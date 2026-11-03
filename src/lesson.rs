@@ -26,6 +26,38 @@ pub struct Lesson {
     #[serde(default)]
     pub success: String,
     pub check: Check,
+    #[serde(default)]
+    pub quiz: Vec<Quiz>,
+    pub boss: Option<Boss>,
+}
+
+/// A multiple-choice question shown between reading cards.
+#[derive(Debug, Clone, Deserialize)]
+pub struct Quiz {
+    /// 1-based card number this quiz follows. Defaults to the last card.
+    pub after_card: Option<usize>,
+    pub question: String,
+    pub choices: Vec<String>,
+    pub answer: usize,
+    #[serde(default)]
+    pub explain: String,
+}
+
+/// Turns a lesson into a boss fight: each hidden test is one hit point.
+#[derive(Debug, Clone, Deserialize)]
+pub struct Boss {
+    pub name: String,
+    pub art: String,
+    #[serde(default)]
+    pub taunt: String,
+    #[serde(default)]
+    pub defeat: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Step {
+    Card(usize),
+    Quiz(usize),
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -45,6 +77,53 @@ pub struct Rule {
 }
 
 impl Lesson {
+    /// The intro split into bite-sized cards (separated by `---` lines).
+    pub fn cards(&self) -> Vec<String> {
+        let mut cards = vec![String::new()];
+        for line in self.intro.lines() {
+            if line.trim() == "---" {
+                cards.push(String::new());
+            } else {
+                let c = cards.last_mut().unwrap();
+                c.push_str(line);
+                c.push('\n');
+            }
+        }
+        cards.retain(|c| !c.trim().is_empty());
+        if cards.is_empty() {
+            cards.push(self.intro.clone());
+        }
+        cards
+    }
+
+    /// The intro with card breaks removed, for the side panel while coding.
+    pub fn full_text(&self) -> String {
+        self.cards().join("\n")
+    }
+
+    /// Number of hidden tests (a boss's hit points).
+    pub fn test_count(&self) -> usize {
+        self.check
+            .tests
+            .as_deref()
+            .map_or(0, |t| t.matches("#[test]").count())
+    }
+
+    /// The order in which reading cards and quizzes are shown.
+    pub fn steps(&self) -> Vec<Step> {
+        let cards = self.cards().len();
+        let mut steps = Vec::new();
+        for c in 0..cards {
+            steps.push(Step::Card(c));
+            for (qi, q) in self.quiz.iter().enumerate() {
+                if q.after_card.unwrap_or(cards).clamp(1, cards) == c + 1 {
+                    steps.push(Step::Quiz(qi));
+                }
+            }
+        }
+        steps
+    }
+
     pub fn parse(file_name: &str, src: &str) -> Result<Lesson> {
         let lesson: Lesson = toml::from_str(src)
             .with_context(|| format!("could not read lesson file {file_name}"))?;
@@ -68,6 +147,17 @@ impl Lesson {
             .is_some_and(|s| !s.trim().is_empty());
         if !has_output && !has_tests {
             bail!("{file_name}: [check] needs expected_output or tests");
+        }
+        for (i, q) in lesson.quiz.iter().enumerate() {
+            if !(2..=6).contains(&q.choices.len()) || q.answer >= q.choices.len() {
+                bail!(
+                    "{file_name}: quiz {} needs 2-6 choices and a valid answer index",
+                    i + 1
+                );
+            }
+        }
+        if lesson.boss.is_some() && lesson.test_count() == 0 {
+            bail!("{file_name}: boss lessons need tests (each test is one hit point)");
         }
         Ok(lesson)
     }

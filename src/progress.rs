@@ -1,4 +1,4 @@
-//! Saved progress: XP, levels, streaks, badges, and code drafts.
+//! Saved progress: XP, levels, streaks, shells, badges, quiz results and code drafts.
 //! Stored as JSON in ~/.local/share/clawcode/progress.json (XDG data dir).
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
@@ -19,9 +19,39 @@ pub struct Progress {
     pub drafts: BTreeMap<String, String>,
     pub streak: u32,
     pub best_streak: u32,
-    /// Day number (days since 1970-01-01, local time) of the last passed lesson.
+    /// Day number (days since 1970-01-01, local time) of the last active day.
     pub last_day: Option<i64>,
     pub badges: BTreeSet<String>,
+
+    /// Lessons whose reading cards have been read through once.
+    pub learned: BTreeSet<String>,
+    /// Quizzes already answered correctly, as "lesson-id#index".
+    pub quizzes_done: BTreeSet<String>,
+    /// Current run of correct first answers, and the best ever.
+    pub combo: u32,
+    pub best_combo: u32,
+
+    /// Shells are the in-game currency for the shop.
+    pub shells: u32,
+    pub owned: BTreeSet<String>,
+    pub hat: Option<String>,
+    pub color: Option<String>,
+
+    /// Day the Daily Tide was last finished.
+    pub daily_day: Option<i64>,
+    pub stats: Stats,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Stats {
+    pub runs: u32,
+    pub compile_errors: u32,
+    pub quizzes_right: u32,
+    pub quizzes_answered: u32,
+    pub bosses_defeated: u32,
+    pub dailies: u32,
+    pub shells_earned: u32,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -33,10 +63,11 @@ pub struct Completion {
     pub day: i64,
 }
 
-/// What happened when a lesson was passed, for the celebration screen.
+/// What happened when something was won, for the celebration screen.
 #[derive(Debug, Clone, Default)]
 pub struct Reward {
     pub xp: u32,
+    pub shells: u32,
     pub breakdown: Vec<(String, i64)>,
     pub first_time: bool,
     pub leveled_up: Option<u32>,
@@ -51,60 +82,40 @@ pub struct Badge {
     pub desc: &'static str,
 }
 
-pub const BADGES: &[Badge] = &[
-    Badge {
-        id: "first-steps",
-        name: "First Steps",
-        desc: "Pass your first lesson",
-    },
-    Badge {
-        id: "flawless",
-        name: "Flawless",
-        desc: "Pass a lesson on the very first try",
-    },
-    Badge {
-        id: "no-peeking",
-        name: "No Peeking",
-        desc: "Pass 3 lessons without any hints",
-    },
-    Badge {
-        id: "persistent",
-        name: "Persistent Pincer",
-        desc: "Pass a lesson after 5 or more tries",
-    },
-    Badge {
-        id: "on-a-roll",
-        name: "On a Roll",
-        desc: "Keep a 3-day streak",
-    },
-    Badge {
-        id: "week-warrior",
-        name: "Week Warrior",
-        desc: "Keep a 7-day streak",
-    },
-    Badge {
-        id: "borrow-boss",
-        name: "Borrow Boss",
-        desc: "Conquer the ownership lesson",
-    },
-    Badge {
-        id: "halfway",
-        name: "Halfway Reef",
-        desc: "Pass half of the lessons",
-    },
-    Badge {
-        id: "graduate",
-        name: "Rustacean Graduate",
-        desc: "Pass every lesson",
-    },
-];
+macro_rules! badges {
+    ($($id:literal, $name:literal, $desc:literal;)*) => {
+        pub const BADGES: &[Badge] = &[$(Badge { id: $id, name: $name, desc: $desc }),*];
+    };
+}
+
+badges! {
+    "first-steps", "First Steps", "Pass your first lesson";
+    "flawless", "Flawless", "Pass a lesson on the very first try";
+    "no-peeking", "No Peeking", "Pass 3 lessons without any tips";
+    "persistent", "Persistent Pincer", "Pass a lesson after 5 or more tries";
+    "on-a-roll", "On a Roll", "Keep a 3-day streak";
+    "week-warrior", "Week Warrior", "Keep a 7-day streak";
+    "borrow-boss", "Borrow Boss", "Conquer the ownership lesson";
+    "boss-slayer", "Boss Slayer", "Defeat your first boss";
+    "monster-hunter", "Monster Hunter", "Defeat 3 bosses";
+    "quiz-whiz", "Quiz Whiz", "Answer 10 quizzes right on the first try";
+    "combo-5", "Combo Crab", "Reach a 5x quiz combo";
+    "combo-10", "Unstoppable", "Reach a 10x quiz combo";
+    "daily-diver", "Daily Diver", "Finish 3 Daily Tides";
+    "perfect-tide", "Perfect Tide", "Get every Daily Tide question right";
+    "fashionista", "Fashionista", "Buy something in the Shell Shop";
+    "collector", "Collector", "Own 5 shop items";
+    "error-veteran", "Error Veteran", "Survive 25 compiler errors (they make you stronger!)";
+    "halfway", "Halfway Reef", "Pass half of the lessons";
+    "graduate", "Rustacean Graduate", "Pass every lesson";
+}
 
 pub fn badge(id: &str) -> Option<&'static Badge> {
     BADGES.iter().find(|b| b.id == id)
 }
 
 /// XP needed to *reach* each level. Level 1 starts at 0.
-const LEVEL_XP: &[u32] = &[0, 100, 250, 450, 700, 1000, 1400, 1900, 2500];
+const LEVEL_XP: &[u32] = &[0, 100, 250, 450, 700, 1000, 1400, 1900, 2500, 3200, 4000];
 const LEVEL_TITLES: &[&str] = &[
     "Hatchling",
     "Tide-pool Tinkerer",
@@ -113,7 +124,9 @@ const LEVEL_TITLES: &[&str] = &[
     "Borrow Buddy",
     "Ownership Oracle",
     "Trait Tamer",
+    "Iterator Ace",
     "Deep-sea Debugger",
+    "Leviathan Wrangler",
     "Rustacean",
 ];
 
@@ -199,26 +212,8 @@ impl Progress {
         level_for(self.xp)
     }
 
-    /// Records a pass and computes the XP reward.
-    ///
-    /// Rules: base XP, +50% for a first-try pass, -10% of base per hint (the
-    /// first-try bonus still counts), half XP if the solution was revealed,
-    /// +5 XP per streak day (max +25). Replaying a finished lesson gives no XP.
-    pub fn record_pass(
-        &mut self,
-        id: &str,
-        base_xp: u32,
-        total_lessons: usize,
-        day: i64,
-    ) -> Reward {
-        let attempts = *self.attempts.get(id).unwrap_or(&1);
-        let hints = *self.hints_used.get(id).unwrap_or(&0);
-        let mut reward = Reward {
-            streak: self.streak,
-            ..Default::default()
-        };
-
-        // Streak: counts days in a row on which you passed at least one lesson.
+    /// Streak: counts days in a row with at least one passed lesson or Daily Tide.
+    pub fn touch_streak(&mut self, day: i64) {
         match self.last_day {
             Some(d) if d == day => {}
             Some(d) if d == day - 1 => self.streak += 1,
@@ -226,6 +221,73 @@ impl Progress {
         }
         self.last_day = Some(day);
         self.best_streak = self.best_streak.max(self.streak);
+    }
+
+    /// The streak as it should be shown today (it's 0 if a day was missed).
+    pub fn live_streak(&self, day: i64) -> u32 {
+        match self.last_day {
+            Some(d) if d >= day - 1 => self.streak,
+            _ => 0,
+        }
+    }
+
+    fn add_shells(&mut self, n: u32) {
+        self.shells += n;
+        self.stats.shells_earned += n;
+    }
+
+    fn add_xp(&mut self, n: u32, reward: &mut Reward) {
+        let before = self.level();
+        self.xp += n;
+        if self.level() > before {
+            reward.leveled_up = Some(self.level());
+        }
+    }
+
+    /// Awards a badge if `cond` holds and it's new.
+    fn award(&mut self, id: &str, cond: bool, reward: &mut Reward) {
+        if cond
+            && self.badges.insert(id.to_string())
+            && let Some(b) = badge(id)
+        {
+            reward.new_badges.push(b);
+        }
+    }
+
+    fn general_badges(&mut self, r: &mut Reward) {
+        let s = self.stats.clone();
+        self.award("on-a-roll", self.streak >= 3, r);
+        self.award("week-warrior", self.streak >= 7, r);
+        self.award("quiz-whiz", s.quizzes_right >= 10, r);
+        self.award("combo-5", self.best_combo >= 5, r);
+        self.award("combo-10", self.best_combo >= 10, r);
+        self.award("error-veteran", s.compile_errors >= 25, r);
+        self.award("daily-diver", s.dailies >= 3, r);
+        self.award("boss-slayer", s.bosses_defeated >= 1, r);
+        self.award("monster-hunter", s.bosses_defeated >= 3, r);
+        self.award("fashionista", !self.owned.is_empty(), r);
+        self.award("collector", self.owned.len() >= 5, r);
+    }
+
+    /// Records a pass and computes the reward.
+    ///
+    /// XP rules: base XP, +50% for a first-try pass, -10% of base per tip (the
+    /// first-try bonus still counts), -50% of base if the solution was revealed,
+    /// +5 XP per streak day (max +25), never less than 25% of base, +50% of base
+    /// for defeating a boss. Shells: a quarter of the XP earned (more for bosses).
+    /// Replaying a finished lesson gives no XP or shells.
+    pub fn record_pass(
+        &mut self,
+        id: &str,
+        base_xp: u32,
+        boss: bool,
+        total_lessons: usize,
+        day: i64,
+    ) -> Reward {
+        let attempts = *self.attempts.get(id).unwrap_or(&1);
+        let hints = *self.hints_used.get(id).unwrap_or(&0);
+        let mut reward = Reward::default();
+        self.touch_streak(day);
         reward.streak = self.streak;
 
         if self.is_done(id) {
@@ -234,12 +296,23 @@ impl Progress {
         reward.first_time = true;
 
         let base = base_xp as i64;
-        let mut parts: Vec<(String, i64)> = vec![("Lesson cleared".into(), base)];
+        let mut parts: Vec<(String, i64)> = vec![(
+            if boss {
+                "Boss defeated"
+            } else {
+                "Lesson cleared"
+            }
+            .into(),
+            base,
+        )];
         if attempts == 1 {
             parts.push(("First-try bonus".into(), base / 2));
         }
+        if boss {
+            parts.push(("Boss bounty".into(), base / 2));
+        }
         if hints > 0 {
-            parts.push((format!("Hints used ({hints})"), -(base / 10) * hints as i64));
+            parts.push((format!("Tips used ({hints})"), -(base / 10) * hints as i64));
         }
         if self.solution_seen.contains(id) {
             parts.push(("Peeked at solution".into(), -(base / 2)));
@@ -252,14 +325,11 @@ impl Progress {
         }
         let total: i64 = parts.iter().map(|(_, v)| v).sum();
         let earned = total.max(base / 4) as u32;
-
-        let before = self.level();
-        self.xp += earned;
-        let after = self.level();
-        if after > before {
-            reward.leveled_up = Some(after);
-        }
+        self.add_xp(earned, &mut reward);
+        let shells = earned / 4 + if boss { 25 } else { 0 };
+        self.add_shells(shells);
         reward.xp = earned;
+        reward.shells = shells;
         reward.breakdown = parts;
         self.completed.insert(
             id.to_string(),
@@ -270,29 +340,123 @@ impl Progress {
                 day,
             },
         );
-        self.drafts.remove(id);
+        if boss {
+            self.stats.bosses_defeated += 1;
+        }
 
-        // Badges
         let no_hint_passes = self.completed.values().filter(|c| c.hints == 0).count();
-        let mut award = |b: &str, cond: bool| {
-            if cond
-                && self.badges.insert(b.to_string())
-                && let Some(b) = badge(b)
-            {
-                reward.new_badges.push(b);
-            }
-        };
         let done = self.completed.len();
-        award("first-steps", done >= 1);
-        award("flawless", attempts == 1 && hints == 0);
-        award("no-peeking", no_hint_passes >= 3);
-        award("persistent", attempts >= 5);
-        award("on-a-roll", self.streak >= 3);
-        award("week-warrior", self.streak >= 7);
-        award("borrow-boss", id.contains("ownership"));
-        award("halfway", done * 2 >= total_lessons);
-        award("graduate", done >= total_lessons);
+        let r = &mut reward;
+        self.award("first-steps", done >= 1, r);
+        self.award("flawless", attempts == 1 && hints == 0, r);
+        self.award("no-peeking", no_hint_passes >= 3, r);
+        self.award("persistent", attempts >= 5, r);
+        self.award("borrow-boss", id.contains("ownership"), r);
+        self.award("halfway", done * 2 >= total_lessons, r);
+        self.award("graduate", done >= total_lessons, r);
+        self.general_badges(r);
         reward
+    }
+
+    /// Records a quiz answer. Returns (xp, shells) gained. Only the first answer
+    /// to a quiz that has never been solved counts for rewards and combos.
+    pub fn record_quiz(
+        &mut self,
+        key: &str,
+        first_answer_correct: bool,
+        rewardable: bool,
+    ) -> (u32, u32, Reward) {
+        let mut r = Reward::default();
+        if !rewardable || self.quizzes_done.contains(key) {
+            return (0, 0, r);
+        }
+        self.stats.quizzes_answered += 1;
+        if first_answer_correct {
+            self.stats.quizzes_right += 1;
+            self.combo += 1;
+            self.best_combo = self.best_combo.max(self.combo);
+        } else {
+            self.combo = 0;
+        }
+        let (xp, shells) = if first_answer_correct {
+            (10, 3 + self.combo.min(10))
+        } else {
+            (0, 1)
+        };
+        self.quizzes_done.insert(key.to_string());
+        self.add_xp(xp, &mut r);
+        self.add_shells(shells);
+        r.xp = xp;
+        r.shells = shells;
+        self.general_badges(&mut r);
+        (xp, shells, r)
+    }
+
+    /// Finishes today's Daily Tide.
+    pub fn record_daily(&mut self, right: u32, total: u32, day: i64) -> Reward {
+        let mut r = Reward {
+            first_time: true,
+            ..Default::default()
+        };
+        self.daily_day = Some(day);
+        self.touch_streak(day);
+        r.streak = self.streak;
+        self.stats.dailies += 1;
+        let mut parts = vec![
+            ("Showed up for the tide".to_string(), 5),
+            ("Correct answers".to_string(), 8 * right as i64),
+        ];
+        if right == total {
+            parts.push(("Perfect tide!".into(), 20));
+        }
+        if self.streak > 1 {
+            parts.push((
+                format!("{}-day streak", self.streak),
+                (5 * self.streak as i64).min(25),
+            ));
+        }
+        let xp: i64 = parts.iter().map(|(_, v)| v).sum();
+        self.add_xp(xp as u32, &mut r);
+        let shells = 2 + 3 * right + if right == total { 10 } else { 0 };
+        self.add_shells(shells);
+        r.xp = xp as u32;
+        r.shells = shells;
+        r.breakdown = parts;
+        self.award("perfect-tide", right == total, &mut r);
+        self.general_badges(&mut r);
+        r
+    }
+
+    /// Buys or equips a shop item. Returns a message for Pinch to say.
+    pub fn shop_select(&mut self, item: &crate::shop::Item) -> (bool, String, Reward) {
+        let mut r = Reward::default();
+        if !self.owned.contains(item.id) && item.price > 0 {
+            if self.shells < item.price {
+                return (
+                    false,
+                    format!(
+                        "You need {} more shells for the {}. Pass lessons and quizzes to earn more!",
+                        item.price - self.shells,
+                        item.name
+                    ),
+                    r,
+                );
+            }
+            self.shells -= item.price;
+            self.owned.insert(item.id.to_string());
+            self.general_badges(&mut r);
+        }
+        let slot = match item.kind {
+            crate::shop::Kind::Hat => &mut self.hat,
+            crate::shop::Kind::Color => &mut self.color,
+        };
+        if slot.as_deref() == Some(item.id) {
+            *slot = None;
+            (true, format!("Took off the {}.", item.name), r)
+        } else {
+            *slot = Some(item.id.to_string());
+            (true, format!("Looking sharp in the {}!", item.name), r)
+        }
     }
 }
 
@@ -313,12 +477,13 @@ mod tests {
     fn first_try_bonus_and_badges() {
         let mut p = Progress::default();
         p.attempts.insert("01-hello".into(), 1);
-        let r = p.record_pass("01-hello", 50, 10, 100);
+        let r = p.record_pass("01-hello", 50, false, 10, 100);
         assert_eq!(r.xp, 75);
+        assert_eq!(r.shells, 18);
         assert!(r.first_time);
         assert!(p.badges.contains("first-steps") && p.badges.contains("flawless"));
         // Replay gives nothing.
-        assert_eq!(p.record_pass("01-hello", 50, 10, 100).xp, 0);
+        assert_eq!(p.record_pass("01-hello", 50, false, 10, 100).xp, 0);
     }
 
     #[test]
@@ -326,17 +491,58 @@ mod tests {
         let mut p = Progress::default();
         p.attempts.insert("a".into(), 3);
         p.hints_used.insert("a".into(), 2);
-        assert_eq!(p.record_pass("a", 100, 10, 10).xp, 80);
+        assert_eq!(p.record_pass("a", 100, false, 10, 10).xp, 80);
         p.attempts.insert("b".into(), 2);
-        let r = p.record_pass("b", 100, 10, 11);
+        let r = p.record_pass("b", 100, false, 10, 11);
         assert_eq!(r.streak, 2);
         assert_eq!(r.xp, 110);
         p.attempts.insert("c".into(), 2);
         assert_eq!(
-            p.record_pass("c", 100, 10, 20).streak,
+            p.record_pass("c", 100, false, 10, 20).streak,
             1,
             "a gap resets the streak"
         );
+        assert_eq!(p.live_streak(22), 0, "missing a day shows a 0 streak");
+    }
+
+    #[test]
+    fn bosses_pay_more() {
+        let mut p = Progress::default();
+        p.attempts.insert("boss".into(), 2);
+        let r = p.record_pass("boss", 100, true, 10, 1);
+        assert_eq!(r.xp, 150);
+        assert_eq!(r.shells, 150 / 4 + 25);
+        assert!(p.badges.contains("boss-slayer"));
+    }
+
+    #[test]
+    fn quiz_combos() {
+        let mut p = Progress::default();
+        for i in 0..5 {
+            p.record_quiz(&format!("l#{i}"), true, true);
+        }
+        assert_eq!(p.combo, 5);
+        assert!(p.badges.contains("combo-5"));
+        assert_eq!(
+            p.record_quiz("l#0", true, true).0,
+            0,
+            "solved quizzes give nothing again"
+        );
+        p.record_quiz("l#9", false, true);
+        assert_eq!(p.combo, 0);
+    }
+
+    #[test]
+    fn shop_buy_and_equip() {
+        let item = &crate::shop::ITEMS[1];
+        let mut p = Progress::default();
+        assert!(!p.shop_select(item).0, "can't afford with 0 shells");
+        p.shells = 1000;
+        assert!(p.shop_select(item).0);
+        assert_eq!(p.shells, 1000 - item.price);
+        assert!(p.badges.contains("fashionista"));
+        p.shop_select(item); // unequip, no charge
+        assert_eq!(p.shells, 1000 - item.price);
     }
 
     #[test]

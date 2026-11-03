@@ -96,3 +96,47 @@ To validate a lesson by hand:
 cargo run -- verify            # checks every lesson: solution passes, starter fails
 cargo run -- verify 03-types   # just one lesson
 ```
+
+## Cards (bite-sized reading)
+
+Split `intro` into short cards with a line containing only `---`. The game shows
+one card at a time in the "Learn" phase, so each card should be one idea
+(40-120 words). Example: card 1 explains the concept, card 2 shows code, card 3
+gives a tip. 3 to 5 cards per lesson is ideal.
+
+## Quizzes (quick checks between cards)
+
+```toml
+[[quiz]]
+after_card = 1          # shown after this card (1-based). Must be <= number of cards.
+question = '''
+What does this print?
+```rust
+let x = 2 + 3;
+println!("{x}");
+```
+'''
+choices = ["2", "5", "x", "It doesn't compile"]   # 2 to 4 choices
+answer = 1              # index of the correct choice, counting from 0
+explain = "Shown after answering: why the right answer is right."
+```
+
+Use 2 or 3 quizzes per lesson. Mix kinds: "what does this print?", "which line
+has the bug?", "what does this keyword mean?". Make wrong choices plausible
+mistakes a beginner would actually make. Vary which index is correct.
+
+## Boss lessons
+
+A lesson with a `[boss]` table is a boss fight. Each hidden test is one hit
+point: the boss's HP bar drops as more tests pass. Boss lessons must use `tests`
+(5 to 8 tests), and usually review the whole chapter.
+
+```toml
+[boss]
+name = "Borrowzilla"
+art = '''
+(at most 8 lines, at most 30 columns wide, plain ASCII only)
+'''
+taunt = "What the boss says when the fight starts."
+defeat = "What it says when beaten."
+```

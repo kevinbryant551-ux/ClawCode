@@ -15,6 +15,7 @@ break :: jumps out of the nearest loop.
 while :: repeats as long as its condition is true.
 for :: walks through a range (or other collection), one item at a time.
 
+---
 ```rust
 let mut steps = 0;
 loop {
@@ -27,6 +28,7 @@ loop {
 
 `steps += 1` is shorthand for `steps = steps + 1`. The variable has to be `mut` because it changes.
 
+---
 ## while and for
 
 ```rust
@@ -45,6 +47,7 @@ Range :: `1..=3` means 1, 2, 3 (both ends included). `1..3` stops *before* 3, so
 
 Use `for` when you know what to walk through, `while` when you repeat until something changes.
 
+---
 ## Collecting a total
 
 A very common pattern is an **accumulator**: a `mut` variable that starts at 0 and grows each time around.
@@ -172,3 +175,51 @@ why = "Use a `for` loop (like `for i in 1..=n`) somewhere in your solution."
 [[check.must_contain]]
 text = "while "
 why = "Use a `while` loop for the doubling counter."
+
+[[quiz]]
+after_card = 2
+question = '''
+What does this print?
+```rust
+let mut n = 0;
+loop {
+    n += 2;
+    if n > 5 {
+        break;
+    }
+}
+println!("{n}");
+```
+'''
+choices = ["4", "5", "6", "Nothing, it loops forever"]
+answer = 2
+explain = "n goes 2, 4, 6. Only at 6 is n > 5 true, so the loop breaks and 6 is printed. It never lands on 5 because it jumps by 2."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+for i in 1..4 {
+    print!("{i} ");
+}
+```
+'''
+choices = ["1 2 3 4", "1 2 3", "2 3 4", "0 1 2 3"]
+answer = 1
+explain = "`1..4` stops before 4, so you get 1 2 3. Use `1..=4` if you want the 4 too."
+
+[[quiz]]
+after_card = 4
+question = '''
+Spot the bug! This will not compile. What is the fix?
+```rust
+let total = 0;
+for i in 1..=4 {
+    total += i;
+}
+```
+'''
+choices = ["Declare it as `let mut total = 0;`", "Change the range to `1..4`", "Add a `break` inside the loop", "Declare `i` as `mut`"]
+answer = 0
+explain = "An accumulator changes every time around, so it must be `mut`. Without it Rust stops you with error E0384 (assigning twice to an immutable variable)."

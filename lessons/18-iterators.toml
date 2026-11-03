@@ -1,0 +1,199 @@
+id = "18-iterators"
+order = 18
+chapter = "Superpowers"
+title = "The Conveyor Belt"
+xp = 110
+concepts = ["iter", "map", "filter", "sum", "count", "collect", "enumerate", "copied", "chaining"]
+
+intro = '''
+# Iterators: a conveyor belt of values
+
+Instead of a `for` loop with a counter and a pile of `mut` variables, you can put your items on a conveyor belt and add machines along it. Each machine changes or removes items. At the end, something collects the result.
+
+iterator :: something that hands out items one at a time
+adapter :: a belt machine like `map` or `filter` that returns a new iterator
+consumer :: the end of the belt, like `sum` or `collect`, that produces a final answer
+---
+Start the belt with `.iter()`, add machines, finish with a consumer.
+
+```rust
+let nums = vec![1, 2, 3, 4, 5, 6];
+
+let total: i32 = nums.iter().sum();            // 21
+let how_many = nums.iter().count();            // 6
+let doubled: Vec<i32> = nums.iter().map(|x| x * 2).collect();
+// [2, 4, 6, 8, 10, 12]
+```
+
+`map` changes every item using a closure. `collect` gathers the items into a new `Vec`. Nothing happens until a consumer runs, because iterators are lazy.
+---
+`filter` keeps only the items the closure says `true` for. Add `.copied()` first so the closure sees plain numbers instead of references.
+
+```rust
+let big: Vec<i32> = nums
+    .iter()
+    .copied()
+    .filter(|x| *x > 3)
+    .map(|x| x * 10)
+    .collect();
+// [40, 50, 60]
+```
+
+Chain as many machines as you like. Read it top to bottom like a recipe.
+
+filter :: keep only items where the closure returns true
+enumerate :: pairs each item with its index: `(0, "a"), (1, "b")`
+---
+The same job both ways:
+
+```rust
+// for loop
+let mut total = 0;
+for n in &nums {
+    if n % 2 == 0 {
+        total += n * n;
+    }
+}
+
+// iterator chain
+let total: i32 = nums.iter().copied().filter(|n| n % 2 == 0).map(|n| n * n).sum();
+```
+
+`enumerate` is perfect when you need positions: `names.iter().enumerate().map(|(i, s)| format!("{i}:{s}"))`.
+
+> Pinch tip: when a chain stops compiling, add a type like `let x: Vec<i32> = ...` to see what the compiler expects.
+'''
+
+goal = "Rewrite the loops as iterator chains: sum_of_squares, count_big (items over 10), evens_doubled, and labelled (index:name). No `for` loops allowed!"
+
+starter = '''
+// Sum of every number squared. sum_of_squares(&[1, 2, 3]) is 14.
+fn sum_of_squares(v: &[i32]) -> i32 {
+    todo!()
+}
+
+// How many numbers are greater than 10?
+fn count_big(v: &[i32]) -> usize {
+    todo!()
+}
+
+// Keep only the even numbers, then double them.
+// evens_doubled(&[1, 2, 3, 4]) is [4, 8].
+fn evens_doubled(v: &[i32]) -> Vec<i32> {
+    todo!()
+}
+
+// Turn names into "index:name" text.
+// labelled(&["a", "b"]) is ["0:a", "1:b"].
+fn labelled(names: &[&str]) -> Vec<String> {
+    todo!()
+}
+
+fn main() {
+    println!("{}", sum_of_squares(&[1, 2, 3]));
+    println!("{}", count_big(&[5, 15, 25]));
+    println!("{:?}", evens_doubled(&[1, 2, 3, 4]));
+    println!("{:?}", labelled(&["a", "b"]));
+}
+'''
+
+solution = '''
+fn sum_of_squares(v: &[i32]) -> i32 {
+    v.iter().map(|x| x * x).sum()
+}
+
+fn count_big(v: &[i32]) -> usize {
+    v.iter().filter(|x| **x > 10).count()
+}
+
+fn evens_doubled(v: &[i32]) -> Vec<i32> {
+    v.iter().copied().filter(|x| x % 2 == 0).map(|x| x * 2).collect()
+}
+
+fn labelled(names: &[&str]) -> Vec<String> {
+    names
+        .iter()
+        .enumerate()
+        .map(|(i, s)| format!("{}:{}", i, s))
+        .collect()
+}
+
+fn main() {
+    println!("{}", sum_of_squares(&[1, 2, 3]));
+    println!("{}", count_big(&[5, 15, 25]));
+    println!("{:?}", evens_doubled(&[1, 2, 3, 4]));
+    println!("{:?}", labelled(&["a", "b"]));
+}
+'''
+
+hints = [
+  "Every answer starts with `v.iter()` (or `names.iter()`). Then add machines with dots, and end with a consumer like `.sum()`, `.count()` or `.collect()`.",
+  "`sum_of_squares` is `.map(|x| x * x).sum()`. For `count_big`, use `.copied().filter(|x| *x > 10).count()`. For `evens_doubled`, filter with `x % 2 == 0`, then map `x * 2`, then `.collect()`.",
+  "`labelled` is `names.iter().enumerate().map(|(i, s)| format!(\"{}:{}\", i, s)).collect()`. The `(i, s)` pattern unpacks the index and the name.",
+]
+
+success = "Belt running smoothly! `.iter()` starts the line, `map` and `filter` reshape it, `enumerate` adds indexes, and `sum`, `count` or `collect` finish the job. Clean and loop-free!"
+
+[check]
+tests = '''
+#[test]
+fn squares_add_up() {
+    assert_eq!(sum_of_squares(&[1, 2, 3]), 14, "1 + 4 + 9 should be 14");
+    assert_eq!(sum_of_squares(&[]), 0, "an empty list should sum to 0");
+}
+
+#[test]
+fn counts_big_numbers() {
+    assert_eq!(count_big(&[5, 15, 25]), 2, "15 and 25 are over 10, so the count is 2");
+    assert_eq!(count_big(&[10, 1]), 0, "10 is not greater than 10");
+}
+
+#[test]
+fn evens_are_doubled() {
+    assert_eq!(evens_doubled(&[1, 2, 3, 4]), vec![4, 8], "evens 2 and 4 doubled should be [4, 8]");
+    assert_eq!(evens_doubled(&[1, 3]), Vec::<i32>::new(), "no evens should give an empty Vec");
+}
+
+#[test]
+fn labels_use_indexes() {
+    assert_eq!(labelled(&["a", "b"]), vec!["0:a", "1:b"], "labelled should give [\"0:a\", \"1:b\"]");
+    assert_eq!(labelled(&[]), Vec::<String>::new(), "no names should give an empty Vec");
+}
+
+'''
+
+[[check.must_contain]]
+text = ".iter()"
+why = "Start your chains with `.iter()`."
+
+[[check.must_not_contain]]
+text = "for "
+why = "Not this time! Practice the iterator chain instead of a `for` loop: start with `.iter()` and finish with `.sum()`, `.count()` or `.collect()`."
+
+[[quiz]]
+after_card = 2
+question = '''
+What does this print?
+```rust
+let v = vec![1, 2, 3, 4];
+let n: i32 = v.iter().map(|x| x + 1).sum();
+println!("{}", n);
+```
+'''
+choices = ["10", "14", "4", "2, 3, 4, 5"]
+answer = 1
+explain = "map turns 1,2,3,4 into 2,3,4,5 and sum adds them: 14. The original 10 would be the sum without map."
+
+[[quiz]]
+after_card = 3
+question = "You write `nums.iter().map(|x| x * 2);` and never call sum, count or collect. What happens?"
+choices = ["It doubles all the numbers in nums", "Nothing is computed, because iterators are lazy until a consumer runs", "It prints the doubled numbers", "It panics at runtime"]
+answer = 1
+explain = "Adapters like map just describe the work. A consumer at the end of the belt is what actually runs it."
+
+[[quiz]]
+after_card = 4
+question = "What does `.enumerate()` add to each item?"
+choices = ["Its length", "A random number", "Its index, as a (index, item) pair", "A copy of the item"]
+answer = 2
+explain = "enumerate turns each item into a pair `(index, item)`, counting from 0."

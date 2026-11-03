@@ -1,0 +1,224 @@
+id = "13-strings"
+order = 13
+chapter = "Collections"
+title = "String Theory"
+xp = 90
+concepts = ["String", "&str", "push_str", "format!", "len", "to_uppercase", "contains", "split_whitespace", "chars", "trim"]
+
+intro = '''
+# Two kinds of text
+
+You have met both already, but let's make it stick.
+
+String :: owned text that lives in a variable and can grow
+&str :: a borrowed view of text, like a literal `"hello"`
+push_str :: adds more text onto the end of a `String`
+format! :: builds a new `String` from pieces, like `println!` without printing
+
+Rule of thumb: **take `&str` as input, give back `String` as output**. A `&str` parameter accepts both literals and borrowed Strings.
+---
+Building text:
+
+```rust
+let mut s = String::from("Ahoy");
+s.push_str(", crab");
+s.push('!');                       // one char uses push
+let msg = format!("{s} x{}", 3);   // "Ahoy, crab! x3"
+println!("{}", msg.len());         // 14
+```
+
+`len()` counts **bytes**, which equals letters for plain English text.
+
+A function that changes a String must borrow it mutably: `fn add_bang(s: &mut String) { s.push('!'); }`.
+
+> Pinch tip: `"abc" + "def"` does not work in Rust. Use `format!` to glue text together instead.
+---
+Asking questions about text. These methods work on `&str` and `String`:
+
+```rust
+let t = "  big red crab  ";
+t.trim();                    // "big red crab"
+t.contains("red");           // true
+t.to_uppercase();            // "  BIG RED CRAB  " (a new String)
+t.split_whitespace().count() // 3 words
+```
+
+trim :: removes spaces from both ends
+split_whitespace :: cuts text into words, ignoring extra spaces; use it in a `for` loop or call `.count()`
+---
+Letter by letter, use `.chars()` in a loop:
+
+```rust
+let mut e = 0;
+for ch in "seashell".chars() {
+    if ch == 'e' {
+        e += 1;
+    }
+}
+// e is 2
+```
+
+chars :: gives you each character one at a time
+
+Single characters use single quotes (`'e'`), text uses double quotes (`"e"`).
+
+Methods like `to_uppercase()` and `trim()` don't change the original. They give you something new.
+'''
+
+goal = "Implement shout, count_vowels, word_count, banner and add_ahoy so the tests pass."
+
+starter = '''
+// "hi crab" becomes "HI CRAB!" (uppercase, plus an exclamation mark).
+fn shout(s: &str) -> String {
+    todo!()
+}
+
+// Count the letters a, e, i, o, u (lowercase only) in the text.
+fn count_vowels(s: &str) -> usize {
+    todo!()
+}
+
+// How many words are in the text? Extra spaces don't matter.
+fn word_count(s: &str) -> usize {
+    todo!()
+}
+
+// banner("Pinch", 3) gives "Pinch has 3 shells". Use format!.
+// Trim spaces off the name first.
+fn banner(name: &str, shells: u32) -> String {
+    todo!()
+}
+
+// Add the text " Ahoy!" to the end of the String (note the leading space).
+fn add_ahoy(s: &mut String) {
+    todo!()
+}
+
+fn main() {
+    println!("{}", shout("hi crab"));
+    println!("{}", count_vowels("seashell"));
+    println!("{}", word_count("  one  two three "));
+    println!("{}", banner(" Pinch ", 3));
+    let mut s = String::from("Hello");
+    add_ahoy(&mut s);
+    println!("{}", s);
+}
+'''
+
+solution = '''
+fn shout(s: &str) -> String {
+    let mut out = s.to_uppercase();
+    out.push('!');
+    out
+}
+
+fn count_vowels(s: &str) -> usize {
+    let mut n = 0;
+    for ch in s.chars() {
+        if ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' {
+            n += 1;
+        }
+    }
+    n
+}
+
+fn word_count(s: &str) -> usize {
+    s.split_whitespace().count()
+}
+
+fn banner(name: &str, shells: u32) -> String {
+    format!("{} has {} shells", name.trim(), shells)
+}
+
+fn add_ahoy(s: &mut String) {
+    s.push_str(" Ahoy!");
+}
+
+fn main() {
+    println!("{}", shout("hi crab"));
+    println!("{}", count_vowels("seashell"));
+    println!("{}", word_count("  one  two three "));
+    println!("{}", banner(" Pinch ", 3));
+    let mut s = String::from("Hello");
+    add_ahoy(&mut s);
+    println!("{}", s);
+}
+'''
+
+hints = [
+  "`shout`: `s.to_uppercase()` gives a new String. Store it in `let mut out`, then use `out.push('!');` and return `out`.",
+  "`word_count` is one line: `s.split_whitespace().count()`. `banner` is `format!(\"{} has {} shells\", name.trim(), shells)`. `add_ahoy` is `s.push_str(\" Ahoy!\");`.",
+  "`count_vowels`: `let mut n = 0;` then `for ch in s.chars() { if ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' { n += 1; } }` and finish with `n`.",
+]
+
+success = "Text tamed! You can build Strings with push_str and format!, and inspect them with trim, contains, split_whitespace and chars. Input as &str, output as String."
+
+[check]
+tests = '''
+#[test]
+fn shout_works() {
+    assert_eq!(shout("hi crab"), "HI CRAB!", "shout(\"hi crab\") should be \"HI CRAB!\"");
+}
+
+#[test]
+fn vowels_counted() {
+    assert_eq!(count_vowels("seashell"), 3, "seashell has e, a, e = 3 vowels");
+    assert_eq!(count_vowels("xyz"), 0, "xyz has no vowels");
+}
+
+#[test]
+fn words_counted() {
+    assert_eq!(word_count("one two three"), 3, "three words expected");
+    assert_eq!(word_count("  extra   spaces here  "), 3, "extra spaces must not create extra words");
+    assert_eq!(word_count(""), 0, "empty text has 0 words");
+}
+
+#[test]
+fn banner_trims_and_formats() {
+    assert_eq!(banner("Pinch", 3), "Pinch has 3 shells", "expected \"Pinch has 3 shells\"");
+    assert_eq!(banner("  Sandy ", 12), "Sandy has 12 shells", "spaces around the name should be trimmed");
+}
+
+#[test]
+fn ahoy_appended() {
+    let mut s = String::from("Hello");
+    add_ahoy(&mut s);
+    assert_eq!(s, "Hello Ahoy!", "add_ahoy should append \" Ahoy!\" to the same String");
+}
+'''
+
+[[quiz]]
+after_card = 1
+question = '''
+Which is the best type for a function parameter that only needs to read some text?
+'''
+choices = ["String", "&str", "&mut String", "str"]
+answer = 1
+explain = "`&str` accepts string literals and borrowed Strings alike, and promises not to change the text."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+let t = "  big red crab ";
+println!("{}", t.trim().len());
+```
+'''
+choices = ["15", "12", "3", "13"]
+answer = 1
+explain = "`trim()` removes the spaces at both ends, leaving \"big red crab\", which is 12 bytes long."
+
+[[quiz]]
+after_card = 4
+question = '''
+Which line counts how many times the letter `a` appears in `word`?
+'''
+choices = [
+  "word.contains('a')",
+  "word.chars().count()",
+  "for ch in word.chars() { if ch == 'a' { n += 1; } }",
+  "word.len('a')",
+]
+answer = 2
+explain = "`contains` only says yes or no, and `chars().count()` counts all letters. Looping over `chars()` and comparing each one counts just the a's."

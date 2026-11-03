@@ -1,4 +1,5 @@
 //! ClawCode: learn Rust by playing through small, compiler-checked challenges.
+mod anim;
 mod app;
 mod checker;
 mod feedback;
@@ -6,6 +7,9 @@ mod friendly;
 mod lesson;
 mod markdown;
 mod progress;
+mod shop;
+mod ui;
+mod widgets;
 
 use anyhow::Result;
 use std::process::ExitCode;

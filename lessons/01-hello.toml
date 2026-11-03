@@ -12,11 +12,13 @@ Welcome, new shell-mate! I'm Pinch. Let's get you writing real Rust right away.
 
 A program is just a list of instructions the computer follows, top to bottom. Rust programs always start in one special spot, a function called `main`.
 
+---
 fn :: short for "function", a named bundle of instructions. You make one with the word `fn`.
 main :: the function Rust runs first when your program starts.
 println! :: prints a line of text on the screen, then moves to the next line.
 string :: text wrapped in double quotes, like `"Hello"`.
 
+---
 See how `println!` ends with a `!`? That means it is a **macro**, a special helper that Rust expands into more code for you. For now just remember to type the `!`.
 
 Here is a whole program:
@@ -28,6 +30,7 @@ fn main() {
 }
 ```
 
+---
 A few things to notice:
 
 - The instructions live between the curly braces `{` and `}`.
@@ -68,3 +71,42 @@ expected_output = '''
 Hello, Rust!
 I am learning with Pinch.
 '''
+
+[[quiz]]
+after_card = 2
+question = '''
+Which word do you type to create a function in Rust?
+'''
+choices = ["main", "println!", "fn", "string"]
+answer = 2
+explain = "`fn` (short for function) starts every function. `main` is just the name of the special one Rust runs first."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+fn main() {
+    println!("Sea");
+    println!("Shell");
+}
+```
+'''
+choices = ["SeaShell on one line", "Sea, then Shell on a new line", "Shell, then Sea", "Nothing, it won't compile"]
+answer = 1
+explain = "`println!` prints its text and then moves to the next line, so each call gets its own line, top to bottom."
+
+[[quiz]]
+after_card = 4
+question = '''
+Spot the bug! Why won't this compile?
+```rust
+fn main() {
+    println!("Ahoy!")
+    println!("Bye!");
+}
+```
+'''
+choices = ["The first println! is missing its semicolon", "main must be written Main", "The text needs single quotes", "You can only call println! once"]
+answer = 0
+explain = "Every instruction ends with `;`. The compiler spotted the missing one after `println!(\"Ahoy!\")` and tells you it expected a `;`."

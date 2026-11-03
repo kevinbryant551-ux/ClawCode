@@ -14,6 +14,7 @@ If :: runs a block of code only when a condition is true. The condition must be 
 else :: the block that runs when the `if` condition was false.
 else if :: another condition to try when the earlier ones were false.
 
+---
 ```rust
 let water = 4;
 
@@ -28,6 +29,7 @@ if water < 2 {
 
 Rust checks the conditions from the top and runs the **first** block that matches. No parentheses are needed around the condition.
 
+---
 ## Asking questions
 
 Comparison operators :: `==` equal, `!=` not equal, `<` less, `>` greater, `<=` less or equal, `>=` greater or equal. Each gives back a `bool`.
@@ -38,6 +40,7 @@ You can combine yes/no answers:
 - `a || b` means at least one is true ("or")
 - `!a` flips true to false and back ("not")
 
+---
 ## `if` hands back a value
 
 In Rust, `if` is an **expression**, so it can produce a value:
@@ -140,3 +143,43 @@ fn beach_day_needs_both() {
     assert!(is_beach_day(6, false), "height 6 is allowed (the range includes 6)");
 }
 '''
+
+[[quiz]]
+after_card = 2
+question = '''
+What does this print?
+```rust
+let n = 8;
+if n > 5 {
+    println!("big");
+} else if n > 7 {
+    println!("huge");
+} else {
+    println!("small");
+}
+```
+'''
+choices = ["huge", "big", "big and huge", "small"]
+answer = 1
+explain = "Rust runs only the first matching block. `n > 5` is true, so it prints big and skips the rest, even though `n > 7` is also true."
+
+[[quiz]]
+after_card = 3
+question = '''
+Which operator means "or" (at least one must be true)?
+'''
+choices = ["&&", "!", "==", "||"]
+answer = 3
+explain = "`||` is \"or\". `&&` is \"and\", `!` is \"not\", and `==` compares for equality."
+
+[[quiz]]
+after_card = 4
+question = '''
+Spot the bug! What's wrong here?
+```rust
+let mood = if water > 5 { "splashy" } else { 3 };
+```
+'''
+choices = ["Both branches must have the same type", "The condition needs parentheses", "else needs its own condition", "water must be mut"]
+answer = 0
+explain = "When `if` gives back a value, every branch must produce the same type. One is text and the other is a number, so it fails."

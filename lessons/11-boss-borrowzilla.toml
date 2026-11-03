@@ -1,0 +1,233 @@
+id = "11-boss-borrowzilla"
+order = 11
+chapter = "Boss: Borrowzilla"
+title = "Boss: Borrowzilla"
+xp = 150
+concepts = ["struct", "enum", "match", "Option", "loops", "borrowing", "review"]
+
+intro = '''
+# Borrowzilla rises from the tide pool!
+
+A giant monster guards the tide pool, and the only way past is to finish its **inventory** of sea creatures. Every passing test knocks one HP off the boss.
+
+You already know every tool you need:
+
+- `struct` and `enum` hold the data (already defined for you)
+- `match` picks an answer based on the enum
+- `Option` says "maybe there is a value"
+- `for` loops repeat work
+- `&` and `&mut` borrow instead of taking ownership
+
+Read the comments in the starter, then fill in each `todo!()`.
+
+> Pinch tip: if a test fails, read its message. It tells you exactly what the boss expected. Beat him one function at a time!
+'''
+
+goal = "Fill in all six todo!() functions (points, kind_from_letter, pile_score, grow, label, rename) so every test passes and Borrowzilla is defeated."
+
+starter = '''
+#[derive(Debug, PartialEq)]
+enum Kind {
+    Crab,
+    Starfish,
+    Snail,
+}
+
+struct Creature {
+    name: String,
+    kind: Kind,
+    size: u32,
+}
+
+// Crab is worth 5 points, Starfish 3, Snail 1. Use match.
+fn points(kind: &Kind) -> u32 {
+    todo!()
+}
+
+// 'c' means Crab, 's' means Starfish, 'n' means Snail.
+// Any other letter means "no such creature": return None.
+fn kind_from_letter(letter: char) -> Option<Kind> {
+    todo!()
+}
+
+// Score for a pile of `count` creatures of one kind.
+// Use a loop that adds points(kind) once per creature.
+fn pile_score(kind: &Kind, count: u32) -> u32 {
+    todo!()
+}
+
+// Make the creature one size bigger. It is borrowed mutably.
+fn grow(creature: &mut Creature) {
+    todo!()
+}
+
+// Return text like "Pinch (size 3)". It is only borrowed to look.
+fn label(creature: &Creature) -> String {
+    todo!()
+}
+
+// Give the creature a new name. The new name arrives as a &str.
+fn rename(creature: &mut Creature, new_name: &str) {
+    todo!()
+}
+
+fn main() {
+    let mut c = Creature { name: String::from("Pinch"), kind: Kind::Crab, size: 3 };
+    grow(&mut c);
+    println!("{} worth {}", label(&c), points(&c.kind));
+}
+'''
+
+solution = '''
+#[derive(Debug, PartialEq)]
+enum Kind {
+    Crab,
+    Starfish,
+    Snail,
+}
+
+struct Creature {
+    name: String,
+    kind: Kind,
+    size: u32,
+}
+
+fn points(kind: &Kind) -> u32 {
+    match kind {
+        Kind::Crab => 5,
+        Kind::Starfish => 3,
+        Kind::Snail => 1,
+    }
+}
+
+fn kind_from_letter(letter: char) -> Option<Kind> {
+    match letter {
+        'c' => Some(Kind::Crab),
+        's' => Some(Kind::Starfish),
+        'n' => Some(Kind::Snail),
+        _ => None,
+    }
+}
+
+fn pile_score(kind: &Kind, count: u32) -> u32 {
+    let mut total = 0;
+    for _ in 0..count {
+        total += points(kind);
+    }
+    total
+}
+
+fn grow(creature: &mut Creature) {
+    creature.size += 1;
+}
+
+fn label(creature: &Creature) -> String {
+    format!("{} (size {})", creature.name, creature.size)
+}
+
+fn rename(creature: &mut Creature, new_name: &str) {
+    creature.name = new_name.to_string();
+}
+
+fn main() {
+    let mut c = Creature { name: String::from("Pinch"), kind: Kind::Crab, size: 3 };
+    grow(&mut c);
+    println!("{} worth {}", label(&c), points(&c.kind));
+}
+'''
+
+hints = [
+  "Take the functions top to bottom. `points` and `kind_from_letter` are both `match`. The second one needs a final `_ => None` arm for every other letter.",
+  "`kind_from_letter` returns `Some(Kind::Crab)` for 'c' and so on. `pile_score` needs `let mut total = 0;`, then `for _ in 0..count { total += points(kind); }`, then `total` on its own line at the end.",
+  "`grow` is `creature.size += 1;`. `label` is `format!(\"{} (size {})\", creature.name, creature.size)`. `rename` is `creature.name = new_name.to_string();` because a `&str` must become an owned `String`.",
+]
+
+success = "Borrowzilla is toast! You mixed a struct, an enum with match, an Option, a loop and both kinds of borrow in one program. Chapter one complete, crab commander!"
+
+[boss]
+name = "Borrowzilla"
+art = '''
+   /\_/\    _  _
+  ( o.o )  / \/ \
+   > ^ <  <  ()  >
+  /|   |\  \_/\_/
+ (_|   |_)  |  |
+   |_|_|   /|  |\
+  ~~~~~~~~~~~~~~~~~
+'''
+taunt = "GRAAAH! I borrow your memory and I NEVER give it back! Show me you can keep &mut and & straight, little crab, or I will eat your lifetimes!"
+defeat = "Noooo... the borrow checker... was on YOUR side... I return everything... I always... returned... it... (poof, back into the tide pool)"
+
+[check]
+tests = '''
+#[test]
+fn points_for_each_kind() {
+    assert_eq!(points(&Kind::Crab), 5, "a Crab is worth 5 points");
+    assert_eq!(points(&Kind::Starfish), 3, "a Starfish is worth 3 points");
+    assert_eq!(points(&Kind::Snail), 1, "a Snail is worth 1 point");
+}
+
+#[test]
+fn letter_c_is_a_crab() {
+    assert_eq!(kind_from_letter('c'), Some(Kind::Crab), "'c' should give Some(Kind::Crab)");
+    assert_eq!(kind_from_letter('s'), Some(Kind::Starfish), "'s' should give Some(Kind::Starfish)");
+    assert_eq!(kind_from_letter('n'), Some(Kind::Snail), "'n' should give Some(Kind::Snail)");
+}
+
+#[test]
+fn unknown_letter_is_none() {
+    assert_eq!(kind_from_letter('z'), None, "'z' is not a creature, so expect None");
+}
+
+#[test]
+fn pile_of_crabs() {
+    assert_eq!(pile_score(&Kind::Crab, 4), 20, "4 crabs at 5 points each is 20");
+}
+
+#[test]
+fn empty_pile_scores_zero() {
+    assert_eq!(pile_score(&Kind::Starfish, 0), 0, "a pile of 0 creatures scores 0");
+    assert_eq!(pile_score(&Kind::Snail, 3), 3, "3 snails at 1 point each is 3");
+}
+
+#[test]
+fn grow_and_label() {
+    let mut c = Creature { name: String::from("Pinch"), kind: Kind::Crab, size: 3 };
+    assert_eq!(label(&c), "Pinch (size 3)", "label should look like \"Pinch (size 3)\"");
+    grow(&mut c);
+    grow(&mut c);
+    assert_eq!(c.size, 5, "two grows should take size 3 to 5");
+    assert_eq!(label(&c), "Pinch (size 5)", "label should show the new size");
+}
+
+#[test]
+fn rename_changes_name() {
+    let mut c = Creature { name: String::from("Pinch"), kind: Kind::Snail, size: 1 };
+    rename(&mut c, "Goo");
+    assert_eq!(c.name, "Goo", "rename should replace the creature's name");
+    assert_eq!(c.size, 1, "rename should not touch the size");
+}
+'''
+
+[[quiz]]
+after_card = 1
+question = '''
+Which function signature lets a function change a `Creature` without taking ownership of it?
+'''
+choices = [
+  "fn grow(c: Creature)",
+  "fn grow(c: &Creature)",
+  "fn grow(c: &mut Creature)",
+  "fn grow(mut c: Creature)",
+]
+answer = 2
+explain = "`&mut Creature` borrows the value for changing. `&Creature` only lets you look, and plain `Creature` would move it into the function."
+
+[[quiz]]
+after_card = 1
+question = '''
+What does `kind_from_letter('q')` return if the match ends with `_ => None`?
+'''
+choices = ["Some(Kind::Crab)", "None", "It panics", "It doesn't compile"]
+answer = 1
+explain = "The `_` arm catches every letter not listed above it, and gives back `None` to say \"nothing found\"."

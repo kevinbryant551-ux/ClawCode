@@ -14,6 +14,7 @@ let :: creates a new variable. `let lives = 3;` puts the value 3 in a bucket nam
 mut :: short for "mutable". It allows a variable's value to change later.
 shadowing :: making a brand new variable with the same name using `let` again. The new one hides the old one.
 
+---
 Here is the surprising part: in Rust, variables **cannot change by default**.
 
 ```rust
@@ -29,8 +30,12 @@ fn main() {
 
 `coins` is locked. If you wrote `coins = 6;` the compiler would refuse (error E0384). `steps` has `mut`, so changing it is fine.
 
+---
 The `{}` inside `println!` is a placeholder. Rust swaps it for the value of the variable listed after the text.
 
+So `println!("Steps: {}", steps);` prints `Steps: 1`. Use one `{}` for each value you list.
+
+---
 Shadowing looks like this:
 
 ```rust
@@ -82,3 +87,45 @@ Lives: 2
 [[check.must_contain]]
 text = "mut"
 why = "This lesson is about `mut`, so make the variable mutable."
+
+[[quiz]]
+after_card = 1
+question = '''
+Which keyword lets a variable's value change later?
+'''
+choices = ["fn", "let", "shadowing", "mut"]
+answer = 3
+explain = "`mut` (mutable) opts a variable in to changing. `let` only creates the variable."
+
+[[quiz]]
+after_card = 2
+question = '''
+Spot the bug! Why does the compiler refuse this?
+```rust
+fn main() {
+    let score = 10;
+    score = score + 5;
+    println!("{}", score);
+}
+```
+'''
+choices = ["Nothing is wrong, it prints 15", "score is not mut, so it can't be changed", "println! needs two arguments", "You can't use + on variables"]
+answer = 1
+explain = "Variables are locked by default. Writing `let mut score = 10;` fixes error E0384."
+
+[[quiz]]
+after_card = 4
+question = '''
+What does this print?
+```rust
+fn main() {
+    let size = 3;
+    let size = size + 1;
+    let size = size * 2;
+    println!("{}", size);
+}
+```
+'''
+choices = ["3", "4", "8", "It doesn't compile"]
+answer = 2
+explain = "Each `let` shadows the last: 3, then 4, then 4 * 2 = 8. Shadowing is allowed even without `mut`."

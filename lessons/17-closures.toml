@@ -1,0 +1,175 @@
+id = "17-closures"
+order = 17
+chapter = "Superpowers"
+title = "Pocket Functions"
+xp = 100
+concepts = ["closure", "|x|", "capture", "impl Fn", "passing functions"]
+
+intro = '''
+# Closures: functions in your pocket
+
+A normal function needs a name and a spot outside `main`. Sometimes you just want a tiny bit of behavior on the spot. That is a **closure**.
+
+closure :: a small unnamed function you can store in a variable or hand to another function
+capture :: when a closure uses a variable from the code around it
+---
+The inputs go between two bars `| |`, then comes the body.
+
+```rust
+let add_one = |x| x + 1;
+let add = |a, b| a + b;
+
+println!("{}", add_one(4)); // 5
+println!("{}", add(2, 3));  // 5
+```
+
+You call it just like a function. Rust usually works out the types by itself, so you can skip them. Compare with the long way: `fn add_one(x: i32) -> i32 { x + 1 }`.
+---
+Closures can **capture** variables from where they were made. A plain `fn` cannot do that.
+
+```rust
+let bonus = 10;
+let with_bonus = |score| score + bonus;
+
+println!("{}", with_bonus(5)); // 15
+```
+
+`bonus` was never passed in. The closure grabbed it from its surroundings. This is what makes closures so handy.
+---
+You can pass a closure to a function. The parameter type says "anything callable that takes an `i32` and returns an `i32`":
+
+```rust
+fn apply(f: impl Fn(i32) -> i32, x: i32) -> i32 {
+    f(x)
+}
+
+fn main() {
+    println!("{}", apply(|n| n * 3, 5)); // 15
+}
+```
+
+Fn(i32) -> i32 :: the shape of a callable: takes an i32, gives back an i32
+
+> Pinch tip: inside `apply`, you call `f(x)` exactly like a normal function. The caller decides what `f` does!
+'''
+
+goal = "Write apply, apply_twice (run f two times in a row) and score_with_bonus (use a closure that captures bonus) so the tests pass."
+
+starter = '''
+// Runs the function f on x and returns the result.
+fn apply(f: impl Fn(i32) -> i32, x: i32) -> i32 {
+    todo!()
+}
+
+// Runs f on x, then runs f again on that result.
+// apply_twice(|n| n * 2, 3) is 12.
+fn apply_twice(f: impl Fn(i32) -> i32, x: i32) -> i32 {
+    todo!()
+}
+
+// Use apply with a CLOSURE that adds `bonus` to its input.
+// score_with_bonus(5, 10) is 15.
+fn score_with_bonus(base: i32, bonus: i32) -> i32 {
+    todo!()
+}
+
+fn main() {
+    println!("{}", apply(|n| n + 1, 4));
+    println!("{}", apply_twice(|n| n * 2, 3));
+    println!("{}", score_with_bonus(5, 10));
+}
+'''
+
+solution = '''
+fn apply(f: impl Fn(i32) -> i32, x: i32) -> i32 {
+    f(x)
+}
+
+fn apply_twice(f: impl Fn(i32) -> i32, x: i32) -> i32 {
+    f(f(x))
+}
+
+fn score_with_bonus(base: i32, bonus: i32) -> i32 {
+    apply(|s| s + bonus, base)
+}
+
+fn main() {
+    println!("{}", apply(|n| n + 1, 4));
+    println!("{}", apply_twice(|n| n * 2, 3));
+    println!("{}", score_with_bonus(5, 10));
+}
+'''
+
+hints = [
+  "`f` is a function-like value, so you call it with parentheses: `f(x)`.",
+  "`apply` is just `f(x)`. For `apply_twice`, feed the result back in: `f(f(x))`.",
+  "In `score_with_bonus`, call `apply(|s| s + bonus, base)`. The closure grabs `bonus` from the surrounding function.",
+]
+
+success = "Closure unlocked! `|x| x + 1` is a tiny function with no name, it can capture variables around it, and `impl Fn(i32) -> i32` lets a function accept one."
+
+[check]
+tests = '''
+#[test]
+fn apply_runs_the_closure() {
+    assert_eq!(apply(|n| n + 1, 4), 5, "apply(|n| n + 1, 4) should be 5");
+    assert_eq!(apply(|n| n * n, 6), 36, "apply(|n| n * n, 6) should be 36");
+}
+
+#[test]
+fn apply_twice_runs_it_two_times() {
+    assert_eq!(apply_twice(|n| n * 2, 3), 12, "doubling 3 twice should give 12");
+    assert_eq!(apply_twice(|n| n - 1, 10), 8, "subtracting 1 twice from 10 should give 8");
+}
+
+#[test]
+fn closures_can_capture() {
+    let extra = 100;
+    assert_eq!(apply(|n| n + extra, 1), 101, "a closure should be able to use `extra`");
+}
+
+#[test]
+fn bonus_is_added() {
+    assert_eq!(score_with_bonus(5, 10), 15, "score_with_bonus(5, 10) should be 15");
+    assert_eq!(score_with_bonus(0, -3), -3, "score_with_bonus(0, -3) should be -3");
+}
+
+'''
+
+[[check.must_contain]]
+text = "|"
+why = "Write a closure with bars, like `|s| s + bonus`, inside score_with_bonus."
+
+[[quiz]]
+after_card = 2
+question = '''
+What does this print?
+```rust
+let add = |a, b| a + b;
+println!("{}", add(2, 3));
+```
+'''
+choices = ["23", "5", "add", "Nothing, closures cannot be stored"]
+answer = 1
+explain = "A closure is called like a function. `add(2, 3)` runs `a + b` and gives 5."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+let n = 10;
+let f = |x| x + n;
+println!("{}", f(1));
+```
+'''
+choices = ["1", "10", "11", "It does not compile because n was not passed in"]
+answer = 2
+explain = "The closure captured `n` from its surroundings, so f(1) is 1 + 10 = 11."
+
+[[quiz]]
+after_card = 4
+question = "In `fn apply(f: impl Fn(i32) -> i32, x: i32)`, how do you run f on x?"
+choices = ["f.run(x)", "f(x)", "Fn(x)", "x(f)"]
+answer = 1
+explain = "A closure parameter is called with parentheses, just like any function: `f(x)`."

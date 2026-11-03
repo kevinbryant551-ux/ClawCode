@@ -1,0 +1,239 @@
+id = "14-hashmaps"
+order = 14
+chapter = "Collections"
+title = "Shell Tally"
+xp = 100
+concepts = ["HashMap", "use", "insert", "get", "entry", "or_insert", "counting", "iterating"]
+
+intro = '''
+# A notebook with labels
+
+A Vec finds things by position. A **HashMap** finds things by **name**, like a notebook where each page has a label.
+
+HashMap :: a collection of key and value pairs; look up a value by its key
+key :: the label you search with, like `"pearl"`
+value :: the data stored under that key, like `3`
+use :: brings a type from the standard library into your code
+
+HashMap lives outside the default toolbox, so add this line at the top of your file:
+
+```rust
+use std::collections::HashMap;
+```
+---
+Making and reading one:
+
+```rust
+let mut shells: HashMap<String, u32> = HashMap::new();
+shells.insert(String::from("pearl"), 3);
+shells.insert(String::from("conch"), 1);
+
+match shells.get("pearl") {
+    Some(n) => println!("{n} pearls"),
+    None => println!("no pearls"),
+}
+```
+
+`insert` adds a pair (or replaces an old value with the same key). `get` returns an `Option<&u32>`, because the key might not be there. That is the same safe idea as `Vec::get`.
+
+> Pinch tip: `get("pearl")` takes a `&str`, so you do not have to build a new String just to look something up.
+---
+**Counting trick!** To count things you need "start at 0 if new, then add 1". The `entry` method does exactly that:
+
+```rust
+let mut counts: HashMap<String, u32> = HashMap::new();
+for word in "a b a".split_whitespace() {
+    let c = counts.entry(word.to_string()).or_insert(0);
+    *c += 1;
+}
+// a: 2, b: 1
+```
+
+entry :: asks "is this key already here?"
+or_insert :: if the key is missing, store this starting value; either way, hand back a mutable reference to the value
+
+Because you get a reference, you write `*c += 1` to change the number inside.
+---
+Looping over every pair:
+
+```rust
+for (name, count) in &counts {
+    println!("{name}: {count}");
+}
+```
+
+Careful: a HashMap has **no fixed order**. Run the program twice and the pairs may come out in different orders. If order matters, collect the keys into a Vec and sort them.
+
+`counts.len()` tells you how many keys there are.
+'''
+
+goal = "Implement count_words (how often each word appears), count_of (look up one word, 0 if missing), total_words (sum of all counts) and add_shells (add n to a name's tally)."
+
+starter = '''
+use std::collections::HashMap;
+
+// "a b a" gives {"a": 2, "b": 1}. Use entry().or_insert(0).
+fn count_words(text: &str) -> HashMap<String, u32> {
+    todo!()
+}
+
+// How many times does `word` appear in the map? 0 if it is not there.
+// Use .get() and match.
+fn count_of(map: &HashMap<String, u32>, word: &str) -> u32 {
+    todo!()
+}
+
+// Add up all the counts in the map. Loop over &map.
+fn total_words(map: &HashMap<String, u32>) -> u32 {
+    todo!()
+}
+
+// Add n shells to `who`'s tally. Create the entry at 0 if it is new.
+fn add_shells(map: &mut HashMap<String, u32>, who: &str, n: u32) {
+    todo!()
+}
+
+fn main() {
+    let counts = count_words("crab shell crab pearl crab");
+    println!("crab: {}", count_of(&counts, "crab"));
+    println!("total: {}", total_words(&counts));
+    let mut tally = HashMap::new();
+    add_shells(&mut tally, "Pinch", 4);
+    add_shells(&mut tally, "Pinch", 2);
+    println!("Pinch: {}", count_of(&tally, "Pinch"));
+}
+'''
+
+solution = '''
+use std::collections::HashMap;
+
+fn count_words(text: &str) -> HashMap<String, u32> {
+    let mut counts = HashMap::new();
+    for word in text.split_whitespace() {
+        let c = counts.entry(word.to_string()).or_insert(0);
+        *c += 1;
+    }
+    counts
+}
+
+fn count_of(map: &HashMap<String, u32>, word: &str) -> u32 {
+    match map.get(word) {
+        Some(n) => *n,
+        None => 0,
+    }
+}
+
+fn total_words(map: &HashMap<String, u32>) -> u32 {
+    let mut total = 0;
+    for (_word, count) in map {
+        total += count;
+    }
+    total
+}
+
+fn add_shells(map: &mut HashMap<String, u32>, who: &str, n: u32) {
+    let c = map.entry(who.to_string()).or_insert(0);
+    *c += n;
+}
+
+fn main() {
+    let counts = count_words("crab shell crab pearl crab");
+    println!("crab: {}", count_of(&counts, "crab"));
+    println!("total: {}", total_words(&counts));
+    let mut tally = HashMap::new();
+    add_shells(&mut tally, "Pinch", 4);
+    add_shells(&mut tally, "Pinch", 2);
+    println!("Pinch: {}", count_of(&tally, "Pinch"));
+}
+'''
+
+hints = [
+  "`count_words`: start with `let mut counts = HashMap::new();`, loop `for word in text.split_whitespace()`, and return `counts` at the end.",
+  "Inside the loop: `let c = counts.entry(word.to_string()).or_insert(0);` then `*c += 1;`. `add_shells` uses the same two lines, but adds `n` and uses `who`.",
+  "`count_of`: `match map.get(word) { Some(n) => *n, None => 0 }`. `total_words`: `let mut total = 0; for (_word, count) in map { total += count; } total`.",
+]
+
+success = "Tally complete! A HashMap stores key and value pairs. `get` returns an Option, `entry().or_insert()` is the counting trick, and loops give pairs in no guaranteed order."
+
+[check]
+tests = '''
+#[test]
+fn counts_each_word() {
+    let m = count_words("crab shell crab pearl crab");
+    assert_eq!(m.len(), 3, "there are 3 different words, so the map needs 3 keys");
+    assert_eq!(m.get("crab"), Some(&3), "crab appears 3 times");
+    assert_eq!(m.get("shell"), Some(&1), "shell appears once");
+}
+
+#[test]
+fn empty_text_gives_empty_map() {
+    assert_eq!(count_words("").len(), 0, "no words means an empty map");
+}
+
+#[test]
+fn count_of_finds_and_misses() {
+    let m = count_words("a b a");
+    assert_eq!(count_of(&m, "a"), 2, "a appears twice");
+    assert_eq!(count_of(&m, "zzz"), 0, "a missing word should give 0");
+}
+
+#[test]
+fn totals_add_up() {
+    let m = count_words("x y x z x y");
+    assert_eq!(total_words(&m), 6, "6 words in total");
+}
+
+#[test]
+fn shells_accumulate() {
+    let mut m: HashMap<String, u32> = HashMap::new();
+    add_shells(&mut m, "Pinch", 4);
+    add_shells(&mut m, "Sandy", 1);
+    add_shells(&mut m, "Pinch", 2);
+    assert_eq!(count_of(&m, "Pinch"), 6, "Pinch got 4 then 2, so 6");
+    assert_eq!(count_of(&m, "Sandy"), 1, "Sandy got 1");
+    assert_eq!(m.len(), 2, "only two names were added");
+}
+'''
+
+[[quiz]]
+after_card = 1
+question = '''
+What goes on the very first line of a file that uses `HashMap`?
+'''
+choices = [
+  "import HashMap;",
+  "use std::collections::HashMap;",
+  "use HashMap::new();",
+  "Nothing, it is always available",
+]
+answer = 1
+explain = "HashMap is in the standard library's `collections` module, so you bring it in with `use std::collections::HashMap;`."
+
+[[quiz]]
+after_card = 2
+question = '''
+What does `scores.get("zed")` return when the key `"zed"` was never inserted?
+'''
+choices = ["0", "A crash", "None", "An empty string"]
+answer = 2
+explain = "`get` returns an Option. A missing key is `None`, so you can handle it safely with `match`."
+
+[[quiz]]
+after_card = 3
+question = '''
+What is in `m` after this runs?
+```rust
+let mut m: HashMap<String, u32> = HashMap::new();
+for w in "hi hi yo".split_whitespace() {
+    *m.entry(w.to_string()).or_insert(0) += 1;
+}
+```
+'''
+choices = [
+  "hi: 1, yo: 1",
+  "hi: 2, yo: 1",
+  "hi: 3, yo: 3",
+  "Only hi: 2",
+]
+answer = 1
+explain = "The first `hi` creates the entry at 0 then adds 1, and the second `hi` adds another 1. `yo` is new, so it ends at 1."

@@ -17,7 +17,19 @@ for which in ("solution", "starter"):
 (d / "expected.txt").write_text(c.get("expected_output", "") or "")
 (d / "has_out").write_text("1" if c.get("expected_output") else "")
 (d / "has_tests").write_text("1" if c.get("tests") else "")
-print("parsed OK:", L["id"])
+cards = [c for c in L["intro"].split("\n---\n")]
+for i, q in enumerate(L.get("quiz", [])):
+    assert 2 <= len(q["choices"]) <= 4, f"quiz {i}: needs 2-4 choices"
+    assert 0 <= q["answer"] < len(q["choices"]), f"quiz {i}: answer index out of range"
+    assert 1 <= q.get("after_card", len(cards)) <= len(cards), f"quiz {i}: after_card > {len(cards)} cards"
+    assert q.get("explain"), f"quiz {i}: missing explain"
+if "boss" in L:
+    b = L["boss"]
+    assert c.get("tests"), "boss lessons need tests"
+    lines = b["art"].strip("\n").splitlines()
+    assert len(lines) <= 8 and max(len(l) for l in lines) <= 30, "boss art too big (max 8 lines x 30 cols)"
+    assert b.get("name") and b.get("taunt") and b.get("defeat")
+print("parsed OK:", L["id"], "| cards:", len(cards), "| quizzes:", len(L.get("quiz", [])), "| boss:" , L.get("boss", {}).get("name"))
 PY
 cd "$d"
 norm() { sed -e 's/[[:space:]]*$//' | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}'; }

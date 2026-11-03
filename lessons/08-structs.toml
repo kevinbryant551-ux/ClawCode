@@ -18,6 +18,7 @@ impl :: a block where you attach functions to a type
 method :: a function that works on one particular value; you call it with a dot
 associated function :: a function in an `impl` block that has no `self`; you call it with `::`
 
+---
 Here is a tiny example about a fish:
 
 ```rust
@@ -50,6 +51,7 @@ fn main() {
 }
 ```
 
+---
 Notice a few things:
 
 - You read a field with a dot: `f.length`.
@@ -161,3 +163,40 @@ fn ten_shells_is_rich() {
     assert!(c.is_rich(), "10 shells should count as rich");
 }
 '''
+
+[[quiz]]
+after_card = 2
+question = '''
+Using the Fish code, which line builds a new Fish?
+'''
+choices = ["`Fish::new(\"Bubbles\")`", "`f.new(\"Bubbles\")`", "`new.Fish(\"Bubbles\")`", "`Fish.new(\"Bubbles\")`"]
+answer = 0
+explain = "`new` has no `self`, so it is an associated function and you call it with `::` on the type name."
+
+[[quiz]]
+after_card = 3
+question = '''
+Does this compile? (`grow` takes `&mut self`)
+```rust
+let f = Fish::new("Bubbles");
+f.grow(5);
+```
+'''
+choices = ["Yes", "No: f must be declared `let mut f`", "No: grow is private", "No: Fish::new returns the wrong type"]
+answer = 1
+explain = "A `&mut self` method changes the value, so the variable has to be `mut`. Rust reports E0596."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+let mut f = Fish::new("Bubbles");
+f.grow(20);
+f.grow(15);
+println!("{}", f.is_big());
+```
+'''
+choices = ["false", "true", "36", "It does not compile"]
+answer = 1
+explain = "The length starts at 1, then 1 + 20 + 15 = 36. That is more than 30, so is_big gives true."

@@ -12,10 +12,12 @@ Sometimes a value can be one of a few different kinds. A traffic light is red, y
 
 enum :: a type whose value is exactly one of several named options
 variant :: one of the options inside an enum
+---
 match :: checks a value against patterns, one arm at a time, and runs the first arm that fits
 arm :: one `pattern => result` line inside a match
 _ :: a catch-all pattern that matches anything not listed above it
 
+---
 Variants can carry data too:
 
 ```rust
@@ -36,8 +38,10 @@ fn describe(s: &Snack) -> String {
 
 You name a variant with `::`, like `Snack::Shrimp(3)`. Inside a match arm you can pull the carried data out into a name, like `n` or `scoops`.
 
+---
 Here is the clever bit: `match` must cover **every** possible variant. If you forget one, the compiler refuses with error **E0004** ("non-exhaustive patterns"). That is a safety net, not a scolding. It means you can never forget a case.
 
+---
 Too many variants to list? End with `_`:
 
 ```rust
@@ -135,3 +139,58 @@ fn storm_advice() {
 [[check.must_contain]]
 text = "match"
 why = "This lesson is about `match`. Use `match w { ... }` to pick the advice for each variant."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+enum Snack {
+    Seaweed,
+    Shrimp(u32),
+}
+let s = Snack::Shrimp(3);
+match s {
+    Snack::Seaweed => println!("weed"),
+    Snack::Shrimp(n) => println!("{} shrimp", n + 1),
+}
+```
+'''
+choices = ["3 shrimp", "weed", "4 shrimp", "It does not compile"]
+answer = 2
+explain = "The Shrimp arm fits, and `n` is the 3 it carries. The arm prints n + 1, which is 4."
+
+[[quiz]]
+after_card = 4
+question = '''
+Does this compile?
+```rust
+enum Light { Red, Yellow, Green }
+
+let l = Light::Red;
+let s = match l {
+    Light::Red => "stop",
+    Light::Green => "go",
+};
+```
+'''
+choices = ["Yes, Yellow just does nothing", "No: E0004, Yellow is not covered", "No: Red needs to carry data", "Yes, s becomes an empty string"]
+answer = 1
+explain = "A match must cover every variant. Add a `Light::Yellow` arm or finish with `_`."
+
+[[quiz]]
+after_card = 5
+question = '''
+What does this print? (It compiles, with a warning.)
+```rust
+let n = 5;
+let word = match n {
+    _ => "other",
+    5 => "five",
+};
+println!("{word}");
+```
+'''
+choices = ["five", "five other", "nothing", "other"]
+answer = 3
+explain = "Arms are checked top to bottom and `_` matches anything, so the first arm wins. The `5` arm can never run, and the compiler warns about an unreachable pattern."

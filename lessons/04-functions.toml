@@ -16,6 +16,7 @@ expression :: a piece of code that produces a value, like `n * 2`.
 statement :: an instruction that does something but produces no value, like a line ending in `;`.
 format! :: like `println!`, but instead of printing it gives you the text as a `String`.
 
+---
 ```rust
 fn double(n: i32) -> i32 {
     n * 2
@@ -29,6 +30,7 @@ fn main() {
 
 Look closely at `n * 2`. It has **no semicolon**. The last expression in a function is its return value. Add a `;` and it turns into a statement that produces nothing, and the compiler will complain.
 
+---
 To call a function, write its name and put the inputs in parentheses: `double(4)`.
 
 Here is `format!` in action:
@@ -37,6 +39,9 @@ Here is `format!` in action:
 let msg = format!("Ahoy, {}!", "sailor"); // "Ahoy, sailor!"
 ```
 
+It builds text just like `println!` does, but hands it back to you instead of printing it.
+
+---
 Your turn: three functions are waiting, each with a `todo!()` placeholder. Fill them in.
 
 > Pinch tip: if the compiler says it expected a value but found `()`, check for a stray semicolon on your last line.
@@ -118,3 +123,44 @@ fn greeting_works() {
     assert_eq!(greeting("Sam"), "Hello, Sam!", "greeting(\"Sam\") should be \"Hello, Sam!\"");
 }
 '''
+
+[[quiz]]
+after_card = 1
+question = '''
+Which symbol shows a function's return type?
+'''
+choices = ["=>", "->", "::", "<-"]
+answer = 1
+explain = "The return type goes after `->`, like `fn double(n: i32) -> i32`."
+
+[[quiz]]
+after_card = 2
+question = '''
+Spot the bug! Why does this fail to compile?
+```rust
+fn double(n: i32) -> i32 {
+    n * 2;
+}
+```
+'''
+choices = ["The semicolon makes the last line a statement, so nothing is returned", "n needs to be mut", "It's missing a println!", "-> should be written =>"]
+answer = 0
+explain = "With the `;`, the function body produces `()` instead of an `i32`. Remove the semicolon to return the value."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+fn add_one(n: i32) -> i32 {
+    n + 1
+}
+
+fn main() {
+    println!("{}", add_one(add_one(3)));
+}
+```
+'''
+choices = ["4", "6", "5", "It doesn't compile"]
+answer = 2
+explain = "The inner call gives 4, then the outer call turns that into 5."

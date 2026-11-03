@@ -103,6 +103,19 @@ pub fn inline(text: &str, base: Style) -> Vec<Span<'static>> {
                 bold.push(c2);
             }
             spans.push(Span::styled(bold, base.add_modifier(Modifier::BOLD)));
+        } else if c == '*'
+            && chars.peek().is_some_and(|n| !n.is_whitespace())
+            && text.matches('*').count() >= 2
+        {
+            flush(&mut buf, &mut spans, base);
+            let mut it = String::new();
+            for c2 in chars.by_ref() {
+                if c2 == '*' {
+                    break;
+                }
+                it.push(c2);
+            }
+            spans.push(Span::styled(it, base.add_modifier(Modifier::ITALIC)));
         } else {
             buf.push(c);
         }
@@ -126,6 +139,10 @@ mod tests {
         );
         assert_eq!(text(&lines[0]), "TITLE");
         assert_eq!(text(&lines[1]), "use let now");
+        assert_eq!(
+            text(&Line::from(inline("to *choose* now, 2 * 3", Style::new()))),
+            "to choose now, 2 * 3"
+        );
         assert!(text(&lines[3]).starts_with("◆ mut — can change"));
         assert!(text(&lines[4]).contains("Pinch"));
         assert!(text(&lines[5]).contains("fn main"));

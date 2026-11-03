@@ -12,10 +12,12 @@ Looking for a shell on the beach? Maybe you find one, maybe you don't. Many lang
 
 Option :: an enum meaning "maybe a value": either `Some(value)` or `None`
 Result :: an enum meaning "worked or failed": either `Ok(value)` or `Err(error)`
+---
 if let :: a short match that only cares about one pattern
 ? :: inside a function that returns Result, passes an `Err` straight back to the caller
 unwrap :: grabs the value inside, but crashes your whole program on `None` or `Err`
 
+---
 Here they are in action:
 
 ```rust
@@ -45,6 +47,7 @@ fn main() {
 }
 ```
 
+---
 The type `&[i32]` is a **slice**: a borrowed view of a list of values. `&[&str]` is a slice of text pieces.
 
 You can use `match` on both types, just like an enum, because they are enums. The compiler makes you handle `None` and `Err`, so a missing value can't sneak up on you.
@@ -172,3 +175,43 @@ fn negative_depth_is_error() {
 [[check.must_not_contain]]
 text = "unwrap()"
 why = "unwrap() crashes the program when there is no value. Handle both cases with `match` (Some/None or Ok/Err) instead."
+
+[[quiz]]
+after_card = 2
+question = '''
+Which of these crashes your program when the value is `None` or `Err`?
+'''
+choices = ["`if let`", "`match`", "`unwrap()`", "`?`"]
+answer = 2
+explain = "`unwrap()` panics when there is no value. `match` and `if let` let you handle it, and `?` passes an Err back to the caller."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+let v = vec![10, 20, 30];
+match v.get(5) {
+    Some(x) => println!("got {x}"),
+    None => println!("nothing"),
+}
+```
+'''
+choices = ["nothing", "got 30", "It panics", "got 5"]
+answer = 0
+explain = "`get` returns an Option instead of crashing. Index 5 is past the end, so you get None."
+
+[[quiz]]
+after_card = 4
+question = '''
+Does this compile?
+```rust
+fn half(s: &str) -> u32 {
+    let n = s.parse::<u32>()?;
+    n / 2
+}
+```
+'''
+choices = ["Yes", "No: `?` needs a function that returns Result (or Option)", "No: parse is not a method on &str", "Yes, but it panics on bad text"]
+answer = 1
+explain = "`?` hands an Err back to the caller, so the function must return a Result. Here it returns u32, which is error E0277."
