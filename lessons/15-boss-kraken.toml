@@ -1,0 +1,264 @@
+id = "15-boss-kraken"
+order = 15
+chapter = "Boss: The Collection Kraken"
+title = "Boss: The Collection Kraken"
+xp = 180
+concepts = ["Vec", "String", "HashMap", "entry", "Option", "review"]
+
+intro = '''
+# The Collection Kraken surfaces!
+
+Something huge slides up from the deep, its tentacles stuffed with lists, text and labelled notebooks. To beat it you must sort the Kraken's **catch**.
+
+Today's weapons:
+
+- **Vec** to hold lists (`push`, `get`, `for x in &v`)
+- **String** and `&str` tools (`split_whitespace`, `to_lowercase`, `push_str`)
+- **HashMap** with `entry().or_insert()` for counting
+
+Each function you finish knocks off one HP. The starter already compiles, so run it often.
+
+> Pinch tip: the `HashMap` import is already at the top. Fight one tentacle at a time and read each failing test message.
+'''
+
+goal = "Fill in all seven todo!() functions (parse_catch, tally, count_of, biggest, bump_all, banner, shortest_name) so every test passes and the Kraken sinks."
+
+starter = '''
+use std::collections::HashMap;
+
+// "Crab  SHELL crab" becomes ["crab", "shell", "crab"]:
+// split into words, make each lowercase, and push them into a Vec.
+fn parse_catch(text: &str) -> Vec<String> {
+    todo!()
+}
+
+// Count how many times each item appears. Use entry().or_insert(0).
+fn tally(items: &Vec<String>) -> HashMap<String, u32> {
+    todo!()
+}
+
+// Look up one item in the tally. Return 0 if it is missing.
+fn count_of(map: &HashMap<String, u32>, item: &str) -> u32 {
+    todo!()
+}
+
+// The largest number in the Vec, or None if the Vec is empty.
+fn biggest(v: &Vec<u32>) -> Option<u32> {
+    todo!()
+}
+
+// Add 1 to every number in the Vec, in place.
+fn bump_all(v: &mut Vec<u32>) {
+    todo!()
+}
+
+// Join the items in uppercase with commas: ["a", "b"] becomes "A,B".
+// No comma at the start or end. An empty Vec gives "".
+fn banner(items: &Vec<String>) -> String {
+    todo!()
+}
+
+// The length of the shortest name, or None if there are no names.
+fn shortest_name(items: &Vec<String>) -> Option<usize> {
+    todo!()
+}
+
+fn main() {
+    let catch = parse_catch("Crab  SHELL crab");
+    let counts = tally(&catch);
+    println!("crabs: {}", count_of(&counts, "crab"));
+    println!("{}", banner(&catch));
+}
+'''
+
+solution = '''
+use std::collections::HashMap;
+
+fn parse_catch(text: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    for word in text.split_whitespace() {
+        out.push(word.to_lowercase());
+    }
+    out
+}
+
+fn tally(items: &Vec<String>) -> HashMap<String, u32> {
+    let mut map = HashMap::new();
+    for item in items {
+        let c = map.entry(item.to_string()).or_insert(0);
+        *c += 1;
+    }
+    map
+}
+
+fn count_of(map: &HashMap<String, u32>, item: &str) -> u32 {
+    match map.get(item) {
+        Some(n) => *n,
+        None => 0,
+    }
+}
+
+fn biggest(v: &Vec<u32>) -> Option<u32> {
+    let mut best: Option<u32> = None;
+    for &n in v {
+        match best {
+            Some(b) if b >= n => {}
+            _ => best = Some(n),
+        }
+    }
+    best
+}
+
+fn bump_all(v: &mut Vec<u32>) {
+    for n in v {
+        *n += 1;
+    }
+}
+
+fn banner(items: &Vec<String>) -> String {
+    let mut out = String::new();
+    for item in items {
+        if !out.is_empty() {
+            out.push(',');
+        }
+        out.push_str(&item.to_uppercase());
+    }
+    out
+}
+
+fn shortest_name(items: &Vec<String>) -> Option<usize> {
+    let mut best: Option<usize> = None;
+    for item in items {
+        let len = item.len();
+        match best {
+            Some(b) if b <= len => {}
+            _ => best = Some(len),
+        }
+    }
+    best
+}
+
+fn main() {
+    let catch = parse_catch("Crab  SHELL crab");
+    let counts = tally(&catch);
+    println!("crabs: {}", count_of(&counts, "crab"));
+    println!("{}", banner(&catch));
+}
+'''
+
+hints = [
+  "Easy tentacles first. `parse_catch`: make `let mut out = Vec::new();`, loop over `text.split_whitespace()`, and `out.push(word.to_lowercase());`. `tally` and `count_of` work just like the HashMap lesson.",
+  "`biggest` and `shortest_name` both track a best value so far: `let mut best = None;` then for each item decide whether to replace it with `Some(item)`. An empty Vec never replaces it, so `None` comes out. (`bump_all` adds 1 to each: `*n += 1;`.)",
+  "`banner`: `let mut out = String::new();` then for each item `if !out.is_empty() { out.push(','); }` followed by `out.push_str(&item.to_uppercase());`, and return `out`.",
+]
+
+success = "The Kraken sinks beneath the waves! Vec for lists, String tools for text, HashMap for counting, and Option for 'maybe nothing'. You now wield every collection, Pinch approves!"
+
+[boss]
+name = "The Collection Kraken"
+art = '''
+     .-"""""-.
+    /  O   O  \
+   |    ___    |
+    \  \___/  /
+  ~~~'-._____.-'~~~
+  /|/|/|/| |\|\|\|\
+ ( ( ( ( (   ) ) ) )
+  ~ ~ ~ ~     ~ ~ ~ ~
+'''
+taunt = "BLUB BLUB! Eight arms, eight lists, and not one of them in order! Count my catch wrong and I'll tangle your Vec into spaghetti!"
+defeat = "Blub... you sorted every tentacle... counted every shell... Fine! I'll go back to the deep and tidy my own collections... (glub glub)"
+
+[check]
+tests = '''
+fn strings(v: &[&str]) -> Vec<String> {
+    v.iter().map(|s| s.to_string()).collect()
+}
+
+#[test]
+fn parse_splits_and_lowercases() {
+    assert_eq!(
+        parse_catch("Crab  SHELL crab"),
+        strings(&["crab", "shell", "crab"]),
+        "parse_catch should split on whitespace and lowercase each word"
+    );
+    assert_eq!(parse_catch("   ").len(), 0, "only spaces means no words");
+}
+
+#[test]
+fn tally_counts() {
+    let m = tally(&strings(&["a", "b", "a", "a"]));
+    assert_eq!(m.len(), 2, "two different items means two keys");
+    assert_eq!(m.get("a"), Some(&3), "a appears 3 times");
+    assert_eq!(m.get("b"), Some(&1), "b appears once");
+}
+
+#[test]
+fn count_of_defaults_to_zero() {
+    let m = tally(&strings(&["x", "x"]));
+    assert_eq!(count_of(&m, "x"), 2, "x appears twice");
+    assert_eq!(count_of(&m, "nope"), 0, "a missing item should count as 0");
+}
+
+#[test]
+fn biggest_finds_max() {
+    assert_eq!(biggest(&vec![3, 9, 4]), Some(9), "the biggest of [3, 9, 4] is 9");
+    assert_eq!(biggest(&vec![5]), Some(5), "a single item is the biggest");
+}
+
+#[test]
+fn biggest_of_nothing() {
+    assert_eq!(biggest(&Vec::new()), None, "an empty Vec has no biggest, so None");
+}
+
+#[test]
+fn adds_one_in_place() {
+    let mut v = vec![0, 4, 9];
+    bump_all(&mut v);
+    assert_eq!(v, vec![1, 5, 10], "every number should go up by 1");
+}
+
+#[test]
+fn banner_joins_loudly() {
+    assert_eq!(banner(&strings(&["crab", "pearl"])), "CRAB,PEARL", "expected \"CRAB,PEARL\"");
+    assert_eq!(banner(&strings(&["solo"])), "SOLO", "one item needs no comma");
+    assert_eq!(banner(&Vec::new()), "", "no items gives an empty String");
+}
+
+#[test]
+fn shortest_name_works() {
+    assert_eq!(shortest_name(&strings(&["octopus", "eel", "crab"])), Some(3), "eel is the shortest at 3 letters");
+    assert_eq!(shortest_name(&Vec::new()), None, "no names means None");
+}
+'''
+
+[[quiz]]
+after_card = 1
+question = '''
+What does this print?
+```rust
+let mut v = vec![4, 8];
+v.push(1);
+match v.get(3) {
+    Some(n) => println!("{n}"),
+    None => println!("none"),
+}
+```
+'''
+choices = ["1", "8", "none", "It panics"]
+answer = 2
+explain = "The Vec has 3 items, so valid indexes are 0, 1 and 2. `get(3)` is out of range and safely gives `None`."
+
+[[quiz]]
+after_card = 1
+question = '''
+Which line adds 1 to the count for `word`, creating it at 0 if new?
+'''
+choices = [
+  "*map.entry(word.to_string()).or_insert(0) += 1;",
+  "map.insert(word, map.get(word) + 1);",
+  "map[word] += 1;",
+  "map.push(word);",
+]
+answer = 0
+explain = "`entry(...).or_insert(0)` returns a mutable reference to the value, creating it at 0 if missing. The `*` lets you add to it."

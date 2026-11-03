@@ -1,0 +1,166 @@
+id = "04-functions"
+order = 4
+chapter = "The Basics"
+title = "Build Your Own Moves"
+xp = 80
+concepts = ["parameters", "return types", "->", "expressions", "format!"]
+
+intro = '''
+# Functions
+
+You've already used `main`. Now let's build our own functions, little machines that take something in and give something back.
+
+parameter :: a named input to a function, written with its type: `n: i32`.
+return type :: the type of the value a function hands back, written after `->`.
+expression :: a piece of code that produces a value, like `n * 2`.
+statement :: an instruction that does something but produces no value, like a line ending in `;`.
+format! :: like `println!`, but instead of printing it gives you the text as a `String`.
+
+---
+```rust
+fn double(n: i32) -> i32 {
+    n * 2
+}
+
+fn main() {
+    let result = double(4);
+    println!("{}", result); // 8
+}
+```
+
+Look closely at `n * 2`. It has **no semicolon**. The last expression in a function is its return value. Add a `;` and it turns into a statement that produces nothing, and the compiler will complain.
+
+---
+To call a function, write its name and put the inputs in parentheses: `double(4)`.
+
+Here is `format!` in action:
+
+```rust
+let msg = format!("Ahoy, {}!", "sailor"); // "Ahoy, sailor!"
+```
+
+It builds text just like `println!` does, but hands it back to you instead of printing it.
+
+---
+Your turn: three functions are waiting, each with a `todo!()` placeholder. Fill them in.
+
+> Pinch tip: if the compiler says it expected a value but found `()`, check for a stray semicolon on your last line.
+'''
+
+goal = "Implement square (n * n), average (of two f64 numbers) and greeting (returns \"Hello, NAME!\") so the tests pass."
+
+starter = '''
+// Replace each todo!() with real code.
+
+// Returns the number multiplied by itself.
+fn square(n: i32) -> i32 {
+    todo!()
+}
+
+// Returns the average (the sum divided by 2) of two numbers.
+fn average(a: f64, b: f64) -> f64 {
+    todo!()
+}
+
+// Returns text like "Hello, Pinch!" for the name given.
+fn greeting(name: &str) -> String {
+    todo!()
+}
+
+fn main() {
+    println!("{}", square(5));
+    println!("{}", average(4.0, 6.0));
+    println!("{}", greeting("Pinch"));
+}
+'''
+
+solution = '''
+fn square(n: i32) -> i32 {
+    n * n
+}
+
+fn average(a: f64, b: f64) -> f64 {
+    (a + b) / 2.0
+}
+
+fn greeting(name: &str) -> String {
+    format!("Hello, {}!", name)
+}
+
+fn main() {
+    println!("{}", square(5));
+    println!("{}", average(4.0, 6.0));
+    println!("{}", greeting("Pinch"));
+}
+'''
+
+hints = [
+  "Replace each todo!() with one expression and leave off the semicolon so it gets returned.",
+  "square is n * n. average adds the two numbers, then divides by 2.0 (use parentheses around the sum).",
+  "greeting is format!(\"Hello, {}!\", name). The {} gets replaced by name.",
+]
+
+success = "Wave-some! You gave functions inputs, outputs, and a final expression with no semicolon. That's the backbone of Rust code."
+
+[check]
+tests = '''
+#[test]
+fn square_works() {
+    assert_eq!(square(5), 25, "square(5) should be 25");
+    assert_eq!(square(-4), 16, "square(-4) should be 16 (a negative times a negative is positive)");
+    assert_eq!(square(0), 0, "square(0) should be 0");
+}
+
+#[test]
+fn average_works() {
+    assert_eq!(average(4.0, 6.0), 5.0, "average(4.0, 6.0) should be 5.0");
+    assert_eq!(average(1.0, 2.0), 1.5, "average(1.0, 2.0) should be 1.5");
+}
+
+#[test]
+fn greeting_works() {
+    assert_eq!(greeting("Pinch"), "Hello, Pinch!", "greeting(\"Pinch\") should be \"Hello, Pinch!\"");
+    assert_eq!(greeting("Sam"), "Hello, Sam!", "greeting(\"Sam\") should be \"Hello, Sam!\"");
+}
+'''
+
+[[quiz]]
+after_card = 1
+question = '''
+Which symbol shows a function's return type?
+'''
+choices = ["=>", "->", "::", "<-"]
+answer = 1
+explain = "The return type goes after `->`, like `fn double(n: i32) -> i32`."
+
+[[quiz]]
+after_card = 2
+question = '''
+Spot the bug! Why does this fail to compile?
+```rust
+fn double(n: i32) -> i32 {
+    n * 2;
+}
+```
+'''
+choices = ["The semicolon makes the last line a statement, so nothing is returned", "n needs to be mut", "It's missing a println!", "-> should be written =>"]
+answer = 0
+explain = "With the `;`, the function body produces `()` instead of an `i32`. Remove the semicolon to return the value."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+fn add_one(n: i32) -> i32 {
+    n + 1
+}
+
+fn main() {
+    println!("{}", add_one(add_one(3)));
+}
+```
+'''
+choices = ["4", "6", "5", "It doesn't compile"]
+answer = 2
+explain = "The inner call gives 4, then the outer call turns that into 5."

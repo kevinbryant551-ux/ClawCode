@@ -1,0 +1,261 @@
+id = "20-boss-leviathan"
+order = 20
+chapter = "Final Boss: The Rust Leviathan"
+title = "The Rust Leviathan"
+xp = 250
+concepts = ["struct", "trait", "enum", "iterators", "Result", "?", "review"]
+
+intro = '''
+# The Rust Leviathan rises!
+
+Everything you learned comes together here. You will build the battle system: a `Hero` struct, a `Describe` trait, a `Move` enum, iterator chains to total up damage, and `Result` with `?` to read a battle script like `"claw, pinch 4, retreat"`.
+
+Each passing test is one hit on the Leviathan.
+
+> Pinch tip: go one function at a time and run the check often. Every hit counts, and the compiler is your shield.
+'''
+
+goal = "Fill in every todo!() so all 8 tests pass: Hero, Describe, damage, total_damage, count_big_hits, parse_move and parse_battle."
+
+starter = '''
+struct Hero {
+    name: String,
+    hp: u32,
+}
+
+impl Hero {
+    // New hero with the given name and 30 hp.
+    fn new(name: &str) -> Hero {
+        todo!()
+    }
+}
+
+trait Describe {
+    fn title(&self) -> String;
+
+    // Default method: "=== TITLE ==="
+    fn banner(&self) -> String {
+        todo!()
+    }
+}
+
+// A hero's title is just its name.
+impl Describe for Hero {
+    fn title(&self) -> String {
+        todo!()
+    }
+}
+
+enum Move {
+    Claw,
+    Pinch(u32),
+    Retreat,
+}
+
+// Claw does 5, Pinch(n) does n * 2, Retreat does 0.
+fn damage(m: &Move) -> u32 {
+    todo!()
+}
+
+// Add up the damage of every move. Use an iterator chain.
+fn total_damage(moves: &[Move]) -> u32 {
+    todo!()
+}
+
+// How many moves do 10 or more damage? Use an iterator chain.
+fn count_big_hits(moves: &[Move]) -> usize {
+    todo!()
+}
+
+// "claw" -> Claw, "retreat" -> Retreat, "pinch 4" -> Pinch(4).
+// Anything else (including "pinch abc") -> Err with a message.
+fn parse_move(text: &str) -> Result<Move, String> {
+    todo!()
+}
+
+// "claw, pinch 4, retreat" -> Ok(vec of three moves).
+// If any piece fails, pass that Err up with ?.
+fn parse_battle(script: &str) -> Result<Vec<Move>, String> {
+    todo!()
+}
+
+fn main() {
+    let hero = Hero::new("Pinch");
+    println!("{}", hero.banner());
+    match parse_battle("claw, pinch 4, retreat") {
+        Ok(moves) => println!("Damage: {}", total_damage(&moves)),
+        Err(e) => println!("Bad script: {}", e),
+    }
+}
+'''
+
+solution = '''
+struct Hero {
+    name: String,
+    hp: u32,
+}
+
+impl Hero {
+    fn new(name: &str) -> Hero {
+        Hero { name: name.to_string(), hp: 30 }
+    }
+}
+
+trait Describe {
+    fn title(&self) -> String;
+
+    fn banner(&self) -> String {
+        format!("=== {} ===", self.title())
+    }
+}
+
+impl Describe for Hero {
+    fn title(&self) -> String {
+        self.name.clone()
+    }
+}
+
+enum Move {
+    Claw,
+    Pinch(u32),
+    Retreat,
+}
+
+fn damage(m: &Move) -> u32 {
+    match m {
+        Move::Claw => 5,
+        Move::Pinch(n) => n * 2,
+        Move::Retreat => 0,
+    }
+}
+
+fn total_damage(moves: &[Move]) -> u32 {
+    moves.iter().map(|m| damage(m)).sum()
+}
+
+fn count_big_hits(moves: &[Move]) -> usize {
+    moves.iter().filter(|m| damage(m) >= 10).count()
+}
+
+fn parse_move(text: &str) -> Result<Move, String> {
+    let text = text.trim();
+    if text == "claw" {
+        return Ok(Move::Claw);
+    }
+    if text == "retreat" {
+        return Ok(Move::Retreat);
+    }
+    if let Some(rest) = text.strip_prefix("pinch ") {
+        return match rest.trim().parse::<u32>() {
+            Ok(n) => Ok(Move::Pinch(n)),
+            Err(_) => Err(format!("bad pinch power: {}", rest)),
+        };
+    }
+    Err(format!("unknown move: {}", text))
+}
+
+fn parse_battle(script: &str) -> Result<Vec<Move>, String> {
+    let mut moves = Vec::new();
+    for piece in script.split(',') {
+        let m = parse_move(piece)?;
+        moves.push(m);
+    }
+    Ok(moves)
+}
+
+fn main() {
+    let hero = Hero::new("Pinch");
+    println!("{}", hero.banner());
+    match parse_battle("claw, pinch 4, retreat") {
+        Ok(moves) => println!("Damage: {}", total_damage(&moves)),
+        Err(e) => println!("Bad script: {}", e),
+    }
+}
+'''
+
+hints = [
+  "Take it one hit at a time. `Hero::new` builds `Hero { name: name.to_string(), hp: 30 }`. The default `banner` is `format!(\"=== {} ===\", self.title())`.",
+  "`damage` is a `match m` with one arm per variant; `Move::Pinch(n) => n * 2`. Then `total_damage` is `moves.iter().map(|m| damage(m)).sum()` and `count_big_hits` filters on `damage(m) >= 10` then `.count()`.",
+  "For `parse_move`: `text.trim()`, compare with `\"claw\"` and `\"retreat\"`, and use `text.strip_prefix(\"pinch \")` plus `.parse::<u32>()` for the power. For `parse_battle`: make a `Vec`, loop over `script.split(',')`, and write `let m = parse_move(piece)?;` then push.",
+]
+
+success = "VICTORY! You finished ClawCode and slew the Rust Leviathan with structs, traits, enums, iterators, Result and `?`. You are officially a Rustacean. Your next adventure: read The Rust Programming Language (\"The Rust Book\") at doc.rust-lang.org/book, and keep building little projects. Pinch is so proud!"
+
+[boss]
+name = "The Rust Leviathan"
+art = '''
+        _.-._      ___
+      .'  o  '.__.'   `.
+     (     ___        _ >==
+      `-.-'   `-.__.-'
+   ~~~~~/   /~~~~~~~~~~~~~
+  ~~~~~/   /_ _ _ _ ___ ~~
+ ~~~~~`--'~~(_(_(_(_)~~~~~~
+'''
+taunt = "SSSSSLIME AND SALT! Little crab, I have swallowed a thousand compilers. Show me your borrow checker and your best iterator chain, or sink!"
+defeat = "NOOOO! My lifetimes... all elided! The Leviathan sinks beneath the waves and the ocean sparkles with green checkmarks."
+
+[check]
+tests = '''
+#[test]
+fn hero_is_built() {
+    let h = Hero::new("Pinch");
+    assert_eq!(h.name, "Pinch", "Hero::new should store the name");
+    assert_eq!(h.hp, 30, "a new hero should have 30 hp");
+}
+
+#[test]
+fn banner_uses_the_title() {
+    let h = Hero::new("Pinch");
+    assert_eq!(h.title(), "Pinch", "a hero's title is its name");
+    assert_eq!(h.banner(), "=== Pinch ===", "the default banner should be \"=== TITLE ===\"");
+}
+
+#[test]
+fn damage_values() {
+    assert_eq!(damage(&Move::Claw), 5, "Claw does 5");
+    assert_eq!(damage(&Move::Pinch(4)), 8, "Pinch(4) does 8");
+    assert_eq!(damage(&Move::Retreat), 0, "Retreat does 0");
+}
+
+#[test]
+fn total_damage_adds_up() {
+    let moves = vec![Move::Claw, Move::Pinch(4), Move::Retreat, Move::Pinch(10)];
+    assert_eq!(total_damage(&moves), 33, "5 + 8 + 0 + 20 should be 33");
+    assert_eq!(total_damage(&[]), 0, "no moves means no damage");
+}
+
+#[test]
+fn big_hits_are_counted() {
+    let moves = vec![Move::Claw, Move::Pinch(5), Move::Pinch(10), Move::Retreat];
+    assert_eq!(count_big_hits(&moves), 2, "Pinch(5) and Pinch(10) do 10 or more");
+}
+
+#[test]
+fn parse_move_works() {
+    assert_eq!(damage(&parse_move("claw").unwrap()), 5, "\"claw\" should parse to Claw");
+    assert_eq!(damage(&parse_move("retreat").unwrap()), 0, "\"retreat\" should parse to Retreat");
+    assert_eq!(damage(&parse_move("pinch 4").unwrap()), 8, "\"pinch 4\" should parse to Pinch(4)");
+}
+
+#[test]
+fn parse_move_rejects_nonsense() {
+    assert!(parse_move("dance").is_err(), "\"dance\" is not a move");
+    assert!(parse_move("pinch abc").is_err(), "\"pinch abc\" has no valid power");
+}
+
+#[test]
+fn parse_battle_reads_scripts() {
+    let moves = parse_battle("claw, pinch 4, retreat").unwrap();
+    assert_eq!(moves.len(), 3, "the script has three moves");
+    assert_eq!(total_damage(&moves), 13, "5 + 8 + 0 should be 13");
+    assert!(parse_battle("claw, dance").is_err(), "one bad move should make the whole battle an Err");
+}
+'''
+
+[[quiz]]
+after_card = 1
+question = "Inside parse_battle you write `let m = parse_move(piece)?;`. If parse_move returns an Err, what happens?"
+choices = ["The program panics", "m becomes 0", "parse_battle returns that Err right away", "The Err is ignored"]
+answer = 2
+explain = "`?` hands the Err straight back to the caller of parse_battle and skips the rest of the function."

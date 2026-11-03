@@ -1,0 +1,258 @@
+id = "16-traits"
+order = 16
+chapter = "Superpowers"
+title = "Shared Superpowers"
+xp = 110
+concepts = ["trait", "impl Trait for", "default method", "&impl Trait", "#[derive]", "Debug", "Clone", "PartialEq"]
+
+intro = '''
+# Traits: a promise of skills
+
+Crabs click. Octopuses blub. Different animals, but both can **speak**. A trait lets you say "anything that can speak must have these methods", and then write code that works with every speaker.
+
+trait :: a list of methods a type promises to have
+impl Trait for Type :: the block where a type keeps that promise
+default method :: a trait method that already has a body, so types may skip it
+---
+Here is a trait with one required method and one default method.
+
+```rust
+trait Speak {
+    fn sound(&self) -> String;          // required
+
+    fn shout(&self) -> String {         // default
+        self.sound().to_uppercase()
+    }
+}
+
+struct Cat;
+
+impl Speak for Cat {
+    fn sound(&self) -> String {
+        "meow".to_string()
+    }
+}
+```
+
+`Cat` only wrote `sound`. It got `shout` for free, and `Cat.shout()` gives `"MEOW"`. A type may also write its own version of a default method to override it.
+---
+Now the payoff. A function can accept **any** type that keeps the promise:
+
+```rust
+fn announce(x: &impl Speak) -> String {
+    format!("Listen: {}", x.sound())
+}
+```
+
+Read `&impl Speak` as "a borrowed something that implements Speak". Pass a `Cat`, a `Dog`, anything with the trait. One function, many types.
+
+impl Trait :: in a parameter, "any type that has this trait"
+
+> Pinch tip: `&impl Speak` is the friendly way to write this. You will meet fancier spellings later, but they all mean the same idea.
+---
+Some traits are so common that Rust writes them for you. Put `#[derive(...)]` above a struct:
+
+```rust
+#[derive(Debug, Clone, PartialEq)]
+struct Crab {
+    name: String,
+}
+```
+
+Debug :: lets you print the value with `{:?}`
+Clone :: lets you make a copy with `.clone()`
+PartialEq :: lets you compare two values with `==`
+
+Without the derive, `a == b` on your own struct will not compile.
+'''
+
+goal = "Fill in the Speak trait's default method, implement Speak for Crab and Octopus, write describe, and derive Debug, Clone and PartialEq on Crab."
+
+starter = '''
+// A skill that speaking creatures share.
+trait Speak {
+    fn name(&self) -> String;
+    fn sound(&self) -> String;
+
+    // Default method: "NAME says SOUND", e.g. "Pinch says click".
+    fn speak(&self) -> String {
+        todo!()
+    }
+}
+
+// TODO: add #[derive(Debug, Clone, PartialEq)] on the next line
+struct Crab {
+    name: String,
+}
+
+struct Octopus {
+    name: String,
+    arms: u32,
+}
+
+// Crab's sound is "click".
+impl Speak for Crab {
+    fn name(&self) -> String {
+        todo!()
+    }
+    fn sound(&self) -> String {
+        todo!()
+    }
+}
+
+// Octopus's sound is "blub".
+impl Speak for Octopus {
+    fn name(&self) -> String {
+        todo!()
+    }
+    fn sound(&self) -> String {
+        todo!()
+    }
+}
+
+// Works for ANY speaker. Returns "[" + the speak() text + "]".
+fn describe(x: &impl Speak) -> String {
+    todo!()
+}
+
+fn main() {
+    let c = Crab { name: "Pinch".to_string() };
+    let o = Octopus { name: "Inky".to_string(), arms: 8 };
+    println!("{}", describe(&c));
+    println!("{}", describe(&o));
+    println!("{:?} has a twin: {}", c, c == c.clone());
+    println!("Inky has {} arms", o.arms);
+}
+'''
+
+solution = '''
+trait Speak {
+    fn name(&self) -> String;
+    fn sound(&self) -> String;
+
+    fn speak(&self) -> String {
+        format!("{} says {}", self.name(), self.sound())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+struct Crab {
+    name: String,
+}
+
+struct Octopus {
+    name: String,
+    arms: u32,
+}
+
+impl Speak for Crab {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+    fn sound(&self) -> String {
+        "click".to_string()
+    }
+}
+
+impl Speak for Octopus {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+    fn sound(&self) -> String {
+        "blub".to_string()
+    }
+}
+
+fn describe(x: &impl Speak) -> String {
+    format!("[{}]", x.speak())
+}
+
+fn main() {
+    let c = Crab { name: "Pinch".to_string() };
+    let o = Octopus { name: "Inky".to_string(), arms: 8 };
+    println!("{}", describe(&c));
+    println!("{}", describe(&o));
+    println!("{:?} has a twin: {}", c, c == c.clone());
+    println!("Inky has {} arms", o.arms);
+}
+'''
+
+hints = [
+  "Start with the default method. Inside a trait you can call the other trait methods on `self`: `self.name()` and `self.sound()`. Combine them with `format!`.",
+  "`speak` is `format!(\"{} says {}\", self.name(), self.sound())`. For the impls, `name` can return `self.name.clone()` and `sound` returns a string like `\"click\".to_string()`.",
+  "`describe` is `format!(\"[{}]\", x.speak())`. For the derive, write `#[derive(Debug, Clone, PartialEq)]` on the line right above `struct Crab`.",
+]
+
+success = "Superpower unlocked! A trait is a promise of methods, `impl Trait for Type` keeps it, default methods come free, `&impl Trait` accepts any keeper, and `#[derive]` writes common traits for you."
+
+[check]
+tests = '''
+#[test]
+fn crab_speaks() {
+    let c = Crab { name: "Pinch".to_string() };
+    assert_eq!(c.speak(), "Pinch says click", "Crab's speak() should be \"Pinch says click\"");
+}
+
+#[test]
+fn octopus_speaks() {
+    let o = Octopus { name: "Inky".to_string(), arms: 8 };
+    assert_eq!(o.speak(), "Inky says blub", "Octopus's speak() should be \"Inky says blub\"");
+}
+
+#[test]
+fn describe_takes_any_speaker() {
+    let c = Crab { name: "Pinch".to_string() };
+    let o = Octopus { name: "Inky".to_string(), arms: 8 };
+    assert_eq!(describe(&c), "[Pinch says click]", "describe should wrap speak() in square brackets");
+    assert_eq!(describe(&o), "[Inky says blub]", "describe should work for Octopus too");
+}
+
+#[test]
+fn crab_derives_work() {
+    let c = Crab { name: "Pinch".to_string() };
+    let twin = c.clone();
+    assert!(c == twin, "a cloned Crab should be equal to the original (PartialEq + Clone)");
+    assert!(format!("{:?}", c).contains("Pinch"), "Debug output should show the name");
+}
+
+'''
+
+[[check.must_contain]]
+text = "#[derive("
+why = "Add #[derive(Debug, Clone, PartialEq)] above `struct Crab`."
+
+[[quiz]]
+after_card = 2
+question = '''
+What does this print?
+```rust
+trait Hi {
+    fn hi(&self) -> String {
+        "hi".to_string()
+    }
+}
+struct A;
+impl Hi for A {}
+
+fn main() {
+    println!("{}", A.hi());
+}
+```
+'''
+choices = ["Nothing, it will not compile", "hi", "A", "It panics"]
+answer = 1
+explain = "`A` kept the promise with an empty impl, and `hi` is a default method, so A gets it for free."
+
+[[quiz]]
+after_card = 3
+question = "In `fn describe(x: &impl Speak)`, what does `&impl Speak` mean?"
+choices = ["x is a Speak struct", "x is a borrowed value of any type that implements Speak", "x is a trait that needs a body", "x can be anything at all"]
+answer = 1
+explain = "It accepts any type that implements the trait, borrowed. Types without the trait are rejected by the compiler."
+
+[[quiz]]
+after_card = 4
+question = "You want to write `if a == b` on two of your own structs. Which derive do you need?"
+choices = ["Debug", "Clone", "PartialEq", "Speak"]
+answer = 2
+explain = "PartialEq gives you `==`. Debug is for `{:?}` printing and Clone is for `.clone()`."

@@ -1,0 +1,219 @@
+id = "03-types"
+order = 3
+chapter = "The Basics"
+title = "Types of Things"
+xp = 70
+concepts = ["i32", "u32", "f64", "bool", "char", "&str", "type annotations"]
+
+intro = '''
+# Types
+
+Every value in Rust has a **type**, which says what kind of thing it is. Numbers, text, and yes/no answers are all different kinds.
+
+i32 :: a whole number that can be negative. Like `-5`, `0`, or `42`.
+u32 :: a whole number that is never negative (the "u" is for "unsigned").
+f64 :: a number with a decimal point, like `2.5`.
+bool :: either `true` or `false`.
+char :: a single character in single quotes, like `'A'`.
+&str :: a piece of text in double quotes, like `"Pinch"`.
+
+---
+You can tell Rust the type yourself with a **type annotation**: a colon and the type after the name.
+
+```rust
+let crabs: i32 = 5;
+let speed: f64 = 2.5;
+let happy: bool = true;
+let grade: char = 'A';
+let name: &str = "Pinch";
+```
+
+---
+One sneaky detail: whole numbers and decimals divide differently.
+
+```rust
+let a = 7 / 2;     // 3   (whole numbers drop the remainder)
+let b = 7.0 / 2.0; // 3.5 (decimals keep it)
+```
+
+> Pinch tip: `5` and `5.0` are different types. Rust won't mix them up for you, so add the `.0` when you want a decimal.
+
+---
+In the starter, each little function should hand back a value of the right type. The part after `->` is the type it returns.
+
+Replace each `todo!()` with the correct value. The last line of a function, with no semicolon, is what comes back.
+'''
+
+goal = "Replace every todo!() so each function returns the value its name and type describe, as the tests check."
+
+starter = '''
+// Replace each todo!() with the right value.
+
+fn lives() -> u32 {
+    // 3 lives
+    todo!()
+}
+
+fn temperature() -> i32 {
+    // five degrees below zero
+    todo!()
+}
+
+fn speed() -> f64 {
+    // two and a half
+    todo!()
+}
+
+fn is_alive() -> bool {
+    // the crab is doing fine
+    todo!()
+}
+
+fn grade() -> char {
+    // the letter A
+    todo!()
+}
+
+fn crab_name() -> &'static str {
+    // the text Pinch
+    todo!()
+}
+
+fn whole_half() -> i32 {
+    // 7 divided by 2, using whole numbers
+    todo!()
+}
+
+fn decimal_half() -> f64 {
+    // 7 divided by 2, using decimals
+    todo!()
+}
+
+fn main() {
+    println!("{} {} {}", lives(), temperature(), speed());
+}
+'''
+
+solution = '''
+fn lives() -> u32 {
+    3
+}
+
+fn temperature() -> i32 {
+    -5
+}
+
+fn speed() -> f64 {
+    2.5
+}
+
+fn is_alive() -> bool {
+    true
+}
+
+fn grade() -> char {
+    'A'
+}
+
+fn crab_name() -> &'static str {
+    "Pinch"
+}
+
+fn whole_half() -> i32 {
+    7 / 2
+}
+
+fn decimal_half() -> f64 {
+    7.0 / 2.0
+}
+
+fn main() {
+    println!("{} {} {}", lives(), temperature(), speed());
+}
+'''
+
+hints = [
+  "Each todo!() becomes a single value. No semicolon after it, so it gets returned.",
+  "Numbers are plain (3, -5, 2.5). bool is true or false. char uses single quotes 'A'. Text uses double quotes.",
+  "For the last two, write 7 / 2 (gives 3) and 7.0 / 2.0 (gives 3.5). The dot-zero makes it a decimal division.",
+]
+
+success = "Type-tastic! You met i32, u32, f64, bool, char and &str, and saw that 7 / 2 is 3 but 7.0 / 2.0 is 3.5."
+
+[check]
+tests = '''
+#[test]
+fn lives_is_three() {
+    assert_eq!(lives(), 3u32, "lives() should return 3");
+}
+
+#[test]
+fn temperature_is_negative_five() {
+    assert_eq!(temperature(), -5i32, "temperature() should return -5");
+}
+
+#[test]
+fn speed_is_two_and_a_half() {
+    assert_eq!(speed(), 2.5f64, "speed() should return 2.5");
+}
+
+#[test]
+fn crab_is_alive() {
+    assert!(is_alive(), "is_alive() should return true");
+}
+
+#[test]
+fn grade_is_a() {
+    assert_eq!(grade(), 'A', "grade() should return the char 'A' (single quotes)");
+}
+
+#[test]
+fn name_is_pinch() {
+    assert_eq!(crab_name(), "Pinch", "crab_name() should return \"Pinch\"");
+}
+
+#[test]
+fn whole_division_drops_remainder() {
+    assert_eq!(whole_half(), 3, "7 / 2 with whole numbers is 3");
+}
+
+#[test]
+fn decimal_division_keeps_remainder() {
+    assert_eq!(decimal_half(), 3.5, "7.0 / 2.0 with decimals is 3.5");
+}
+'''
+
+[[quiz]]
+after_card = 1
+question = '''
+Which type fits the number of claws on a crab (whole, never negative)?
+'''
+choices = ["i32", "f64", "u32", "bool"]
+answer = 2
+explain = "`u32` is for whole numbers that are never negative. `i32` would work too, but `u32` says more about the data."
+
+[[quiz]]
+after_card = 2
+question = '''
+Spot the bug! What's wrong with this line?
+```rust
+let grade: char = "A";
+```
+'''
+choices = ["A char needs single quotes: 'A'", "char should be spelled Char", "It needs mut", "Nothing, it's fine"]
+answer = 0
+explain = "Double quotes make a `&str`, single quotes make a `char`. The compiler reports mismatched types."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+let a = 9 / 2;
+let b = 9.0 / 2.0;
+println!("{a} {b}");
+```
+'''
+choices = ["4.5 4.5", "4 4.5", "5 4.5", "4 4"]
+answer = 1
+explain = "Whole-number division drops the remainder (9 / 2 = 4), but decimal division keeps it (9.0 / 2.0 = 4.5)."

@@ -1,0 +1,185 @@
+id = "05-decisions"
+order = 5
+chapter = "Control Flow"
+title = "Tide Decisions"
+xp = 80
+concepts = ["if", "else if", "else", "comparison", "&&", "||", "if expression"]
+
+intro = '''
+# Tide Decisions
+
+So far your programs run top to bottom, no questions asked. Time to teach them to *choose*.
+
+If :: runs a block of code only when a condition is true. The condition must be a `bool` (`true` or `false`).
+else :: the block that runs when the `if` condition was false.
+else if :: another condition to try when the earlier ones were false.
+
+---
+```rust
+let water = 4;
+
+if water < 2 {
+    println!("Low tide");
+} else if water < 6 {
+    println!("Mid tide");
+} else {
+    println!("High tide");
+}
+```
+
+Rust checks the conditions from the top and runs the **first** block that matches. No parentheses are needed around the condition.
+
+---
+## Asking questions
+
+Comparison operators :: `==` equal, `!=` not equal, `<` less, `>` greater, `<=` less or equal, `>=` greater or equal. Each gives back a `bool`.
+
+You can combine yes/no answers:
+
+- `a && b` means both must be true ("and")
+- `a || b` means at least one is true ("or")
+- `!a` flips true to false and back ("not")
+
+---
+## `if` hands back a value
+
+In Rust, `if` is an **expression**, so it can produce a value:
+
+```rust
+let mood = if water > 5 { "splashy" } else { "calm" };
+```
+
+Every branch must give the same type, and there is no semicolon after the value inside the braces. This is also how a function can end with an `if` and return its result.
+
+> Pinch tip: the `'static` in `&'static str` just means the text is baked into the program. Treat it as "a piece of text" for now!
+'''
+
+goal = "Fill in `tide_level` (below 0 is \"unknown\", 0 to 2 is \"low\", 3 to 6 is \"medium\", 7 or more is \"high\") and `is_beach_day` (true when the height is 2 to 6 inclusive and it is not raining)."
+
+starter = '''
+// Return one of: "unknown", "low", "medium", "high"
+//   height below 0  -> "unknown"
+//   0, 1, 2         -> "low"
+//   3, 4, 5, 6      -> "medium"
+//   7 or more       -> "high"
+fn tide_level(height: i32) -> &'static str {
+    todo!()
+}
+
+// A good beach day: tide height from 2 to 6 (inclusive) AND no rain.
+fn is_beach_day(height: i32, raining: bool) -> bool {
+    todo!()
+}
+
+fn main() {
+    println!("Tide at 5 is {}", tide_level(5));
+    println!("Beach day? {}", is_beach_day(5, false));
+}
+'''
+
+solution = '''
+fn tide_level(height: i32) -> &'static str {
+    if height < 0 {
+        "unknown"
+    } else if height <= 2 {
+        "low"
+    } else if height <= 6 {
+        "medium"
+    } else {
+        "high"
+    }
+}
+
+fn is_beach_day(height: i32, raining: bool) -> bool {
+    height >= 2 && height <= 6 && !raining
+}
+
+fn main() {
+    println!("Tide at 5 is {}", tide_level(5));
+    println!("Beach day? {}", is_beach_day(5, false));
+}
+'''
+
+hints = [
+  "Start `tide_level` with `if height < 0 { \"unknown\" }`. Leave off the semicolon so the text is the value of the block.",
+  "Chain more checks with `else if height <= 2 { \"low\" }`, then `else if height <= 6 { ... }`, and finish with a plain `else`.",
+  "For `is_beach_day`, join three yes/no answers with `&&`: `height >= 2 && height <= 6 && !raining`.",
+]
+
+success = "Smooth sailing! `if` checks conditions top to bottom, `&&` and `||` combine them, and since `if` is an expression it can hand back a value."
+
+[check]
+tests = '''
+#[test]
+fn negative_is_unknown() {
+    assert_eq!(tide_level(-1), "unknown", "tide_level(-1) should be \"unknown\"");
+}
+
+#[test]
+fn low_tides() {
+    assert_eq!(tide_level(0), "low", "tide_level(0) should be \"low\"");
+    assert_eq!(tide_level(2), "low", "tide_level(2) should be \"low\" (2 is the top of low)");
+}
+
+#[test]
+fn medium_tides() {
+    assert_eq!(tide_level(3), "medium", "tide_level(3) should be \"medium\"");
+    assert_eq!(tide_level(6), "medium", "tide_level(6) should be \"medium\" (6 is the top of medium)");
+}
+
+#[test]
+fn high_tides() {
+    assert_eq!(tide_level(7), "high", "tide_level(7) should be \"high\"");
+    assert_eq!(tide_level(40), "high", "tide_level(40) should be \"high\"");
+}
+
+#[test]
+fn beach_day_needs_both() {
+    assert!(is_beach_day(4, false), "height 4 with no rain is a beach day");
+    assert!(!is_beach_day(4, true), "rain ruins the beach day");
+    assert!(!is_beach_day(1, false), "height 1 is too low for a beach day");
+    assert!(!is_beach_day(7, false), "height 7 is too high for a beach day");
+    assert!(is_beach_day(2, false), "height 2 is allowed (the range includes 2)");
+    assert!(is_beach_day(6, false), "height 6 is allowed (the range includes 6)");
+}
+'''
+
+[[quiz]]
+after_card = 2
+question = '''
+What does this print?
+```rust
+let n = 8;
+if n > 5 {
+    println!("big");
+} else if n > 7 {
+    println!("huge");
+} else {
+    println!("small");
+}
+```
+'''
+choices = ["huge", "big", "big and huge", "small"]
+answer = 1
+explain = "Rust runs only the first matching block. `n > 5` is true, so it prints big and skips the rest, even though `n > 7` is also true."
+
+[[quiz]]
+after_card = 3
+question = '''
+Which operator means "or" (at least one must be true)?
+'''
+choices = ["&&", "!", "==", "||"]
+answer = 3
+explain = "`||` is \"or\". `&&` is \"and\", `!` is \"not\", and `==` compares for equality."
+
+[[quiz]]
+after_card = 4
+question = '''
+Spot the bug! What's wrong here?
+```rust
+let mood = if water > 5 { "splashy" } else { 3 };
+```
+'''
+choices = ["Both branches must have the same type", "The condition needs parentheses", "else needs its own condition", "water must be mut"]
+answer = 0
+explain = "When `if` gives back a value, every branch must produce the same type. One is text and the other is a number, so it fails."

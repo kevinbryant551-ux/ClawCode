@@ -1,0 +1,225 @@
+id = "12-vectors"
+order = 12
+chapter = "Collections"
+title = "Bucket of Shells"
+xp = 90
+concepts = ["Vec<T>", "vec!", "push", "len", "indexing", ".get()", "for over &v", "for over &mut v"]
+
+intro = '''
+# One bucket, many shells
+
+Until now each variable held one thing. What if you find 50 shells on the beach? You need a bucket!
+
+A **Vec** is a growable list that holds many values of the same type.
+
+Vec :: a growable list of values that all have the same type, written `Vec<i32>`
+vec! :: a macro that builds a Vec from values you list
+push :: a method that adds one item to the end of a Vec
+index :: the position of an item, counting from 0
+---
+Here is a bucket in action:
+
+```rust
+let mut shells = vec![3, 8, 5];
+shells.push(10);
+println!("{}", shells.len());   // 4
+println!("{}", shells[0]);      // 3
+```
+
+`vec![...]` makes the list. `push` needs `mut`, because the bucket changes. `len()` tells you how many items are inside.
+
+You can also start empty with `Vec::new()` and push as you go. Rust figures out the type from what you push in.
+
+> Pinch tip: indexes start at 0, so the first shell is `shells[0]` and the last of four is `shells[3]`.
+---
+**Danger zone!** What if you ask for `shells[99]` and there are only 4? The program **panics** and crashes.
+
+The safe way is `.get(99)`. It returns an `Option`: `Some(&value)` if the spot exists, or `None` if not.
+
+```rust
+match shells.get(99) {
+    Some(n) => println!("found {n}"),
+    None => println!("nothing there"),
+}
+```
+
+Option :: you met it before! `get` uses it to say "maybe there is a value here"
+
+Use `[]` when you are sure the spot exists. Use `.get()` when you are not.
+---
+To visit every item, use `for`. Borrow the Vec with `&` so you can use it again afterwards:
+
+```rust
+let mut sum = 0;
+for s in &shells {
+    sum += s;
+}
+```
+
+To **change** each item, borrow mutably with `&mut`. Then `s` is a reference, and you write `*s` to reach the value inside:
+
+```rust
+for s in &mut shells {
+    *s += 1;
+}
+```
+
+`*s` means "the thing `s` points at". Functions can take `&Vec<i32>` to look at a list or `&mut Vec<i32>` to change it.
+
+> Pinch tip: a plain `for s in shells` would move the whole Vec away. Add `&` to keep it!
+'''
+
+goal = "Implement total (sum of the Vec), first_or_zero (first item, or 0 if empty, using .get), double_all (double every item in place) and countdown (a Vec from n down to 1)."
+
+starter = '''
+// Add up every number in the bucket.
+fn total(v: &Vec<i32>) -> i32 {
+    todo!()
+}
+
+// Return the first item. If the Vec is empty, return 0.
+// Hint: use v.get(0) and match on the Option.
+fn first_or_zero(v: &Vec<i32>) -> i32 {
+    todo!()
+}
+
+// Double every number in place.
+fn double_all(v: &mut Vec<i32>) {
+    todo!()
+}
+
+// countdown(3) gives [3, 2, 1]. countdown(0) gives an empty Vec.
+fn countdown(n: i32) -> Vec<i32> {
+    todo!()
+}
+
+fn main() {
+    let mut shells = vec![3, 8, 5];
+    shells.push(10);
+    double_all(&mut shells);
+    println!("total {}, first {}", total(&shells), first_or_zero(&shells));
+    println!("{:?}", countdown(3));
+}
+'''
+
+solution = '''
+fn total(v: &Vec<i32>) -> i32 {
+    let mut sum = 0;
+    for n in v {
+        sum += n;
+    }
+    sum
+}
+
+fn first_or_zero(v: &Vec<i32>) -> i32 {
+    match v.get(0) {
+        Some(n) => *n,
+        None => 0,
+    }
+}
+
+fn double_all(v: &mut Vec<i32>) {
+    for n in v {
+        *n *= 2;
+    }
+}
+
+fn countdown(n: i32) -> Vec<i32> {
+    let mut out = Vec::new();
+    let mut i = n;
+    while i > 0 {
+        out.push(i);
+        i -= 1;
+    }
+    out
+}
+
+fn main() {
+    let mut shells = vec![3, 8, 5];
+    shells.push(10);
+    double_all(&mut shells);
+    println!("total {}, first {}", total(&shells), first_or_zero(&shells));
+    println!("{:?}", countdown(3));
+}
+'''
+
+hints = [
+  "`total`: make `let mut sum = 0;`, then `for n in v { sum += n; }` (v is already a borrow), and end the function with `sum`.",
+  "`first_or_zero`: `match v.get(0) { Some(n) => *n, None => 0 }`. The `*` turns the reference `&i32` into a plain `i32`.",
+  "`double_all`: `for n in v { *n *= 2; }`. `countdown`: start with `let mut out = Vec::new();` then push `n`, `n - 1`, ... down to 1 using a `while` loop, and return `out`.",
+]
+
+success = "Bucket full! A Vec holds many values of one type. Use [] when you're sure, .get() when you're not, `for x in &v` to look and `for x in &mut v` to change."
+
+[check]
+tests = '''
+#[test]
+fn total_adds_everything() {
+    assert_eq!(total(&vec![1, 2, 3, 4]), 10, "1 + 2 + 3 + 4 should be 10");
+}
+
+#[test]
+fn total_of_empty_is_zero() {
+    assert_eq!(total(&Vec::new()), 0, "an empty Vec adds up to 0");
+}
+
+#[test]
+fn first_item_found() {
+    assert_eq!(first_or_zero(&vec![7, 8, 9]), 7, "the first item of [7, 8, 9] is 7");
+}
+
+#[test]
+fn first_item_missing() {
+    assert_eq!(first_or_zero(&Vec::new()), 0, "an empty Vec should give 0, not crash");
+}
+
+#[test]
+fn doubling_changes_the_vec() {
+    let mut v = vec![1, 5, -2];
+    double_all(&mut v);
+    assert_eq!(v, vec![2, 10, -4], "every item should be doubled in place");
+}
+
+#[test]
+fn countdown_builds_a_list() {
+    assert_eq!(countdown(4), vec![4, 3, 2, 1], "countdown(4) should be [4, 3, 2, 1]");
+    assert_eq!(countdown(0), Vec::<i32>::new(), "countdown(0) should be empty");
+}
+'''
+
+[[quiz]]
+after_card = 2
+question = '''
+What does this print?
+```rust
+let mut v = vec![10, 20];
+v.push(30);
+println!("{} {}", v.len(), v[1]);
+```
+'''
+choices = ["2 10", "3 20", "3 30", "2 20"]
+answer = 1
+explain = "After the push there are 3 items, so len is 3. Indexes start at 0, so v[1] is the second item: 20."
+
+[[quiz]]
+after_card = 3
+question = '''
+A Vec has 3 items. What does `v.get(5)` give back?
+'''
+choices = ["A panic and crash", "0", "None", "The last item"]
+answer = 2
+explain = "`.get()` never panics. Out of range gives `None`. Only `v[5]` would crash the program."
+
+[[quiz]]
+after_card = 4
+question = '''
+Which loop adds 1 to every number inside `v`?
+'''
+choices = [
+  "for n in v { n += 1; }",
+  "for n in &mut v { *n += 1; }",
+  "for n in &v { *n += 1; }",
+  "for n in &v { n + 1; }",
+]
+answer = 1
+explain = "You need `&mut v` to be allowed to change items, and `*n` to reach the value behind the reference."

@@ -1,0 +1,264 @@
+id = "19-error-handling"
+order = 19
+chapter = "Superpowers"
+title = "When Things Go Wrong"
+xp = 120
+concepts = ["custom error", "Result<T, E>", "?", "Display", "fmt", "match"]
+
+intro = '''
+# Errors you design yourself
+
+`Result<T, E>` says "I will give you a `T`, or an `E` explaining what went wrong". Until now `E` was a plain `String`. Better: make an **enum** with one variant per kind of problem.
+
+```rust
+#[derive(Debug, PartialEq)]
+enum CrabError {
+    Empty,
+    NotANumber,
+    TooBig(u32),
+}
+```
+
+custom error :: your own enum that lists the ways something can fail
+---
+A function that can fail returns `Result<T, MyError>`. Return `Ok(value)` for success and `Err(MyError::...)` for failure.
+
+```rust
+fn half(n: u32) -> Result<u32, CrabError> {
+    if n > 100 {
+        return Err(CrabError::TooBig(n));
+    }
+    Ok(n / 2)
+}
+```
+
+Callers can then `match` and handle each case. No crashes, no mystery.
+---
+Calling another function that returns `Result` can get wordy. The `?` operator does the boring part: on `Ok(v)` it gives you `v`, on `Err(e)` it **returns that error from your function right away**.
+
+```rust
+fn quarter(n: u32) -> Result<u32, CrabError> {
+    let h = half(n)?;   // Err? leave early. Ok? carry on.
+    half(h)
+}
+```
+
+? :: unwrap an Ok, or return the Err to the caller immediately
+
+> Pinch tip: `?` only works inside a function that itself returns a `Result`. It is a shortcut for a `match` with an early `return`.
+---
+To print an error with `{}`, give it a friendly message by implementing `Display`.
+
+```rust
+use std::fmt;
+
+impl fmt::Display for CrabError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            CrabError::Empty => write!(f, "nothing here"),
+            CrabError::NotANumber => write!(f, "not a number"),
+            CrabError::TooBig(n) => write!(f, "{} is too big", n),
+        }
+    }
+}
+```
+
+Display :: the trait behind `{}` printing, and behind `.to_string()`
+write! :: like `println!`, but writes into `f` instead of the screen
+'''
+
+goal = "Finish the CrabError Display impl, write parse_shells (returns a Result), total_shells (use ?), and report (match on the result)."
+
+starter = '''
+use std::fmt;
+
+#[derive(Debug, PartialEq)]
+enum CrabError {
+    Empty,
+    NotANumber,
+    TooBig(u32),
+}
+
+// Messages: Empty -> "empty input", NotANumber -> "not a number",
+// TooBig(n) -> "N is too big (max 100)" with the real number in place of N.
+impl fmt::Display for CrabError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            CrabError::Empty => todo!(),
+            CrabError::NotANumber => todo!(),
+            CrabError::TooBig(n) => todo!(),
+        }
+    }
+}
+
+// "" (after trim) -> Err(Empty). Not a whole number -> Err(NotANumber).
+// More than 100 -> Err(TooBig(n)). Otherwise Ok(n).
+fn parse_shells(text: &str) -> Result<u32, CrabError> {
+    todo!()
+}
+
+// Parse both texts and add them. Use ? to pass any error up.
+fn total_shells(a: &str, b: &str) -> Result<u32, CrabError> {
+    todo!()
+}
+
+// Ok(n)  -> "Total: N"      Err(e) -> "Error: MESSAGE" (use the Display text)
+fn report(a: &str, b: &str) -> String {
+    todo!()
+}
+
+fn main() {
+    println!("{}", report("3", "4"));
+    println!("{}", report("3", "x"));
+    println!("{}", report("", "4"));
+    println!("{}", report("500", "4"));
+}
+'''
+
+solution = '''
+use std::fmt;
+
+#[derive(Debug, PartialEq)]
+enum CrabError {
+    Empty,
+    NotANumber,
+    TooBig(u32),
+}
+
+impl fmt::Display for CrabError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            CrabError::Empty => write!(f, "empty input"),
+            CrabError::NotANumber => write!(f, "not a number"),
+            CrabError::TooBig(n) => write!(f, "{} is too big (max 100)", n),
+        }
+    }
+}
+
+fn parse_shells(text: &str) -> Result<u32, CrabError> {
+    let text = text.trim();
+    if text.is_empty() {
+        return Err(CrabError::Empty);
+    }
+    let n = match text.parse::<u32>() {
+        Ok(n) => n,
+        Err(_) => return Err(CrabError::NotANumber),
+    };
+    if n > 100 {
+        return Err(CrabError::TooBig(n));
+    }
+    Ok(n)
+}
+
+fn total_shells(a: &str, b: &str) -> Result<u32, CrabError> {
+    let x = parse_shells(a)?;
+    let y = parse_shells(b)?;
+    Ok(x + y)
+}
+
+fn report(a: &str, b: &str) -> String {
+    match total_shells(a, b) {
+        Ok(n) => format!("Total: {}", n),
+        Err(e) => format!("Error: {}", e),
+    }
+}
+
+fn main() {
+    println!("{}", report("3", "4"));
+    println!("{}", report("3", "x"));
+    println!("{}", report("", "4"));
+    println!("{}", report("500", "4"));
+}
+'''
+
+hints = [
+  "Start with the Display messages: `write!(f, \"empty input\")`. For TooBig, put the number in: `write!(f, \"{} is too big (max 100)\", n)`.",
+  "In `parse_shells`: `let text = text.trim();`, return `Err(CrabError::Empty)` if `text.is_empty()`, then `match text.parse::<u32>() { Ok(n) => n, Err(_) => return Err(CrabError::NotANumber) }`, then check `n > 100`.",
+  "`total_shells` is `let x = parse_shells(a)?; let y = parse_shells(b)?; Ok(x + y)`. `report` is a `match total_shells(a, b)` with `Ok(n) => format!(\"Total: {}\", n)` and `Err(e) => format!(\"Error: {}\", e)`.",
+]
+
+success = "Error handling mastered! A custom enum names each failure, Result carries it, `?` passes it up in one character, Display makes it friendly, and `match` decides what to do at the end."
+
+[check]
+tests = '''
+#[test]
+fn good_numbers_parse() {
+    assert_eq!(parse_shells("42"), Ok(42), "\"42\" should parse to Ok(42)");
+    assert_eq!(parse_shells("  7 "), Ok(7), "spaces around the number should be trimmed");
+}
+
+#[test]
+fn bad_input_gives_errors() {
+    assert_eq!(parse_shells(""), Err(CrabError::Empty), "empty text should be Err(Empty)");
+    assert_eq!(parse_shells("   "), Err(CrabError::Empty), "only spaces should be Err(Empty)");
+    assert_eq!(parse_shells("abc"), Err(CrabError::NotANumber), "\"abc\" should be Err(NotANumber)");
+    assert_eq!(parse_shells("101"), Err(CrabError::TooBig(101)), "101 should be Err(TooBig(101))");
+    assert_eq!(parse_shells("100"), Ok(100), "100 is allowed");
+}
+
+#[test]
+fn total_adds_and_passes_errors_up() {
+    assert_eq!(total_shells("3", "4"), Ok(7), "3 + 4 should be Ok(7)");
+    assert_eq!(total_shells("x", "4"), Err(CrabError::NotANumber), "the first error should be passed up");
+    assert_eq!(total_shells("4", "999"), Err(CrabError::TooBig(999)), "the second error should be passed up");
+}
+
+#[test]
+fn errors_have_friendly_messages() {
+    assert_eq!(CrabError::Empty.to_string(), "empty input", "Display for Empty");
+    assert_eq!(CrabError::NotANumber.to_string(), "not a number", "Display for NotANumber");
+    assert_eq!(CrabError::TooBig(500).to_string(), "500 is too big (max 100)", "Display for TooBig(500)");
+}
+
+#[test]
+fn report_matches_on_the_result() {
+    assert_eq!(report("3", "4"), "Total: 7", "success report");
+    assert_eq!(report("", "4"), "Error: empty input", "error report");
+    assert_eq!(report("500", "4"), "Error: 500 is too big (max 100)", "error report with a number");
+}
+
+'''
+
+[[check.must_contain]]
+text = "?;"
+why = "Use the `?` operator in total_shells, like `let x = parse_shells(a)?;`."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+fn f(s: &str) -> Result<i32, String> {
+    let n: i32 = match s.parse() {
+        Ok(n) => n,
+        Err(_) => return Err("bad".to_string()),
+    };
+    Ok(n + 1)
+}
+fn g(s: &str) -> Result<i32, String> {
+    let a = f(s)?;
+    println!("after");
+    Ok(a * 2)
+}
+fn main() {
+    println!("{:?}", g("x"));
+}
+```
+'''
+choices = ["after, then Err(\"bad\")", "Ok(0)", "Err(\"bad\")", "It panics"]
+answer = 2
+explain = "f fails, so `?` returns the Err from g immediately. The println of \"after\" never runs."
+
+[[quiz]]
+after_card = 3
+question = "Where is the `?` operator allowed?"
+choices = ["Anywhere", "Only in a function that itself returns a Result (or Option)", "Only inside main", "Only in match arms"]
+answer = 1
+explain = "`?` may need to return an Err from the current function, so that function's return type must be able to hold one."
+
+[[quiz]]
+after_card = 4
+question = "Your error enum has no Display impl. What breaks?"
+choices = ["Creating the error", "Matching on the error", "Printing it with `println!(\"{}\", e)`", "Returning it inside Err"]
+answer = 2
+explain = "`{}` needs the Display trait. You can still create, match and return the error without it."

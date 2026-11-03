@@ -1,0 +1,153 @@
+id = "07-ownership"
+order = 7
+chapter = "Ownership"
+title = "Who Owns the Shell?"
+xp = 110
+concepts = ["ownership", "move", "borrow", "&", "clone", "Copy", "E0382"]
+
+intro = '''
+# Who Owns the Shell?
+
+A hermit crab owns exactly one shell. If it hands the shell to a friend, the friend owns it now, and the first crab can't live there anymore. Rust treats data the same way. This is the idea that makes Rust special.
+
+Ownership :: every value has exactly one owner (a variable). When the owner goes away, the value is cleaned up automatically.
+Move :: giving a value to another variable or a function transfers ownership. The old variable can no longer be used.
+
+---
+```rust
+let a = String::from("shell");
+let b = a;              // the String MOVES from a to b
+println!("{}", a);      // error[E0382]: borrow of moved value: `a`
+```
+
+That error code, **E0382**, means "you used something after it moved". Remember it, you'll meet it again!
+
+---
+## Numbers just get copied
+
+Copy :: simple, small types like `i32`, `f64`, `bool` and `char` are copied instead of moved, so both variables stay usable.
+
+```rust
+let x = 5;
+let y = x;
+println!("{x} {y}");    // fine!
+```
+
+A `String` owns text on the heap, so copying it silently would be costly. Rust moves it instead.
+
+---
+## Two ways out
+
+Clone :: `.clone()` makes a full, separate copy. Both copies have an owner. It works, but copying costs time and memory.
+
+Borrow :: `&name` lets someone *look* at a value without owning it. The owner keeps the shell.
+
+---
+```rust
+fn shell_size(s: &String) -> usize {
+    s.len()
+}
+
+let shell = String::from("spiral");
+let n = shell_size(&shell);   // borrow with &
+println!("{shell} {n}");      // shell still works
+```
+
+The `&String` in the parameter means "I only want to borrow a String". The `&` at the call site hands over the loan.
+
+> Pinch tip: when a function only needs to look, borrow with `&`. Reach for `.clone()` only when you truly need a second copy.
+'''
+
+goal = "Fix the program so it compiles and prints `Pinch has 5 letters`: make `name_length` borrow its argument (`&String`) and pass `&name` from `main`, without using `.clone()`."
+
+starter = '''
+fn name_length(name: String) -> usize {
+    name.len()
+}
+
+fn main() {
+    let name = String::from("Pinch");
+    let length = name_length(name);
+    // Oops: `name` was moved into the function above, so this fails (E0382).
+    println!("{} has {} letters", name, length);
+}
+'''
+
+solution = '''
+fn name_length(name: &String) -> usize {
+    name.len()
+}
+
+fn main() {
+    let name = String::from("Pinch");
+    let length = name_length(&name);
+    println!("{} has {} letters", name, length);
+}
+'''
+
+hints = [
+  "Run it and read the error: `name` is used after being moved into `name_length`. The function took ownership of the String.",
+  "Make the function only borrow: change the parameter type from `String` to `&String`.",
+  "Then lend the value at the call: `name_length(&name)`. The `&` goes in both places.",
+]
+
+success = "Borrowed, not stolen! `&` lets a function look at a value while the original owner keeps it. No copy needed."
+
+[check]
+expected_output = '''
+Pinch has 5 letters
+'''
+
+[[check.must_contain]]
+text = "&"
+why = "Borrow the String with `&`: use `&String` in the function's parameter and `&name` when you call it."
+
+[[check.must_not_contain]]
+text = "clone()"
+why = "`.clone()` would work, but it makes a needless copy. This lesson is about borrowing with `&` instead."
+
+[[quiz]]
+after_card = 2
+question = '''
+Does this compile?
+```rust
+let a = String::from("shell");
+let b = a;
+println!("{a}");
+```
+'''
+choices = ["Yes, it prints shell", "No: a was moved into b, so it cannot be used", "No: you cannot assign a String to a new variable", "Yes, but it prints nothing"]
+answer = 1
+explain = "`let b = a;` moves the String. After that b owns it and using a is error E0382."
+
+[[quiz]]
+after_card = 3
+question = '''
+What does this print?
+```rust
+let a = 7;
+let mut b = a;
+b += 1;
+println!("{a} {b}");
+```
+'''
+choices = ["8 8", "7 8", "7 7", "It does not compile: a was moved"]
+answer = 1
+explain = "Integers are Copy. b gets its own copy of 7, so adding 1 to b leaves a alone."
+
+[[quiz]]
+after_card = 5
+question = '''
+Spot the bug! `shout` takes `&String`, but this call fails. What is the fix?
+```rust
+fn shout(s: &String) -> usize {
+    s.len()
+}
+
+let word = String::from("claw");
+let n = shout(word);
+```
+'''
+choices = ["Write `let mut word`", "Write `shout(*word)`", "Write `shout(&word)`", "Write `shout(word.len())`"]
+answer = 2
+explain = "The function wants a borrowed String, so lend it with `&word` at the call site. word stays yours afterwards."

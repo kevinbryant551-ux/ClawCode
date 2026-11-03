@@ -1,0 +1,338 @@
+# Pinch's explanation catalog. Entries match by `code` (e.g. E0384) or by
+# `pattern` (lowercase substring of the rustc message, for errors with no code).
+
+[[error]]
+code = "E0384"
+title = "Changing a variable that can't change"
+explain = "Variables in Rust are locked by default. Once you give one a value with `let`, you can't assign a new value to it. This keeps surprises out of your code: if a value never changes, you never have to wonder who changed it."
+fix = "Add `mut` when you declare it: `let mut count = 0;` and then `count = 1;` works."
+
+[[error]]
+code = "E0382"
+title = "Using a value after it moved"
+explain = "Some values, like `String`, have exactly one owner at a time. When you pass one to a function or assign it to another variable, ownership moves, and the old name can no longer be used. This is how Rust cleans up memory safely without a garbage collector."
+fix = "Borrow instead of moving with `&`, as in `print_it(&name)`, or make a copy with `name.clone()`."
+
+[[error]]
+code = "E0499"
+title = "Two mutable borrows at once"
+explain = "A mutable borrow (`&mut`) is permission to change a value, and Rust allows only one such borrow at a time. Two editors changing the same thing at once could clash, so Rust stops it before the program ever runs."
+fix = "Finish using the first `&mut` before creating the second, or put the first one in a smaller `{ }` block so it ends sooner."
+
+[[error]]
+code = "E0502"
+title = "Reading and changing at the same time"
+explain = "You can have many readers (`&`) or one writer (`&mut`) of a value, but never both at once. Otherwise a reader could see data half-changed, or the data could even move out from under it."
+fix = "Make sure the read-only borrow is done before you mutate, for example copy the value out first: `let first = v[0]; v.push(first);`."
+
+[[error]]
+code = "E0505"
+title = "Moving something that's still borrowed"
+explain = "You lent out a reference to a value, then tried to move that value (for example into a function) while the reference was still in use. The reference would be left pointing at something that's gone."
+fix = "Use the reference before moving the value, or pass a borrow or a clone instead: `take(s.clone());`."
+
+[[error]]
+code = "E0506"
+title = "Assigning to something that's borrowed"
+explain = "While a reference to a value exists and is still going to be used, you can't overwrite that value. The reference would suddenly see something different from what it was promised."
+fix = "Finish using the reference before assigning, or reorder your lines so the assignment `x = 5;` comes after the last use of the borrow."
+
+[[error]]
+code = "E0507"
+title = "Moving out of a borrow"
+explain = "You only borrowed this value, so it isn't yours to take apart or give away. Moving something out through a reference would leave the real owner with a hole where the value used to be."
+fix = "Copy it instead with `.clone()`, as in `let s = r.name.clone();`, or use a reference like `&r.name`."
+
+[[error]]
+code = "E0308"
+title = "Types don't match"
+explain = "Rust is strict about types, the kinds of values like numbers, text, and true/false. Here it expected one kind and found another. Look at the `expected` and `found` lines in the message to see the two sides."
+fix = "Convert or change one side, such as `let n: i32 = 5;` instead of `\"5\"`, or `x as f64` for numbers. Also check for a stray `;` after the last expression of a function."
+
+[[error]]
+code = "E0425"
+title = "Unknown name"
+explain = "Rust can't find anything with that name in the current scope (the part of the code where a name is visible). Usually it's a typo, a missing `let`, or a variable declared inside a different block."
+fix = "Check the spelling and where the name was declared. For example, define it first with `let total = 0;` before using `total`."
+
+[[error]]
+code = "E0433"
+title = "Unknown module or type in a path"
+explain = "A path like `HashMap::new()` starts with a name Rust doesn't know yet. Types and modules outside the basics must be brought into scope with `use` before you can name them."
+fix = "Add an import at the top, such as `use std::collections::HashMap;`, and check the spelling."
+
+[[error]]
+code = "E0412"
+title = "Unknown type name"
+explain = "You used a type name that Rust can't find. Maybe it's misspelled, not imported, or never defined. Type names are case-sensitive, so `string` and `String` are different things."
+fix = "Check the spelling and capital letters, or import it: `use std::collections::HashMap;`. Define your own type with `struct Point { x: i32 }`."
+
+[[error]]
+code = "E0423"
+title = "Struct used like a function or value"
+explain = "A name was used in a way that doesn't fit what it is. A common case is writing `Point(1, 2)` or `Point` for a struct that has named fields, which must be built with curly braces."
+fix = "Fill in the named fields with braces: `Point { x: 1, y: 2 }`."
+
+[[error]]
+code = "E0599"
+title = "No such method"
+explain = "You called a method, a function attached to a value with a dot, that this type doesn't have. It might be a typo, or the method belongs to a different type, or a trait (a shared set of abilities) needs to be imported or implemented."
+fix = "Check the name and the type, for example use `v.len()` on a `Vec`. Look for a `use` line for the trait, or a `#[derive(Clone)]` if you need `.clone()` on your own type."
+
+[[error]]
+code = "E0609"
+title = "No such field"
+explain = "You asked for a field, a named piece of a struct, that the struct doesn't have. Field names must match exactly, including spelling and capital letters."
+fix = "Check the struct definition and use a name it really has, such as `p.x` instead of `p.z`. Tuples use numbers like `t.0`."
+
+[[error]]
+code = "E0061"
+title = "Wrong number of arguments"
+explain = "A function declares exactly how many values it needs, and your call gave too many or too few. Arguments are the values you put inside the parentheses when calling."
+fix = "Match the function's signature. If it's `fn add(a: i32, b: i32)`, call it as `add(1, 2)`."
+
+[[error]]
+code = "E0063"
+title = "Missing struct field"
+explain = "When you create a struct, every field must be given a value. Rust won't leave any blank, because that could mean using data that was never set."
+fix = "Add the missing field, as in `User { name, age: 30 }`, or fill the rest from another value with `..Default::default()`."
+
+[[error]]
+code = "E0027"
+title = "Pattern skips some fields"
+explain = "When you take a struct apart in a pattern, you have to mention every field, or say you're skipping the rest. Rust wants you to be deliberate so no field is ignored by accident."
+fix = "List the missing fields or add `..` at the end: `let Point { x, .. } = p;`."
+
+[[error]]
+code = "E0004"
+title = "Match doesn't cover every case"
+explain = "A `match` must handle every possible value, so the program always knows what to do. Rust found at least one case your arms don't cover. The message usually names the missing one."
+fix = "Add an arm for it, or a catch-all as the last arm: `_ => println!(\"other\"),`."
+
+[[error]]
+code = "E0005"
+title = "Pattern might not match"
+explain = "A plain `let` only accepts patterns that always match. Something like `let Some(x) = opt;` fails when the value is `None`, and Rust needs a plan for that."
+fix = "Use `if let Some(x) = opt { ... }`, a full `match`, or `let Some(x) = opt else { return };`."
+
+[[error]]
+code = "E0381"
+title = "Using a variable before it has a value"
+explain = "You declared a variable but read it before giving it a value, or only gave it one on some paths through the code. Rust never lets you read uninitialized (unset) memory."
+fix = "Give it a value right away: `let total = 0;`. If using `if`, make sure every branch sets it."
+
+[[error]]
+code = "E0369"
+title = "Operator not supported for this type"
+explain = "You used an operator such as `+` or `==` on a type that doesn't know how to do it. Numbers do, but many types, including your own structs, need that ability added first."
+fix = "Add the right derive, like `#[derive(PartialEq)]` for `==`, or for strings use `a + &b` or `format!(\"{a}{b}\")`."
+
+[[error]]
+code = "E0277"
+title = "Type is missing a needed ability"
+explain = "Here Rust needs a type to have a trait, a named set of abilities like being printable or comparable, and it doesn't. Common cases are printing with `{}` something that lacks `Display`, or adding mismatched number types."
+fix = "Use `{:?}` with `#[derive(Debug)]` for debug printing, or convert types so they match, e.g. `x as f64`. Read the `required by` note for which trait."
+
+[[error]]
+code = "E0106"
+title = "Missing lifetime"
+explain = "A lifetime says how long a borrowed reference stays valid. When a function returns a reference and Rust can't tell which input it came from, it needs you to say so with a label like `'a`."
+fix = "Add the label: `fn longest<'a>(x: &'a str, y: &'a str) -> &'a str`. Or return an owned `String` to avoid the issue."
+
+[[error]]
+code = "E0614"
+title = "Dereferencing a non-reference"
+explain = "The `*` operator follows a reference to the value it points at. You used it on something that isn't a reference, such as a plain number, so there is nothing to follow."
+fix = "Remove the `*`: use `x` instead of `*x`. Only use `*` on a `&` or `&mut` value."
+
+[[error]]
+code = "E0596"
+title = "Borrowing as mutable from something immutable"
+explain = "You're trying to change a value through a `&mut` borrow, but the variable wasn't declared as changeable. Rust wants the permission to be stated up front."
+fix = "Declare it with `mut`: `let mut list = Vec::new();`. For a function parameter, take `&mut Vec<i32>`."
+
+[[error]]
+code = "E0597"
+title = "Reference outlives its value"
+explain = "You made a reference to a value, but the value is dropped (cleaned up) at the end of its block while the reference is used afterwards. That reference would point at nothing."
+fix = "Declare the value in an outer scope so it lives long enough, or keep an owned copy instead, like `let s = inner.to_string();`."
+
+[[error]]
+code = "E0515"
+title = "Returning a reference to a local"
+explain = "A variable made inside a function is cleaned up when the function ends. Returning a reference to it would hand back a pointer to something that no longer exists."
+fix = "Return the value itself instead: `-> String` and `s` rather than `-> &String` and `&s`."
+
+[[error]]
+code = "E0716"
+title = "Temporary value dropped too soon"
+explain = "A temporary value, one that never got a name, is thrown away at the end of its statement. You borrowed it and then tried to keep using that borrow on later lines."
+fix = "Give it a name so it lives longer: `let s = String::from(\"hi\"); let r = &s;`."
+
+[[error]]
+code = "E0282"
+title = "Rust needs a type hint"
+explain = "Rust usually figures out types on its own, but here there isn't enough information, like an empty `Vec::new()` that's never filled. It asks you to spell the type out."
+fix = "Add an annotation: `let v: Vec<i32> = Vec::new();`, or use a turbofish like `\"5\".parse::<i32>()`."
+
+[[error]]
+code = "E0603"
+title = "Private item"
+explain = "Things in a module are private by default, so only code inside that module can use them. You're reaching in from outside. This lets authors decide what is safe to expose."
+fix = "Make the item public by adding `pub` in front of it: `pub fn helper() {}`."
+
+[[error]]
+code = "E0560"
+title = "Struct has no such field"
+explain = "While building a struct you named a field that isn't part of its definition. It may be a typo or a leftover from an older version of the struct."
+fix = "Compare with the struct definition and use its real field names, e.g. `Point { x: 1, y: 2 }`."
+
+[[error]]
+code = "E0026"
+title = "Pattern names a field that doesn't exist"
+explain = "In a pattern that takes a struct apart, you mentioned a field the struct doesn't have. Rust checks pattern field names against the definition."
+fix = "Use one of the real field names, e.g. `let Point { x, y } = p;`."
+
+[[error]]
+code = "E0040"
+title = "Calling drop by hand"
+explain = "Rust automatically cleans up values when they go out of scope. Calling the `.drop()` method yourself would risk cleaning up twice, so it isn't allowed."
+fix = "Use the standalone function instead: `drop(value);`. Or just let the value go out of scope."
+
+[[error]]
+code = "E0428"
+title = "Name defined twice"
+explain = "Two types, functions, or modules in the same place share one name. Rust can't tell which one you mean, so every name must be unique in its scope."
+fix = "Rename one of them, or delete the duplicate. For instance, change the second `struct Point` to `struct Point3D`."
+
+[[error]]
+code = "E0618"
+title = "Calling something that isn't a function"
+explain = "You put parentheses after a name, which means calling it, but that name is a value, not a function. This often happens when a variable shares a name with a function."
+fix = "Remove the parentheses if you only want the value: `count` rather than `count()`. Or rename the variable."
+
+[[error]]
+code = "E0600"
+title = "Operator doesn't work on this type"
+explain = "You applied a one-sided operator like `!` or `-` to a type that doesn't support it. For example, `!` flips a `bool` or the bits of an integer, but doesn't work on text."
+fix = "Use a type that supports it, or a different approach: `!flag` on a `bool`, or `-x` on a signed number like `i32`."
+
+[[error]]
+code = "E0604"
+title = "Only u8 can become a char with as"
+explain = "The `as` keyword converts between types, but only a `u8` can be turned into a `char` that way. Bigger numbers might not be valid characters."
+fix = "Use `char::from_u32(n)` which returns an `Option`, or cast to `u8` first: `(n as u8) as char`."
+
+[[error]]
+code = "E0606"
+title = "Impossible cast"
+explain = "You used `as` to convert between two types that Rust doesn't know how to convert directly, like a reference to a number type. Casting works only for a short list of simple conversions."
+fix = "Follow the reference first: `*r as f64` instead of `r as f64`. Or use `.into()` or `.parse()` where it fits."
+
+[[error]]
+code = "E0620"
+title = "Casting to an unsized type"
+explain = "You tried to cast to a type whose size isn't known when the program is compiled, such as a bare slice `[usize]`. Values need a known size to live in a variable."
+fix = "Cast to a reference to it instead: `&arr as &[usize]`."
+
+[[error]]
+code = "E0070"
+title = "Can't assign to this"
+explain = "The left side of an `=` must be a place that can hold a value, like a variable or a field. You tried to assign to something else, such as a constant, a function call, or a literal."
+fix = "Assign to a variable, such as `let mut x = 1; x = 2;`. Check you didn't mean `==` for comparing."
+
+[[error]]
+code = "E0107"
+title = "Wrong number of generic arguments"
+explain = "Generic types take type parameters inside `< >`, like `Vec<i32>`. You supplied too many or too few for this type, or gave some to a type that takes none."
+fix = "Match the definition: `Option<i32>` takes one, `Result<i32, String>` takes two."
+
+[[error]]
+code = "E0117"
+title = "Orphan rule: not your type, not your trait"
+explain = "You can implement a trait for a type only if one of them is defined in your own crate (your project). Otherwise two libraries could give conflicting versions of the same behavior."
+fix = "Wrap the outside type in your own struct: `struct Wrapper(Vec<i32>);` then `impl fmt::Display for Wrapper { ... }`."
+
+[[error]]
+code = "E0594"
+title = "Assigning to something immutable"
+explain = "You tried to change a value, or a field of one, that was not declared as changeable. Rust makes you opt in to change, which helps you spot where state can move."
+fix = "Add `mut` to the declaration: `let mut p = Point { x: 0, y: 0 }; p.x = 5;`."
+
+[[error]]
+code = "E0432"
+title = "Import not found"
+explain = "A `use` line points to something Rust can't find. The path might be misspelled, the item might not exist, or a crate (external library) may not be listed in `Cargo.toml`."
+fix = "Check the spelling and path, e.g. `use std::collections::HashMap;`. For outside crates, add them under `[dependencies]` in `Cargo.toml`."
+
+[[error]]
+code = "E0373"
+title = "Closure may outlive borrowed variable"
+explain = "A closure, a small inline function, borrowed a variable, but the closure may be used after that variable is gone, such as when handed to a new thread. Rust won't allow a dangling borrow."
+fix = "Use `move` so the closure takes ownership: `thread::spawn(move || println!(\"{v:?}\"));`."
+
+[[error]]
+code = "E0503"
+title = "Using a value that's mutably borrowed"
+explain = "A mutable borrow gives exclusive access for as long as it's used. Touching the original value in the meantime is blocked, so nothing can change under the borrower's feet."
+fix = "Finish with the mutable borrow before using the value again, or only go through the borrow while it is active."
+
+[[error]]
+code = "E0658"
+title = "Unstable feature"
+explain = "You used something that exists only in nightly Rust, the experimental version, and isn't finished yet. The stable version you're using doesn't allow it."
+fix = "Look for a stable alternative, which is usually the better path while learning."
+
+[[error]]
+pattern = "expected `;`"
+title = "Missing semicolon"
+explain = "Most statements in Rust end with a semicolon, and the compiler found a spot where one should be. The mistake is often at the end of the line just before the one it points to."
+fix = "Add `;` at the end of the previous statement: `let x = 5;`."
+
+[[error]]
+pattern = "mismatched closing delimiter"
+title = "Brackets don't pair up"
+explain = "Each opening bracket, `(`, `[` or `{`, needs a matching closing one of the same kind. Rust found one closing with the wrong partner. The message marks both the opener and where it got confused."
+fix = "Make the pair match, such as `foo(a[0])` rather than `foo(a[0)]`. Good editors highlight matching brackets."
+
+[[error]]
+pattern = "unclosed delimiter"
+title = "A bracket was never closed"
+explain = "Something was opened with `(`, `[`, or `{` and never closed. The compiler points at the opener it couldn't match, which is a good place to start looking."
+fix = "Add the missing closer, for example the final `}` at the end of a function."
+
+[[error]]
+pattern = "this file contains an unclosed delimiter"
+title = "Unfinished block in the file"
+explain = "By the end of the file, one or more `{`, `(`, or `[` were still open. Often a `}` is missing somewhere above, and the compiler only notices at the very end."
+fix = "Check each `{` has a matching `}`. Re-indenting the code makes the missing spot easy to spot."
+
+[[error]]
+pattern = "expected one of"
+title = "Unexpected token"
+explain = "Rust was reading your code and found something that doesn't fit at that spot. The message lists what would have been fine there. Common causes are a missing comma or semicolon, or a misspelled keyword."
+fix = "Look at the token just before the arrow and check for a missing `,` or `;`, such as `let a = [1, 2, 3];`."
+
+[[error]]
+pattern = "cannot find macro"
+title = "Unknown macro"
+explain = "Macros are special commands ending in `!`, like `println!`. Rust doesn't know the one you wrote, so it might be misspelled, or it may come from a crate you haven't added."
+fix = "Check the spelling, for instance `println!(\"hi\");` and not `printl!`. Add `use` or a dependency for macros from other crates."
+
+[[error]]
+pattern = "unknown start of token"
+title = "Strange character in code"
+explain = "Rust met a character it doesn't understand at this spot. A typical cause is a curly quote or a fancy dash pasted from a document or chat instead of a plain keyboard character."
+fix = "Retype it with a plain character, such as a straight quote `\"` instead of a curly one."
+
+[[error]]
+pattern = "unterminated double quote string"
+title = "String never closed"
+explain = "A piece of text started with a double quote `\"` but there's no closing quote. Rust kept reading to the end of the file looking for one."
+fix = "Add the closing quote: `println!(\"Hello\");`. A quote inside the text needs a backslash, like `\\\"`."
+
+[[error]]
+pattern = "missing `fn` or `struct`"
+title = "Unexpected code outside a function"
+explain = "At the top level of a file, Rust expects definitions like functions or structs, not loose statements. A common cause is code written outside `main`, or a stray brace closing things too early."
+fix = "Put statements inside a function: `fn main() { let x = 5; }`, and check your `}` count."
