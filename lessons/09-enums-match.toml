@@ -1,0 +1,137 @@
+id = "09-enums-match"
+order = 9
+chapter = "Building Your Own Types"
+title = "Weather or Not"
+xp = 100
+concepts = ["enum", "variants", "match", "exhaustiveness", "_ catch-all"]
+
+intro = '''
+# One thing, several shapes
+
+Sometimes a value can be one of a few different kinds. A traffic light is red, yellow, or green, never two at once. Rust models this with an **enum**.
+
+enum :: a type whose value is exactly one of several named options
+variant :: one of the options inside an enum
+match :: checks a value against patterns, one arm at a time, and runs the first arm that fits
+arm :: one `pattern => result` line inside a match
+_ :: a catch-all pattern that matches anything not listed above it
+
+Variants can carry data too:
+
+```rust
+enum Snack {
+    Seaweed,
+    Shrimp(u32),
+    Plankton { scoops: u32 },
+}
+
+fn describe(s: &Snack) -> String {
+    match s {
+        Snack::Seaweed => String::from("just seaweed"),
+        Snack::Shrimp(n) => format!("{} shrimp", n),
+        Snack::Plankton { scoops } => format!("{} scoops of plankton", scoops),
+    }
+}
+```
+
+You name a variant with `::`, like `Snack::Shrimp(3)`. Inside a match arm you can pull the carried data out into a name, like `n` or `scoops`.
+
+Here is the clever bit: `match` must cover **every** possible variant. If you forget one, the compiler refuses with error **E0004** ("non-exhaustive patterns"). That is a safety net, not a scolding. It means you can never forget a case.
+
+Too many variants to list? End with `_`:
+
+```rust
+match s {
+    Snack::Seaweed => 1,
+    _ => 0,
+}
+```
+
+> Pinch tip: put `_` last, because arms are checked from top to bottom. If it came first, it would grab everything!
+'''
+
+goal = "Finish `advice` so it uses `match` on the Weather: Sunny gives \"Wear sunglasses\", Rainy(mm) with 10 or more mm gives \"Stay in your shell\", any lighter Rainy gives \"Bring a seaweed umbrella\", and Storm gives \"Hide under a rock\" (exact text)."
+
+starter = '''
+enum Weather {
+    Sunny,
+    Rainy(u32),
+    Storm { wind: u32 },
+}
+
+fn advice(w: &Weather) -> String {
+    // Use `match w { ... }` to cover all three variants.
+    // Rainy carries millimetres of rain; Storm carries wind speed (ignore it with `..`).
+    todo!()
+}
+
+fn main() {
+    println!("{}", advice(&Weather::Sunny));
+    println!("{}", advice(&Weather::Rainy(4)));
+    println!("{}", advice(&Weather::Storm { wind: 90 }));
+}
+'''
+
+solution = '''
+enum Weather {
+    Sunny,
+    Rainy(u32),
+    Storm { wind: u32 },
+}
+
+fn advice(w: &Weather) -> String {
+    match w {
+        Weather::Sunny => String::from("Wear sunglasses"),
+        Weather::Rainy(mm) => {
+            if *mm >= 10 {
+                String::from("Stay in your shell")
+            } else {
+                String::from("Bring a seaweed umbrella")
+            }
+        }
+        Weather::Storm { .. } => String::from("Hide under a rock"),
+    }
+}
+
+fn main() {
+    println!("{}", advice(&Weather::Sunny));
+    println!("{}", advice(&Weather::Rainy(4)));
+    println!("{}", advice(&Weather::Storm { wind: 90 }));
+}
+'''
+
+hints = [
+  "Start with `match w {` and write one arm for each variant, like `Weather::Sunny => ...,`.",
+  "To grab the number inside Rainy, write `Weather::Rainy(mm) => ...`. Because `w` is a reference, `mm` is a `&u32`, so compare with `*mm >= 10`. For Storm, `Weather::Storm { .. }` means \"I do not need the wind\".",
+  "An arm can hold a block: `Weather::Rainy(mm) => { if *mm >= 10 { String::from(\"Stay in your shell\") } else { String::from(\"Bring a seaweed umbrella\") } }`.",
+]
+
+success = "Match made in the deep! An enum says \"one of these shapes\", and match makes the compiler check that you handled every shape. No forgotten cases, ever."
+
+[check]
+tests = '''
+#[test]
+fn sunny_advice() {
+    assert_eq!(advice(&Weather::Sunny), "Wear sunglasses", "Sunny should give \"Wear sunglasses\"");
+}
+
+#[test]
+fn light_rain_advice() {
+    assert_eq!(advice(&Weather::Rainy(9)), "Bring a seaweed umbrella", "9 mm of rain is light: \"Bring a seaweed umbrella\"");
+}
+
+#[test]
+fn heavy_rain_advice() {
+    assert_eq!(advice(&Weather::Rainy(10)), "Stay in your shell", "10 mm of rain or more should give \"Stay in your shell\"");
+    assert_eq!(advice(&Weather::Rainy(50)), "Stay in your shell", "50 mm of rain should give \"Stay in your shell\"");
+}
+
+#[test]
+fn storm_advice() {
+    assert_eq!(advice(&Weather::Storm { wind: 120 }), "Hide under a rock", "Storm should give \"Hide under a rock\"");
+}
+'''
+
+[[check.must_contain]]
+text = "match"
+why = "This lesson is about `match`. Use `match w { ... }` to pick the advice for each variant."

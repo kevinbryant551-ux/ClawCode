@@ -1,0 +1,84 @@
+id = "02-variables"
+order = 2
+chapter = "Getting Started"
+title = "Keeping Things in Buckets"
+xp = 60
+concepts = ["let", "mut", "immutability", "{} placeholders", "shadowing"]
+
+intro = '''
+# Variables
+
+A variable is a labelled bucket that holds a value, so you can use it again later.
+
+let :: creates a new variable. `let lives = 3;` puts the value 3 in a bucket named `lives`.
+mut :: short for "mutable". It allows a variable's value to change later.
+shadowing :: making a brand new variable with the same name using `let` again. The new one hides the old one.
+
+Here is the surprising part: in Rust, variables **cannot change by default**.
+
+```rust
+fn main() {
+    let coins = 5;
+    println!("Coins: {}", coins);
+
+    let mut steps = 0;
+    steps = steps + 1;
+    println!("Steps: {}", steps);
+}
+```
+
+`coins` is locked. If you wrote `coins = 6;` the compiler would refuse (error E0384). `steps` has `mut`, so changing it is fine.
+
+The `{}` inside `println!` is a placeholder. Rust swaps it for the value of the variable listed after the text.
+
+Shadowing looks like this:
+
+```rust
+let size = 3;
+let size = size + 1; // a new variable, now 4
+```
+
+Your turn: the starter tries to change a locked variable, so it won't compile. Read the error message, then unlock the variable.
+
+> Pinch tip: locked-by-default is a safety feature. When you see `mut`, you know that value is going to change somewhere.
+'''
+
+goal = 'Fix the program so it compiles and prints "Lives: 3" followed by "Lives: 2", by making the variable mutable.'
+
+starter = '''
+fn main() {
+    let lives = 3;
+    println!("Lives: {}", lives);
+
+    lives = 2;
+    println!("Lives: {}", lives);
+}
+'''
+
+solution = '''
+fn main() {
+    let mut lives = 3;
+    println!("Lives: {}", lives);
+
+    lives = 2;
+    println!("Lives: {}", lives);
+}
+'''
+
+hints = [
+  "Run it and read the error. It mentions assigning twice to an immutable variable.",
+  "The variable `lives` is locked. There is a keyword that unlocks a variable.",
+  "Change the first line to `let mut lives = 3;`.",
+]
+
+success = "Nicely done! Variables are locked unless you say `mut`. Rust makes you opt in to change, which keeps surprises away."
+
+[check]
+expected_output = '''
+Lives: 3
+Lives: 2
+'''
+
+[[check.must_contain]]
+text = "mut"
+why = "This lesson is about `mut`, so make the variable mutable."

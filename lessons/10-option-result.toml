@@ -1,0 +1,174 @@
+id = "10-option-result"
+order = 10
+chapter = "Handling the Unexpected"
+title = "Maybe, Maybe Not"
+xp = 120
+concepts = ["Option", "Some", "None", "Result", "Ok", "Err", "if let", "?", "unwrap"]
+
+intro = '''
+# When things might go wrong
+
+Looking for a shell on the beach? Maybe you find one, maybe you don't. Many languages use a special "null" value for "nothing here", and it causes crashes. Rust has no null. Instead it has two enums that make you deal with the problem up front.
+
+Option :: an enum meaning "maybe a value": either `Some(value)` or `None`
+Result :: an enum meaning "worked or failed": either `Ok(value)` or `Err(error)`
+if let :: a short match that only cares about one pattern
+? :: inside a function that returns Result, passes an `Err` straight back to the caller
+unwrap :: grabs the value inside, but crashes your whole program on `None` or `Err`
+
+Here they are in action:
+
+```rust
+fn first_even(nums: &[i32]) -> Option<i32> {
+    for &n in nums {
+        if n % 2 == 0 {
+            return Some(n);
+        }
+    }
+    None
+}
+
+fn main() {
+    match first_even(&[3, 5, 8]) {
+        Some(n) => println!("found {}", n),
+        None => println!("no even numbers"),
+    }
+
+    if let Some(n) = first_even(&[1, 3]) {
+        println!("this will not print {}", n);
+    }
+
+    match "42".parse::<u32>() {
+        Ok(n) => println!("number: {}", n),
+        Err(_) => println!("not a number"),
+    }
+}
+```
+
+The type `&[i32]` is a **slice**: a borrowed view of a list of values. `&[&str]` is a slice of text pieces.
+
+You can use `match` on both types, just like an enum, because they are enums. The compiler makes you handle `None` and `Err`, so a missing value can't sneak up on you.
+
+Calling `.unwrap()` skips that safety: it panics (crashes) when there is no value. Fine for quick experiments, risky for real programs.
+
+> Pinch tip: when a function can fail, return a Result and let the caller decide what to do. Much kinder than a crash!
+'''
+
+goal = "Write find_shell (return Some(index) of the first matching name in the slice, or None) and parse_depth (turn text into a u32 as Ok, or return Err with a friendly message that includes the text), without using unwrap()."
+
+starter = '''
+// Return the position of `name` inside `shells`, or None if it is not there.
+fn find_shell(shells: &[&str], name: &str) -> Option<usize> {
+    todo!()
+}
+
+// Turn text like "25" into a depth. If it is not a whole number,
+// return Err with a friendly message that includes the text.
+fn parse_depth(text: &str) -> Result<u32, String> {
+    todo!()
+}
+
+fn main() {
+    let shells = ["conch", "cowrie", "scallop"];
+
+    match find_shell(&shells, "cowrie") {
+        Some(i) => println!("cowrie is at spot {}", i),
+        None => println!("no cowrie here"),
+    }
+
+    match parse_depth("25") {
+        Ok(d) => println!("diving {} metres", d),
+        Err(msg) => println!("{}", msg),
+    }
+}
+'''
+
+solution = '''
+fn find_shell(shells: &[&str], name: &str) -> Option<usize> {
+    for i in 0..shells.len() {
+        if shells[i] == name {
+            return Some(i);
+        }
+    }
+    None
+}
+
+fn parse_depth(text: &str) -> Result<u32, String> {
+    match text.parse::<u32>() {
+        Ok(d) => Ok(d),
+        Err(_) => Err(format!("'{}' is not a depth I can dive to", text)),
+    }
+}
+
+fn main() {
+    let shells = ["conch", "cowrie", "scallop"];
+
+    match find_shell(&shells, "cowrie") {
+        Some(i) => println!("cowrie is at spot {}", i),
+        None => println!("no cowrie here"),
+    }
+
+    match parse_depth("25") {
+        Ok(d) => println!("diving {} metres", d),
+        Err(msg) => println!("{}", msg),
+    }
+}
+'''
+
+hints = [
+  "For find_shell, loop over positions with `for i in 0..shells.len()` and compare `shells[i] == name`. When they match, `return Some(i);`.",
+  "If the loop finishes without finding anything, the last line of find_shell should be `None` (no semicolon, no quotes).",
+  "For parse_depth, `match text.parse::<u32>() { Ok(d) => Ok(d), Err(_) => Err(format!(\"'{}' is not a depth\", text)) }`. The `Ok` and `Err` on the left are what parse gives you; the ones on the right are what you return.",
+]
+
+success = "You did it, Pinch-perfect! You finished the whole first course. You can now make your own types with struct and enum, and handle missing or broken values with Option and Result instead of crashing. The tide is yours, champion of the shore!"
+
+[check]
+tests = '''
+#[test]
+fn finds_shell_in_middle() {
+    let shells = ["conch", "cowrie", "scallop"];
+    assert_eq!(find_shell(&shells, "cowrie"), Some(1), "cowrie is at index 1");
+}
+
+#[test]
+fn finds_first_shell() {
+    let shells = ["conch", "cowrie", "scallop"];
+    assert_eq!(find_shell(&shells, "conch"), Some(0), "conch is at index 0");
+}
+
+#[test]
+fn missing_shell_is_none() {
+    let shells = ["conch", "cowrie"];
+    assert_eq!(find_shell(&shells, "pearl"), None, "pearl is not in the list, so expect None");
+}
+
+#[test]
+fn empty_list_is_none() {
+    let shells: [&str; 0] = [];
+    assert_eq!(find_shell(&shells, "conch"), None, "an empty list has no shells, so expect None");
+}
+
+#[test]
+fn good_depth_parses() {
+    assert_eq!(parse_depth("25"), Ok(25), "\"25\" should become Ok(25)");
+    assert_eq!(parse_depth("0"), Ok(0), "\"0\" should become Ok(0)");
+}
+
+#[test]
+fn bad_depth_is_friendly_error() {
+    match parse_depth("deep") {
+        Ok(_) => panic!("\"deep\" is not a number, so parse_depth should return Err"),
+        Err(msg) => assert!(msg.contains("deep"), "the error message should include the bad text \"deep\", got: {}", msg),
+    }
+}
+
+#[test]
+fn negative_depth_is_error() {
+    assert!(parse_depth("-5").is_err(), "\"-5\" cannot be a u32, so it should be an Err");
+}
+'''
+
+[[check.must_not_contain]]
+text = "unwrap()"
+why = "unwrap() crashes the program when there is no value. Handle both cases with `match` (Some/None or Ok/Err) instead."

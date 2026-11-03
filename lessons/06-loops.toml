@@ -1,0 +1,174 @@
+id = "06-loops"
+order = 6
+chapter = "Control Flow"
+title = "Round and Round"
+xp = 90
+concepts = ["loop", "break", "while", "for", "ranges", "accumulator"]
+
+intro = '''
+# Round and Round
+
+Crabs scuttle back and forth all day. Programs need to repeat things too, and Rust gives you three ways.
+
+loop :: repeats forever, until you stop it with `break`.
+break :: jumps out of the nearest loop.
+while :: repeats as long as its condition is true.
+for :: walks through a range (or other collection), one item at a time.
+
+```rust
+let mut steps = 0;
+loop {
+    steps += 1;
+    if steps == 3 {
+        break;
+    }
+}
+```
+
+`steps += 1` is shorthand for `steps = steps + 1`. The variable has to be `mut` because it changes.
+
+## while and for
+
+```rust
+let mut n = 10;
+while n > 7 {
+    println!("{n}");
+    n -= 1;
+}
+
+for i in 1..=3 {
+    println!("pinch #{i}");
+}
+```
+
+Range :: `1..=3` means 1, 2, 3 (both ends included). `1..3` stops *before* 3, so it gives only 1 and 2.
+
+Use `for` when you know what to walk through, `while` when you repeat until something changes.
+
+## Collecting a total
+
+A very common pattern is an **accumulator**: a `mut` variable that starts at 0 and grows each time around.
+
+```rust
+let mut total = 0;
+for i in 1..=4 {
+    total += i;
+}
+// total is now 10
+```
+
+> Pinch tip: if your program seems frozen, you may have a `loop` or `while` that never ends. Press Ctrl+C and check your `break` or your condition!
+'''
+
+goal = "Write `sum_to` (add 1 through n with a `for` loop), `doublings` (count how many times 1 must double with a `while` loop to pass a limit), and make `main` print the crab count for 1 to 15 exactly as in the comments."
+
+starter = '''
+// Add up 1 + 2 + ... + n. Use a `for` loop with a mut total.
+fn sum_to(n: u32) -> u32 {
+    todo!()
+}
+
+// Start at 1 and keep doubling while the value is <= limit.
+// Return how many doublings it took. doublings(10) is 4: 1 -> 2 -> 4 -> 8 -> 16.
+fn doublings(limit: u32) -> u32 {
+    todo!()
+}
+
+// Print the numbers 1 to 15, one per line, but:
+//   multiples of 3 print "Snip" instead of the number
+//   multiples of 5 print "Snap" instead of the number
+//   multiples of both print "SnipSnap"
+// Hint: `x % 3 == 0` is true when x divides evenly by 3.
+fn main() {
+}
+'''
+
+solution = '''
+fn sum_to(n: u32) -> u32 {
+    let mut total = 0;
+    for i in 1..=n {
+        total += i;
+    }
+    total
+}
+
+fn doublings(limit: u32) -> u32 {
+    let mut value = 1;
+    let mut count = 0;
+    while value <= limit {
+        value *= 2;
+        count += 1;
+    }
+    count
+}
+
+fn main() {
+    for i in 1..=15 {
+        if i % 15 == 0 {
+            println!("SnipSnap");
+        } else if i % 3 == 0 {
+            println!("Snip");
+        } else if i % 5 == 0 {
+            println!("Snap");
+        } else {
+            println!("{i}");
+        }
+    }
+}
+'''
+
+hints = [
+  "For `sum_to`: make `let mut total = 0;`, loop with `for i in 1..=n`, do `total += i;`, and end the function with just `total`.",
+  "For `doublings`, keep two mut variables, `value` (starts at 1) and `count` (starts at 0). Inside `while value <= limit`, do `value *= 2;` and `count += 1;`.",
+  "In `main`, use `for i in 1..=15` with an `if` chain. Check the \"both\" case (`i % 15 == 0`) FIRST, then `% 3`, then `% 5`, then `else { println!(\"{i}\"); }`.",
+]
+
+success = "Looping like a pro! `for` walks a range, `while` repeats on a condition, and an accumulator turns many steps into one answer."
+
+[check]
+expected_output = '''
+1
+2
+Snip
+4
+Snap
+Snip
+7
+8
+Snip
+Snap
+11
+Snip
+13
+14
+SnipSnap
+'''
+
+tests = '''
+#[test]
+fn sum_to_small() {
+    assert_eq!(sum_to(1), 1, "sum_to(1) should be 1");
+    assert_eq!(sum_to(4), 10, "sum_to(4) should be 1+2+3+4 = 10");
+}
+
+#[test]
+fn sum_to_bigger_and_zero() {
+    assert_eq!(sum_to(100), 5050, "sum_to(100) should be 5050");
+    assert_eq!(sum_to(0), 0, "sum_to(0) should be 0 (nothing to add)");
+}
+
+#[test]
+fn doublings_count() {
+    assert_eq!(doublings(10), 4, "doublings(10): 1,2,4,8,16 is 4 doublings");
+    assert_eq!(doublings(1), 1, "doublings(1): 1 is <= 1 so double once to 2");
+    assert_eq!(doublings(0), 0, "doublings(0): 1 is already above 0, so 0 doublings");
+}
+'''
+
+[[check.must_contain]]
+text = "for "
+why = "Use a `for` loop (like `for i in 1..=n`) somewhere in your solution."
+
+[[check.must_contain]]
+text = "while "
+why = "Use a `while` loop for the doubling counter."

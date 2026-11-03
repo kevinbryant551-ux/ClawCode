@@ -1,0 +1,70 @@
+id = "01-hello"
+order = 1
+chapter = "Getting Started"
+title = "Hello, Tide Pool!"
+xp = 50
+concepts = ["fn main", "println!", "strings", "semicolons"]
+
+intro = '''
+# Your first program
+
+Welcome, new shell-mate! I'm Pinch. Let's get you writing real Rust right away.
+
+A program is just a list of instructions the computer follows, top to bottom. Rust programs always start in one special spot, a function called `main`.
+
+fn :: short for "function", a named bundle of instructions. You make one with the word `fn`.
+main :: the function Rust runs first when your program starts.
+println! :: prints a line of text on the screen, then moves to the next line.
+string :: text wrapped in double quotes, like `"Hello"`.
+
+See how `println!` ends with a `!`? That means it is a **macro**, a special helper that Rust expands into more code for you. For now just remember to type the `!`.
+
+Here is a whole program:
+
+```rust
+fn main() {
+    println!("Hi from the sea floor!");
+    println!("Second line.");
+}
+```
+
+A few things to notice:
+
+- The instructions live between the curly braces `{` and `}`.
+- Each instruction ends with a semicolon `;`. It works like a full stop in a sentence.
+- Text must be in double quotes, and what you type is exactly what gets printed.
+
+Your turn: the starter code is close but says slightly the wrong things. Fix the text so it prints the right lines.
+
+> Pinch tip: the compiler is picky about every comma and quote, and that is a good thing. It catches typos before they bite you!
+'''
+
+goal = 'Make the program print exactly two lines: "Hello, Rust!" and then "I am learning with Pinch."'
+
+starter = '''
+fn main() {
+    println!("Hello, World!");
+    println!("I am learning with Crab.");
+}
+'''
+
+solution = '''
+fn main() {
+    println!("Hello, Rust!");
+    println!("I am learning with Pinch.");
+}
+'''
+
+hints = [
+  "You don't need to add any new lines. Just change the words inside the quotes.",
+  "The first line should say Rust instead of World. The second should end with Pinch instead of Crab.",
+  "Capital letters, commas and the final period all count. Expected: println!(\"Hello, Rust!\"); then println!(\"I am learning with Pinch.\");",
+]
+
+success = "Shell yeah! You wrote a function, called a macro, and printed text. Every Rust program you ever write starts with fn main()."
+
+[check]
+expected_output = '''
+Hello, Rust!
+I am learning with Pinch.
+'''
