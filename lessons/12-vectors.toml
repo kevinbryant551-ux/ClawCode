@@ -223,3 +223,50 @@ choices = [
 ]
 answer = 1
 explain = "You need `&mut v` to be allowed to change items, and `*n` to reach the value behind the reference."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Finish `first_or_zero` with `.get`, which returns an Option instead of crashing on an empty Vec."
+code = '''
+fn first_or_zero(v: &Vec<i32>) -> i32 {
+    match v.___(0) {
+        Some(n) => ___n,
+        ___ => 0,
+    }
+}
+'''
+answer = ["get", "*", "None"]
+decoys = ["[0]", "&", "Err", "pop"]
+explain = "`v.get(0)` gives `Some(&item)` or `None`, so an empty Vec is safe. `v[0]` would panic. `*n` copies the number out of the reference."
+
+[[tap]]
+kind = "fill"
+prompt = "Double every item in place. The Vec is borrowed mutably."
+code = '''
+fn double_all(v: ___ Vec<i32>) {
+    for n in v {
+        ___n *= 2;
+    }
+}
+'''
+answer = ["&mut", "*"]
+decoys = ["&", "mut", "+"]
+explain = "`&mut Vec` lets the function change the caller's Vec. Each `n` is a `&mut i32`, and `*n` reaches the number itself."
+
+[[tap]]
+kind = "order"
+prompt = "Build `countdown`: a Vec from n down to 1."
+code = '''
+fn countdown(n: i32) -> Vec<i32> {
+    let mut out = Vec::new();
+    let mut i = n;
+    while i > 0 {
+        out.push(i);
+        i -= 1;
+    }
+    out
+}
+'''
+decoys = ['    let out = Vec::new();', '        out.pop(i);']
+explain = "`Vec::new()` makes an empty Vec, and `.push` adds to the end. The Vec must be `mut` to grow."

@@ -262,3 +262,74 @@ choices = [
 ]
 answer = 0
 explain = "`entry(...).or_insert(0)` returns a mutable reference to the value, creating it at 0 if missing. The `*` lets you add to it."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+# In a boss lesson, every correct blank (or line) is one hit point.
+[[tap]]
+kind = "fill"
+prompt = "Round 1: split the catch into lowercase words, then tally them."
+code = '''
+fn parse_catch(text: &str) -> Vec<String> {
+    let mut out = Vec::___();
+    for word in text.___() {
+        out.push(word.to_lowercase());
+    }
+    out
+}
+
+fn tally(items: &Vec<String>) -> HashMap<String, u32> {
+    let mut map = HashMap::new();
+    for item in items {
+        let c = map.___(item.to_string()).or_insert(0);
+        *c += 1;
+    }
+    map
+}
+'''
+answer = ["new", "split_whitespace", "entry"]
+decoys = ["empty", "chars", "get", "insert"]
+explain = "`Vec::new()` starts empty; `split_whitespace` gives the words; `entry(...).or_insert(0)` makes counting easy."
+
+[[tap]]
+kind = "fill"
+prompt = "Round 2: find the biggest number. A match arm can have an `if` guard."
+code = '''
+fn biggest(v: &Vec<u32>) -> Option<u32> {
+    let mut best: Option<u32> = ___;
+    for &n in v {
+        match best {
+            Some(b) ___ b >= n => {}
+            _ => best = ___(n),
+        }
+    }
+    best
+}
+'''
+answer = ["None", "if", "Some"]
+decoys = ["0", "when", "Ok"]
+explain = "Start with `None` (nothing seen yet). `Some(b) if b >= n` only matches when the old best is still bigger; otherwise `n` becomes the new best."
+
+[[tap]]
+kind = "fill"
+prompt = "Final round: bump every number, and join items as UPPERCASE with commas."
+code = '''
+fn bump_all(v: &mut Vec<u32>) {
+    for n in v {
+        ___n += 1;
+    }
+}
+
+fn banner(items: &Vec<String>) -> String {
+    let mut out = String::new();
+    for item in items {
+        if ___out.is_empty() {
+            out.push(',');
+        }
+        out.push_str(___item.to_uppercase());
+    }
+    out
+}
+'''
+answer = ["*", "!", "&"]
+decoys = ["&mut", "not", "**"]
+explain = "`*n` changes the number behind the reference. `!` means not. `push_str` wants a `&str`, so `&` borrows the new String."

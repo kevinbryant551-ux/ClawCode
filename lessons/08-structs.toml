@@ -200,3 +200,42 @@ println!("{}", f.is_big());
 choices = ["false", "true", "36", "It does not compile"]
 answer = 1
 explain = "The length starts at 1, then 1 + 20 + 15 = 36. That is more than 30, so is_big gives true."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Write `Crab::new`: the given name, and 0 shells to start."
+code = '''
+struct Crab {
+    name: String,
+    shells: u32,
+}
+
+impl Crab {
+    fn new(name: &str) -> ___ {
+        Crab {
+            name: name.___(),
+            shells: ___,
+        }
+    }
+}
+'''
+answer = ["Crab", "to_string", "0"]
+decoys = ["Self()", "len", "\"0\"", "String"]
+explain = "`new` is just a normal function that returns a `Crab`. `.to_string()` turns the borrowed `&str` into an owned `String`."
+
+[[tap]]
+kind = "fill"
+prompt = "Finish the methods: `collect` changes the crab, `is_rich` only looks at it."
+code = '''
+fn collect(___ self, n: u32) {
+    self.shells += n;
+}
+
+fn is_rich(___ self) -> bool {
+    self.shells ___ 10
+}
+'''
+answer = ["&mut", "&", ">="]
+decoys = [">", "mut", "=>"]
+explain = "`&mut self` borrows the crab to change it; `&self` borrows it just to read. `>=` means \"10 or more\"."

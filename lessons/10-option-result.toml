@@ -215,3 +215,36 @@ fn half(s: &str) -> u32 {
 choices = ["Yes", "No: `?` needs a function that returns Result (or Option)", "No: parse is not a method on &str", "Yes, but it panics on bad text"]
 answer = 1
 explain = "`?` hands an Err back to the caller, so the function must return a Result. Here it returns u32, which is error E0277."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Write `find_shell`: Some(index) of the first match, or None if it isn't there."
+code = '''
+fn find_shell(shells: &[&str], name: &str) -> ___<usize> {
+    for i in 0..shells.len() {
+        if shells[i] == name {
+            return ___(i);
+        }
+    }
+    ___
+}
+'''
+answer = ["Option", "Some", "None"]
+decoys = ["Result", "Ok", "null", "-1"]
+explain = "`Option<T>` is either `Some(value)` or `None`. Rust has no `null`, so \"nothing found\" is spelled `None`."
+
+[[tap]]
+kind = "fill"
+prompt = "Write `parse_depth`: Ok with the number, or Err with a friendly message."
+code = '''
+fn parse_depth(text: &str) -> ___<u32, String> {
+    match text.parse::<u32>() {
+        ___(d) => Ok(d),
+        Err(_) => ___(format!("'{}' is not a depth I can dive to", text)),
+    }
+}
+'''
+answer = ["Result", "Ok", "Err"]
+decoys = ["Option", "Some", "None", "unwrap"]
+explain = "`Result<T, E>` is `Ok(value)` on success or `Err(error)` on failure. Matching on it handles both without `unwrap()`."

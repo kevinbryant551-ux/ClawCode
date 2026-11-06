@@ -237,3 +237,38 @@ choices = [
 ]
 answer = 1
 explain = "The first `hi` creates the entry at 0 then adds 1, and the second `hi` adds another 1. `yo` is new, so it ends at 1."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Count how often each word appears using the entry API."
+code = '''
+use std::collections::___;
+
+fn count_words(text: &str) -> HashMap<String, u32> {
+    let mut counts = HashMap::new();
+    for word in text.split_whitespace() {
+        let c = counts.___(word.to_string()).___(0);
+        ___c += 1;
+    }
+    counts
+}
+'''
+answer = ["HashMap", "entry", "or_insert", "*"]
+decoys = ["Vec", "get", "insert", "&"]
+explain = "`entry(key).or_insert(0)` finds the count, creating it as 0 the first time, and gives back a `&mut u32`. `*c += 1` bumps it."
+
+[[tap]]
+kind = "fill"
+prompt = "Look up one word, giving 0 if it isn't in the map."
+code = '''
+fn count_of(map: &HashMap<String, u32>, word: &str) -> u32 {
+    match map.___(word) {
+        ___(n) => *n,
+        None => ___,
+    }
+}
+'''
+answer = ["get", "Some", "0"]
+decoys = ["entry", "Ok", "None", "null"]
+explain = "`map.get(key)` returns an `Option`: `Some(&value)` if the key is there, `None` if not."

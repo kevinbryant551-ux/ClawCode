@@ -259,3 +259,74 @@ question = "Inside parse_battle you write `let m = parse_move(piece)?;`. If pars
 choices = ["The program panics", "m becomes 0", "parse_battle returns that Err right away", "The Err is ignored"]
 answer = 2
 explain = "`?` hands the Err straight back to the caller of parse_battle and skips the rest of the function."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+# In a boss lesson, every correct blank (or line) is one hit point.
+[[tap]]
+kind = "fill"
+prompt = "Round 1: a Hero struct with 30 HP, and a trait with a default banner."
+code = '''
+impl Hero {
+    fn new(name: &str) -> ___ {
+        Hero { name: name.to_string(), hp: ___ }
+    }
+}
+
+trait Describe {
+    fn title(&self) -> String;
+
+    fn banner(&self) -> String {
+        format!("=== {} ===", self.___())
+    }
+}
+
+impl Describe ___ Hero {
+    fn title(&self) -> String {
+        self.name.clone()
+    }
+}
+'''
+answer = ["Hero", "30", "title", "for"]
+decoys = ["self", "banner", "in", "&Hero"]
+explain = "A trait's default method can call its other methods through `self`. `impl Describe for Hero` only has to supply `title`."
+
+[[tap]]
+kind = "fill"
+prompt = "Round 2: damage for each move, then total and count big hits with iterators."
+code = '''
+fn damage(m: &Move) -> u32 {
+    match m {
+        Move::Claw => 5,
+        Move::___(n) => n * 2,
+        Move::Retreat => 0,
+    }
+}
+
+fn total_damage(moves: &[Move]) -> u32 {
+    moves.iter().___(|m| damage(m)).sum()
+}
+
+fn count_big_hits(moves: &[Move]) -> usize {
+    moves.iter().___(|m| damage(m) >= 10).___()
+}
+'''
+answer = ["Pinch", "map", "filter", "count"]
+decoys = ["Claw", "sum", "len", "find"]
+explain = "`map` turns moves into damage numbers, `filter` keeps the big ones, and `count` counts what's left."
+
+[[tap]]
+kind = "fill"
+prompt = "Final round: parse a whole battle script. Any bad move stops the parse with its error."
+code = '''
+fn parse_battle(script: &str) -> ___<Vec<Move>, String> {
+    let mut moves = Vec::new();
+    for piece in script.split(',') {
+        let m = parse_move(piece)___;
+        moves.___(m);
+    }
+    ___(moves)
+}
+'''
+answer = ["Result", "?", "push", "Ok"]
+decoys = ["Option", ".unwrap()", "insert", "Some"]
+explain = "`?` returns the first `Err` straight away. If every move parses, `Ok(moves)` hands back the full list. The Leviathan is beaten!"

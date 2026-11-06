@@ -151,3 +151,34 @@ let n = shout(word);
 choices = ["Write `let mut word`", "Write `shout(*word)`", "Write `shout(&word)`", "Write `shout(word.len())`"]
 answer = 2
 explain = "The function wants a borrowed String, so lend it with `&word` at the call site. word stays yours afterwards."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Make `name_length` borrow the String instead of taking ownership, so `main` can still print `name`."
+code = '''
+fn name_length(name: ___String) -> usize {
+    name.len()
+}
+
+fn main() {
+    let name = String::from("Pinch");
+    let length = name_length(___name);
+    println!("{} has {} letters", name, length);
+}
+'''
+answer = ["&", "&"]
+decoys = ["&mut ", "*", ".clone()"]
+explain = "`&` means \"borrow\": the function can look at the value, but `main` still owns it, so `name` is still usable afterwards."
+
+[[tap]]
+kind = "fill"
+prompt = "Which lines still compile? `a` gives its String away to `b` (a move). Pick the variable that is still valid."
+code = '''
+let a = String::from("shell");
+let b = a;              // the String moves into b
+println!("{}", ___);    // only one of them still owns it
+'''
+answer = ["b"]
+decoys = ["a", "&a"]
+explain = "After `let b = a;` the String belongs to `b`. Using `a` gives error E0382 \"borrow of moved value\"."

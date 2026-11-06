@@ -197,3 +197,35 @@ question = "What does `.enumerate()` add to each item?"
 choices = ["Its length", "A random number", "Its index, as a (index, item) pair", "A copy of the item"]
 answer = 2
 explain = "enumerate turns each item into a pair `(index, item)`, counting from 0."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Sum the squares, and count items over 10, with iterator chains."
+code = '''
+fn sum_of_squares(v: &[i32]) -> i32 {
+    v.iter().___(|x| x * x).___()
+}
+
+fn count_big(v: &[i32]) -> usize {
+    v.iter().___(|x| **x > 10).count()
+}
+'''
+answer = ["map", "sum", "filter"]
+decoys = ["for_each", "collect", "find", "len"]
+explain = "`map` transforms each item, `filter` keeps the ones where the closure says true, and `sum`/`count` finish the chain."
+
+[[tap]]
+kind = "order"
+prompt = "Build `labelled`: turn [\"a\", \"b\"] into [\"0:a\", \"1:b\"]."
+code = '''
+fn labelled(names: &[&str]) -> Vec<String> {
+    names
+        .iter()
+        .enumerate()
+        .map(|(i, s)| format!("{}:{}", i, s))
+        .collect()
+}
+'''
+decoys = ['        .sum()', '        .map(|i, s| format!("{}:{}", i, s))']
+explain = "`enumerate` pairs each item with its index as `(i, item)`, so the closure takes a tuple `|(i, s)|`. `collect` gathers everything into a Vec."

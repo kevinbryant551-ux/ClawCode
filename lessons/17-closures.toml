@@ -173,3 +173,32 @@ question = "In `fn apply(f: impl Fn(i32) -> i32, x: i32)`, how do you run f on x
 choices = ["f.run(x)", "f(x)", "Fn(x)", "x(f)"]
 answer = 1
 explain = "A closure parameter is called with parentheses, just like any function: `f(x)`."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Write `apply` and `apply_twice`. `f` is any function from i32 to i32."
+code = '''
+fn apply(f: impl ___(i32) -> i32, x: i32) -> i32 {
+    ___(x)
+}
+
+fn apply_twice(f: impl Fn(i32) -> i32, x: i32) -> i32 {
+    f(___(x))
+}
+'''
+answer = ["Fn", "f", "f"]
+decoys = ["fn", "x", "Box"]
+explain = "`impl Fn(i32) -> i32` accepts any closure or function with that shape. Calling it twice is `f(f(x))`."
+
+[[tap]]
+kind = "fill"
+prompt = "Make a closure that adds the captured `bonus` to a score."
+code = '''
+fn score_with_bonus(base: i32, bonus: i32) -> i32 {
+    apply(___s___ s + ___, base)
+}
+'''
+answer = ["|", "|", "bonus"]
+decoys = ["(", ")", "base", "=>"]
+explain = "`|s| s + bonus` is a closure: parameters between pipes, then the body. It \"captures\" `bonus` from the surrounding function."

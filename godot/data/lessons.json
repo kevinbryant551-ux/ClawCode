@@ -954,67 +954,145 @@
         {
           "answer": [
             "mut",
-            "total",
-            "while",
-            "count",
-            "\"SnipSnap\"",
-            "else"
+            "for",
+            "..=",
+            "+="
           ],
           "decoys": [
-            "const",
-            "&",
-            "elif",
-            "then",
-            "let"
+            "while",
+            "..",
+            "=",
+            "const"
           ],
-          "explain": "",
-          "hp": 6,
+          "explain": "[code][color=#ffd36e]1..=n[/color][/code] includes [code][color=#ffd36e]n[/color][/code]; [code][color=#ffd36e]1..n[/color][/code] would stop one short. [code][color=#ffd36e]total += i[/color][/code] is short for [code][color=#ffd36e]total = total + i[/color][/code].",
+          "hp": 4,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// Add up 1 + 2 + ... + n. Use a `for` loop with a mut total.[/color]\n[color=#c792ea]fn[/color] sum_to(n: u32) -> u32 {\n    [color=#c792ea]let[/color] "
+              "t": "[color=#c792ea]fn[/color] sum_to(n: u32) -> u32 {\n    [color=#c792ea]let[/color] "
             },
             {
               "b": 0
             },
             {
-              "t": " total = [color=#f78c6c]0[/color];\n    [color=#c792ea]for[/color] i [color=#c792ea]in[/color] [color=#f78c6c]1[/color]..=n {\n        total += i;\n    }\n    "
+              "t": " total = [color=#f78c6c]0[/color];\n    "
             },
             {
               "b": 1
             },
             {
-              "t": "\n}\n\n[color=#7f8ca3]// Start at 1 and keep doubling while the value is <= limit.[/color]\n[color=#7f8ca3]// Return how many doublings it took. doublings(10) is 4: 1 -> 2 -> 4 -> 8 -> 16.[/color]\n[color=#c792ea]fn[/color] doublings(limit: u32) -> u32 {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] value = [color=#f78c6c]1[/color];\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] count = [color=#f78c6c]0[/color];\n    "
+              "t": " i [color=#c792ea]in[/color] [color=#f78c6c]1[/color]"
             },
             {
               "b": 2
             },
             {
-              "t": " value <= limit {\n        value *= [color=#f78c6c]2[/color];\n        count += [color=#f78c6c]1[/color];\n    }\n    "
+              "t": "n {\n        total "
             },
             {
               "b": 3
             },
             {
-              "t": "\n}\n\n[color=#7f8ca3]// Print the numbers 1 to 15, one per line, but:[/color]\n[color=#7f8ca3]//   multiples of 3 print \"Snip\" instead of the number[/color]\n[color=#7f8ca3]//   multiples of 5 print \"Snap\" instead of the number[/color]\n[color=#7f8ca3]//   multiples of both print \"SnipSnap\"[/color]\n[color=#7f8ca3]// Hint: `x % 3 == 0` is true when x divides evenly by 3.[/color]\n[color=#c792ea]fn[/color] main() {\n    [color=#c792ea]for[/color] i [color=#c792ea]in[/color] [color=#f78c6c]1[/color]..=[color=#f78c6c]15[/color] {\n        [color=#c792ea]if[/color] i % [color=#f78c6c]15[/color] == [color=#f78c6c]0[/color] {\n            [color=#82aaff]println[/color]!("
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": ");\n        } [color=#c792ea]else[/color] [color=#c792ea]if[/color] i % [color=#f78c6c]3[/color] == [color=#f78c6c]0[/color] {\n            [color=#82aaff]println[/color]!([color=#c3e88d]\"Snip\"[/color]);\n        } "
-            },
-            {
-              "b": 5
-            },
-            {
-              "t": " [color=#c792ea]if[/color] i % [color=#f78c6c]5[/color] == [color=#f78c6c]0[/color] {\n            [color=#82aaff]println[/color]!([color=#c3e88d]\"Snap\"[/color]);\n        } [color=#c792ea]else[/color] {\n            [color=#82aaff]println[/color]!([color=#c3e88d]\"{i}\"[/color]);\n        }\n    }\n}"
+              "t": " i;\n    }\n    total\n}"
             }
           ],
-          "prompt": "Write [code][color=#ffd36e]sum_to[/color][/code] (add 1 through n with a [code][color=#ffd36e]for[/color][/code] loop), [code][color=#ffd36e]doublings[/color][/code] (count how many times 1 must double with a [code][color=#ffd36e]while[/color][/code] loop to pass a limit), and make [code][color=#ffd36e]main[/color][/code] print the crab count for 1 to 15 exactly as in the comments."
+          "prompt": "Finish [code][color=#ffd36e]sum_to[/color][/code]: add up 1, 2, 3 ... up to and including [code][color=#ffd36e]n[/color][/code]."
+        },
+        {
+          "decoys": [
+            {
+              "bb": "    [color=#c792ea]for[/color] value <= limit {",
+              "text": "    for value <= limit {"
+            },
+            {
+              "bb": "    count;",
+              "text": "    count;"
+            }
+          ],
+          "explain": "A [code][color=#ffd36e]while[/color][/code] loop repeats as long as its condition is true. The last line, [code][color=#ffd36e]count[/color][/code] with no semicolon, is the returned value.",
+          "hp": 9,
+          "kind": "order",
+          "lines": [
+            {
+              "bb": "[color=#c792ea]fn[/color] doublings(limit: u32) -> u32 {",
+              "text": "fn doublings(limit: u32) -> u32 {"
+            },
+            {
+              "bb": "    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] value = [color=#f78c6c]1[/color];",
+              "text": "    let mut value = 1;"
+            },
+            {
+              "bb": "    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] count = [color=#f78c6c]0[/color];",
+              "text": "    let mut count = 0;"
+            },
+            {
+              "bb": "    [color=#c792ea]while[/color] value <= limit {",
+              "text": "    while value <= limit {"
+            },
+            {
+              "bb": "        value *= [color=#f78c6c]2[/color];",
+              "text": "        value *= 2;"
+            },
+            {
+              "bb": "        count += [color=#f78c6c]1[/color];",
+              "text": "        count += 1;"
+            },
+            {
+              "bb": "    }",
+              "text": "    }"
+            },
+            {
+              "bb": "    count",
+              "text": "    count"
+            },
+            {
+              "bb": "}",
+              "text": "}"
+            }
+          ],
+          "prompt": "Build [code][color=#ffd36e]doublings[/color][/code]: keep doubling [code][color=#ffd36e]value[/color][/code] while it is at most [code][color=#ffd36e]limit[/color][/code], counting each step."
+        },
+        {
+          "answer": [
+            "%",
+            "3",
+            "else"
+          ],
+          "decoys": [
+            "/",
+            "5",
+            "elif"
+          ],
+          "explain": "[code][color=#ffd36e]%[/color][/code] gives the remainder, so [code][color=#ffd36e]i % 3 == 0[/color][/code] means \"i divides evenly by 3\". 15 is checked first because it is also a multiple of 3 and 5.",
+          "hp": 3,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]for[/color] i [color=#c792ea]in[/color] [color=#f78c6c]1[/color]..=[color=#f78c6c]15[/color] {\n    [color=#c792ea]if[/color] i "
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": " [color=#f78c6c]15[/color] == [color=#f78c6c]0[/color] {\n        [color=#82aaff]println[/color]!([color=#c3e88d]\"SnipSnap\"[/color]);\n    } [color=#c792ea]else[/color] [color=#c792ea]if[/color] i % "
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": " == [color=#f78c6c]0[/color] {\n        [color=#82aaff]println[/color]!([color=#c3e88d]\"Snip\"[/color]);\n    } "
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": " [color=#c792ea]if[/color] i % [color=#f78c6c]5[/color] == [color=#f78c6c]0[/color] {\n        [color=#82aaff]println[/color]!([color=#c3e88d]\"Snap\"[/color]);\n    } [color=#c792ea]else[/color] {\n        [color=#82aaff]println[/color]!([color=#c3e88d]\"{i}\"[/color]);\n    }\n}"
+            }
+          ],
+          "prompt": "SnipSnap: multiples of 15 print SnipSnap, of 3 print Snip, of 5 print Snap. Check 15 first!"
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Round and Round",
       "xp": 90
     },
@@ -1115,11 +1193,11 @@
             "&"
           ],
           "decoys": [
-            "&mut",
+            "&mut ",
             "*",
-            "fn"
+            ".clone()"
           ],
-          "explain": "",
+          "explain": "[code][color=#ffd36e]&[/color][/code] means \"borrow\": the function can look at the value, but [code][color=#ffd36e]main[/color][/code] still owns it, so [code][color=#ffd36e]name[/color][/code] is still usable afterwards.",
           "hp": 2,
           "kind": "fill",
           "parts": [
@@ -1136,13 +1214,37 @@
               "b": 1
             },
             {
-              "t": "name);\n    [color=#7f8ca3]// Oops: `name` was moved into the function above, so this fails (E0382).[/color]\n    [color=#82aaff]println[/color]!([color=#c3e88d]\"{} has {} letters\"[/color], name, length);\n}"
+              "t": "name);\n    [color=#82aaff]println[/color]!([color=#c3e88d]\"{} has {} letters\"[/color], name, length);\n}"
             }
           ],
-          "prompt": "Fix the program so it compiles and prints [code][color=#ffd36e]Pinch has 5 letters[/color][/code]: make [code][color=#ffd36e]name_length[/color][/code] borrow its argument ([code][color=#ffd36e]&String[/color][/code]) and pass [code][color=#ffd36e]&name[/color][/code] from [code][color=#ffd36e]main[/color][/code], without using [code][color=#ffd36e].clone()[/color][/code]."
+          "prompt": "Make [code][color=#ffd36e]name_length[/color][/code] borrow the String instead of taking ownership, so [code][color=#ffd36e]main[/color][/code] can still print [code][color=#ffd36e]name[/color][/code]."
+        },
+        {
+          "answer": [
+            "b"
+          ],
+          "decoys": [
+            "a",
+            "&a"
+          ],
+          "explain": "After [code][color=#ffd36e]let b = a;[/color][/code] the String belongs to [code][color=#ffd36e]b[/color][/code]. Using [code][color=#ffd36e]a[/color][/code] gives error E0382 \"borrow of moved value\".",
+          "hp": 1,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]let[/color] a = [color=#ffcb6b]String[/color]::from([color=#c3e88d]\"shell\"[/color]);\n[color=#c792ea]let[/color] b = a;              [color=#7f8ca3]// the String moves into b[/color]\n[color=#82aaff]println[/color]!([color=#c3e88d]\"{}\"[/color], "
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": ");    [color=#7f8ca3]// only one of them still owns it[/color]"
+            }
+          ],
+          "prompt": "Which lines still compile? [code][color=#ffd36e]a[/color][/code] gives its String away to [code][color=#ffd36e]b[/color][/code] (a move). Pick the variable that is still valid."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Who Owns the Shell?",
       "xp": 110
     },
@@ -1232,60 +1334,84 @@
         {
           "answer": [
             "Crab",
-            "name",
-            "0",
-            "self",
-            "10"
+            "to_string",
+            "0"
           ],
           "decoys": [
-            "1",
-            "Self",
-            "this",
-            "11",
-            "9"
+            "Self()",
+            "len",
+            "\"0\"",
+            "String"
           ],
-          "explain": "",
-          "hp": 5,
+          "explain": "[code][color=#ffd36e]new[/color][/code] is just a normal function that returns a [code][color=#ffd36e]Crab[/color][/code]. [code][color=#ffd36e].to_string()[/color][/code] turns the borrowed [code][color=#ffd36e]&str[/color][/code] into an owned [code][color=#ffd36e]String[/color][/code].",
+          "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n[color=#c792ea]impl[/color] [color=#ffcb6b]Crab[/color] {\n    [color=#7f8ca3]// Build a Crab with the given name and 0 shells.[/color]\n    [color=#c792ea]fn[/color] new(name: &str) -> [color=#ffcb6b]Crab[/color] {\n        "
+              "t": "[color=#c792ea]struct[/color] [color=#ffcb6b]Crab[/color] {\n    name: [color=#ffcb6b]String[/color],\n    shells: u32,\n}\n\n[color=#c792ea]impl[/color] [color=#ffcb6b]Crab[/color] {\n    [color=#c792ea]fn[/color] new(name: &str) -> "
             },
             {
               "b": 0
             },
             {
-              "t": " {\n            "
+              "t": " {\n        [color=#ffcb6b]Crab[/color] {\n            name: name."
             },
             {
               "b": 1
             },
             {
-              "t": ": name.to_string(),\n            shells: "
+              "t": "(),\n            shells: "
             },
             {
               "b": 2
             },
             {
-              "t": ",\n        }\n    }\n\n    [color=#7f8ca3]// Add n shells to this crab's collection.[/color]\n    [color=#c792ea]fn[/color] collect(&[color=#c792ea]mut[/color] [color=#c792ea]self[/color], n: u32) {\n        "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": ".shells += n;\n    }\n\n    [color=#7f8ca3]// A crab is rich when it has 10 or more shells.[/color]\n    [color=#c792ea]fn[/color] is_rich(&[color=#c792ea]self[/color]) -> bool {\n        [color=#c792ea]self[/color].shells >= "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": "\n    }\n}\n\n[color=#7f8ca3]// ...[/color]"
+              "t": ",\n        }\n    }\n}"
             }
           ],
-          "prompt": "Fill in the three todo!() bodies in the Crab impl: new (name given, 0 shells), collect (adds n shells), and is_rich (true when the crab has 10 or more shells)."
+          "prompt": "Write [code][color=#ffd36e]Crab::new[/color][/code]: the given name, and 0 shells to start."
+        },
+        {
+          "answer": [
+            "&mut",
+            "&",
+            ">="
+          ],
+          "decoys": [
+            ">",
+            "mut",
+            "=>"
+          ],
+          "explain": "[code][color=#ffd36e]&mut self[/color][/code] borrows the crab to change it; [code][color=#ffd36e]&self[/color][/code] borrows it just to read. [code][color=#ffd36e]>=[/color][/code] means \"10 or more\".",
+          "hp": 3,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] collect("
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": " [color=#c792ea]self[/color], n: u32) {\n    [color=#c792ea]self[/color].shells += n;\n}\n\n[color=#c792ea]fn[/color] is_rich("
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": " [color=#c792ea]self[/color]) -> bool {\n    [color=#c792ea]self[/color].shells "
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": " [color=#f78c6c]10[/color]\n}"
+            }
+          ],
+          "prompt": "Finish the methods: [code][color=#ffd36e]collect[/color][/code] changes the crab, [code][color=#ffd36e]is_rich[/color][/code] only looks at it."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Build a Crab",
       "xp": 90
     },
@@ -1381,67 +1507,98 @@
         {
           "answer": [
             "match",
+            "::",
             "=>",
-            "Weather",
-            "\"Stay in your shell\"",
-            "else",
-            "\"Bring a seaweed umbrella\""
+            "*",
+            ".."
           ],
           "decoys": [
-            "if",
             "switch",
+            ".",
             "->",
-            "=",
-            "elif"
+            "&",
+            "_"
           ],
-          "explain": "",
-          "hp": 6,
+          "explain": "[code][color=#ffd36e]Weather::Sunny[/color][/code] names a variant. [code][color=#ffd36e]Rainy(mm)[/color][/code] pulls the number out; [code][color=#ffd36e]*mm[/color][/code] reads through the reference. [code][color=#ffd36e]{ .. }[/color][/code] means \"ignore the other fields\".",
+          "hp": 5,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n}\n\n[color=#c792ea]fn[/color] advice(w: &[color=#ffcb6b]Weather[/color]) -> [color=#ffcb6b]String[/color] {\n    "
+              "t": "[color=#c792ea]fn[/color] advice(w: &[color=#ffcb6b]Weather[/color]) -> [color=#ffcb6b]String[/color] {\n    "
             },
             {
               "b": 0
             },
             {
-              "t": " w {\n        [color=#ffcb6b]Weather[/color]::[color=#ffcb6b]Sunny[/color] "
+              "t": " w {\n        [color=#ffcb6b]Weather[/color]"
             },
             {
               "b": 1
             },
             {
-              "t": " [color=#ffcb6b]String[/color]::from([color=#c3e88d]\"Wear sunglasses\"[/color]),\n        "
+              "t": "[color=#ffcb6b]Sunny[/color] "
             },
             {
               "b": 2
             },
             {
-              "t": "::[color=#ffcb6b]Rainy[/color](mm) => {\n            [color=#c792ea]if[/color] *mm >= [color=#f78c6c]10[/color] {\n                [color=#ffcb6b]String[/color]::from("
+              "t": " [color=#ffcb6b]String[/color]::from([color=#c3e88d]\"Wear sunglasses\"[/color]),\n        [color=#ffcb6b]Weather[/color]::[color=#ffcb6b]Rainy[/color](mm) => {\n            [color=#c792ea]if[/color] "
             },
             {
               "b": 3
             },
             {
-              "t": ")\n            } "
+              "t": "mm >= [color=#f78c6c]10[/color] {\n                [color=#ffcb6b]String[/color]::from([color=#c3e88d]\"Stay in your shell\"[/color])\n            } [color=#c792ea]else[/color] {\n                [color=#ffcb6b]String[/color]::from([color=#c3e88d]\"Bring a seaweed umbrella\"[/color])\n            }\n        }\n        [color=#ffcb6b]Weather[/color]::[color=#ffcb6b]Storm[/color] { "
             },
             {
               "b": 4
             },
             {
-              "t": " {\n                [color=#ffcb6b]String[/color]::from("
-            },
-            {
-              "b": 5
-            },
-            {
-              "t": ")\n            }\n        }\n        [color=#ffcb6b]Weather[/color]::[color=#ffcb6b]Storm[/color] { .. } => [color=#ffcb6b]String[/color]::from([color=#c3e88d]\"Hide under a rock\"[/color]),\n    }\n    [color=#7f8ca3]// Use `match w { ... }` to cover all three variants.[/color]\n    [color=#7f8ca3]// Rainy carries millimetres of rain; Storm carries wind speed (ignore it with `..`).[/color]\n[color=#7f8ca3]// ...[/color]"
+              "t": " } => [color=#ffcb6b]String[/color]::from([color=#c3e88d]\"Hide under a rock\"[/color]),\n    }\n}"
             }
           ],
-          "prompt": "Finish [code][color=#ffd36e]advice[/color][/code] so it uses [code][color=#ffd36e]match[/color][/code] on the Weather: Sunny gives \"Wear sunglasses\", Rainy(mm) with 10 or more mm gives \"Stay in your shell\", any lighter Rainy gives \"Bring a seaweed umbrella\", and Storm gives \"Hide under a rock\" (exact text)."
+          "prompt": "Match on the weather. Each arm is [code][color=#ffd36e]pattern => value[/color][/code]."
+        },
+        {
+          "decoys": [
+            {
+              "bb": "[color=#c792ea]struct[/color] [color=#ffcb6b]Weather[/color] {",
+              "text": "struct Weather {"
+            },
+            {
+              "bb": "    [color=#ffcb6b]Rainy[/color]: u32,",
+              "text": "    Rainy: u32,"
+            }
+          ],
+          "explain": "An enum lists every possible kind of value. Variants can carry data, like [code][color=#ffd36e]Rainy(u32)[/color][/code] or [code][color=#ffd36e]Storm { wind: u32 }[/color][/code].",
+          "hp": 5,
+          "kind": "order",
+          "lines": [
+            {
+              "bb": "[color=#c792ea]enum[/color] [color=#ffcb6b]Weather[/color] {",
+              "text": "enum Weather {"
+            },
+            {
+              "bb": "    [color=#ffcb6b]Sunny[/color],",
+              "text": "    Sunny,"
+            },
+            {
+              "bb": "    [color=#ffcb6b]Rainy[/color](u32),",
+              "text": "    Rainy(u32),"
+            },
+            {
+              "bb": "    [color=#ffcb6b]Storm[/color] { wind: u32 },",
+              "text": "    Storm { wind: u32 },"
+            },
+            {
+              "bb": "}",
+              "text": "}"
+            }
+          ],
+          "prompt": "Build the Weather enum: a plain variant, one holding a number, and one with a named field."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Weather or Not",
       "xp": 100
     },
@@ -1536,68 +1693,86 @@
       "taps": [
         {
           "answer": [
-            "for",
-            "if",
-            "return",
-            "None",
-            "match",
-            "Ok"
+            "Option",
+            "Some",
+            "None"
           ],
           "decoys": [
-            "while",
-            "loop",
-            "break",
-            "yield",
-            "Some"
+            "Result",
+            "Ok",
+            "null",
+            "-1"
           ],
-          "explain": "",
-          "hp": 6,
+          "explain": "[code][color=#ffd36e]Option<T>[/color][/code] is either [code][color=#ffd36e]Some(value)[/color][/code] or [code][color=#ffd36e]None[/color][/code]. Rust has no [code][color=#ffd36e]null[/color][/code], so \"nothing found\" is spelled [code][color=#ffd36e]None[/color][/code].",
+          "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// Return the position of `name` inside `shells`, or None if it is not there.[/color]\n[color=#c792ea]fn[/color] find_shell(shells: &[lb]&str[rb], name: &str) -> [color=#ffcb6b]Option[/color]<usize> {\n    "
+              "t": "[color=#c792ea]fn[/color] find_shell(shells: &[lb]&str[rb], name: &str) -> "
             },
             {
               "b": 0
             },
             {
-              "t": " i [color=#c792ea]in[/color] [color=#f78c6c]0[/color]..shells.len() {\n        "
+              "t": "<usize> {\n    [color=#c792ea]for[/color] i [color=#c792ea]in[/color] [color=#f78c6c]0[/color]..shells.len() {\n        [color=#c792ea]if[/color] shells[lb]i[rb] == name {\n            [color=#c792ea]return[/color] "
             },
             {
               "b": 1
             },
             {
-              "t": " shells[lb]i[rb] == name {\n            "
+              "t": "(i);\n        }\n    }\n    "
             },
             {
               "b": 2
             },
             {
-              "t": " [color=#ffcb6b]Some[/color](i);\n        }\n    }\n    "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": "\n}\n\n[color=#7f8ca3]// Turn text like \"25\" into a depth. If it is not a whole number,[/color]\n[color=#7f8ca3]// return Err with a friendly message that includes the text.[/color]\n[color=#c792ea]fn[/color] parse_depth(text: &str) -> [color=#ffcb6b]Result[/color]<u32, [color=#ffcb6b]String[/color]> {\n    "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": " text.parse::<u32>() {\n        "
-            },
-            {
-              "b": 5
-            },
-            {
-              "t": "(d) => [color=#ffcb6b]Ok[/color](d),\n        [color=#ffcb6b]Err[/color](_) => [color=#ffcb6b]Err[/color]([color=#82aaff]format[/color]!([color=#c3e88d]\"'{}' is not a depth I can dive to\"[/color], text)),\n    }\n}\n\n[color=#7f8ca3]// ...[/color]"
+              "t": "\n}"
             }
           ],
-          "prompt": "Write find_shell (return Some(index) of the first matching name in the slice, or None) and parse_depth (turn text into a u32 as Ok, or return Err with a friendly message that includes the text), without using unwrap()."
+          "prompt": "Write [code][color=#ffd36e]find_shell[/color][/code]: Some(index) of the first match, or None if it isn't there."
+        },
+        {
+          "answer": [
+            "Result",
+            "Ok",
+            "Err"
+          ],
+          "decoys": [
+            "Option",
+            "Some",
+            "None",
+            "unwrap"
+          ],
+          "explain": "[code][color=#ffd36e]Result<T, E>[/color][/code] is [code][color=#ffd36e]Ok(value)[/color][/code] on success or [code][color=#ffd36e]Err(error)[/color][/code] on failure. Matching on it handles both without [code][color=#ffd36e]unwrap()[/color][/code].",
+          "hp": 3,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] parse_depth(text: &str) -> "
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": "<u32, [color=#ffcb6b]String[/color]> {\n    [color=#c792ea]match[/color] text.parse::<u32>() {\n        "
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": "(d) => [color=#ffcb6b]Ok[/color](d),\n        [color=#ffcb6b]Err[/color](_) => "
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": "([color=#82aaff]format[/color]!([color=#c3e88d]\"'{}' is not a depth I can dive to\"[/color], text)),\n    }\n}"
+            }
+          ],
+          "prompt": "Write [code][color=#ffd36e]parse_depth[/color][/code]: Ok with the number, or Err with a friendly message."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Maybe, Maybe Not",
       "xp": 120
     },
@@ -1669,163 +1844,139 @@
       "taps": [
         {
           "answer": [
-            "match",
             "=>",
-            "3",
-            "1",
-            "letter"
+            "Option",
+            "'c'",
+            "_"
           ],
           "decoys": [
-            "if",
-            "switch",
             "->",
-            "=",
-            "4"
+            "Result",
+            "\"c\"",
+            "else"
           ],
-          "explain": "",
-          "hp": 5,
-          "kind": "fill",
-          "parts": [
-            {
-              "t": "[color=#7f8ca3]// ...[/color]\n\n[color=#7f8ca3]// Crab is worth 5 points, Starfish 3, Snail 1. Use match.[/color]\n[color=#c792ea]fn[/color] points(kind: &[color=#ffcb6b]Kind[/color]) -> u32 {\n    "
-            },
-            {
-              "b": 0
-            },
-            {
-              "t": " kind {\n        [color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Crab[/color] "
-            },
-            {
-              "b": 1
-            },
-            {
-              "t": " [color=#f78c6c]5[/color],\n        [color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Starfish[/color] => "
-            },
-            {
-              "b": 2
-            },
-            {
-              "t": ",\n        [color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Snail[/color] => "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": ",\n    }\n}\n\n[color=#7f8ca3]// 'c' means Crab, 's' means Starfish, 'n' means Snail.[/color]\n[color=#7f8ca3]// Any other letter means \"no such creature\": return None.[/color]\n[color=#c792ea]fn[/color] kind_from_letter(letter: char) -> [color=#ffcb6b]Option[/color]<[color=#ffcb6b]Kind[/color]> {\n    [color=#c792ea]match[/color] "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": " {\n        [color=#c3e88d]'c'[/color] => [color=#ffcb6b]Some[/color]([color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Crab[/color]),\n        [color=#c3e88d]'s'[/color] => [color=#ffcb6b]Some[/color]([color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Starfish[/color]),\n        [color=#c3e88d]'n'[/color] => [color=#ffcb6b]Some[/color]([color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Snail[/color]),\n        _ => [color=#ffcb6b]None[/color],\n[color=#7f8ca3]// ...[/color]"
-            }
-          ],
-          "prompt": "Fill in all six todo!() functions (points, kind_from_letter, pile_score, grow, label, rename) so every test passes and Borrowzilla is defeated."
-        },
-        {
-          "answer": [
-            "Some",
-            "'n'",
-            "None",
-            "mut",
-            "for"
-          ],
-          "decoys": [
-            "Ok",
-            "null",
-            "const",
-            "&",
-            "while"
-          ],
-          "explain": "",
-          "hp": 5,
-          "kind": "fill",
-          "parts": [
-            {
-              "t": "[color=#7f8ca3]// ...[/color]\n[color=#c792ea]fn[/color] kind_from_letter(letter: char) -> [color=#ffcb6b]Option[/color]<[color=#ffcb6b]Kind[/color]> {\n    [color=#c792ea]match[/color] letter {\n        [color=#c3e88d]'c'[/color] => [color=#ffcb6b]Some[/color]([color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Crab[/color]),\n        [color=#c3e88d]'s'[/color] => "
-            },
-            {
-              "b": 0
-            },
-            {
-              "t": "([color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Starfish[/color]),\n        "
-            },
-            {
-              "b": 1
-            },
-            {
-              "t": " => [color=#ffcb6b]Some[/color]([color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Snail[/color]),\n        _ => "
-            },
-            {
-              "b": 2
-            },
-            {
-              "t": ",\n    }\n}\n\n[color=#7f8ca3]// Score for a pile of `count` creatures of one kind.[/color]\n[color=#7f8ca3]// Use a loop that adds points(kind) once per creature.[/color]\n[color=#c792ea]fn[/color] pile_score(kind: &[color=#ffcb6b]Kind[/color], count: u32) -> u32 {\n    [color=#c792ea]let[/color] "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": " total = [color=#f78c6c]0[/color];\n    "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": " _ [color=#c792ea]in[/color] [color=#f78c6c]0[/color]..count {\n        total += points(kind);\n    }\n    total\n}\n[color=#7f8ca3]// ...[/color]"
-            }
-          ],
-          "prompt": "Fill in all six todo!() functions (points, kind_from_letter, pile_score, grow, label, rename) so every test passes and Borrowzilla is defeated."
-        },
-        {
-          "answer": [
-            "total",
-            "+=",
-            "\"{} (size {})\"",
-            "creature"
-          ],
-          "decoys": [
-            "=",
-            "-=",
-            "&",
-            "mut"
-          ],
-          "explain": "",
+          "explain": "[code][color=#ffd36e]_[/color][/code] is the catch-all pattern: any other letter gives [code][color=#ffd36e]None[/color][/code]. Chars use single quotes.",
           "hp": 4,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n    [color=#c792ea]for[/color] _ [color=#c792ea]in[/color] [color=#f78c6c]0[/color]..count {\n        total += points(kind);\n    }\n    "
+              "t": "[color=#c792ea]fn[/color] points(kind: &[color=#ffcb6b]Kind[/color]) -> u32 {\n    [color=#c792ea]match[/color] kind {\n        [color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Crab[/color] "
             },
             {
               "b": 0
             },
             {
-              "t": "\n}\n\n[color=#7f8ca3]// Make the creature one size bigger. It is borrowed mutably.[/color]\n[color=#c792ea]fn[/color] grow(creature: &[color=#c792ea]mut[/color] [color=#ffcb6b]Creature[/color]) {\n    creature.size "
+              "t": " [color=#f78c6c]5[/color],\n        [color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Starfish[/color] => [color=#f78c6c]3[/color],\n        [color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Snail[/color] => [color=#f78c6c]1[/color],\n    }\n}\n\n[color=#c792ea]fn[/color] kind_from_letter(letter: char) -> "
             },
             {
               "b": 1
             },
             {
-              "t": " [color=#f78c6c]1[/color];\n}\n\n[color=#7f8ca3]// Return text like \"Pinch (size 3)\". It is only borrowed to look.[/color]\n[color=#c792ea]fn[/color] label(creature: &[color=#ffcb6b]Creature[/color]) -> [color=#ffcb6b]String[/color] {\n    [color=#82aaff]format[/color]!("
+              "t": "<[color=#ffcb6b]Kind[/color]> {\n    [color=#c792ea]match[/color] letter {\n        "
             },
             {
               "b": 2
             },
             {
-              "t": ", creature.name, creature.size)\n}\n\n[color=#7f8ca3]// Give the creature a new name. The new name arrives as a &str.[/color]\n[color=#c792ea]fn[/color] rename(creature: &[color=#c792ea]mut[/color] [color=#ffcb6b]Creature[/color], new_name: &str) {\n    "
+              "t": " => [color=#ffcb6b]Some[/color]([color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Crab[/color]),\n        [color=#c3e88d]'s'[/color] => [color=#ffcb6b]Some[/color]([color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Starfish[/color]),\n        [color=#c3e88d]'n'[/color] => [color=#ffcb6b]Some[/color]([color=#ffcb6b]Kind[/color]::[color=#ffcb6b]Snail[/color]),\n        "
             },
             {
               "b": 3
             },
             {
-              "t": ".name = new_name.to_string();\n}\n\n[color=#c792ea]fn[/color] main() {\n[color=#7f8ca3]// ...[/color]"
+              "t": " => [color=#ffcb6b]None[/color],\n    }\n}"
             }
           ],
-          "prompt": "Fill in all six todo!() functions (points, kind_from_letter, pile_score, grow, label, rename) so every test passes and Borrowzilla is defeated."
+          "prompt": "Round 1: score each creature with [code][color=#ffd36e]match[/color][/code], and turn a letter into a Kind."
+        },
+        {
+          "decoys": [
+            {
+              "bb": "    [color=#c792ea]let[/color] total = [color=#f78c6c]0[/color];",
+              "text": "    let total = 0;"
+            },
+            {
+              "bb": "        total += points(&kind);",
+              "text": "        total += points(&kind);"
+            }
+          ],
+          "explain": "[code][color=#ffd36e]for _ in 0..count[/color][/code] repeats [code][color=#ffd36e]count[/color][/code] times when you don't need the number. [code][color=#ffd36e]kind[/color][/code] is already a [code][color=#ffd36e]&Kind[/color][/code], so pass it straight on.",
+          "hp": 7,
+          "kind": "order",
+          "lines": [
+            {
+              "bb": "[color=#c792ea]fn[/color] pile_score(kind: &[color=#ffcb6b]Kind[/color], count: u32) -> u32 {",
+              "text": "fn pile_score(kind: &Kind, count: u32) -> u32 {"
+            },
+            {
+              "bb": "    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] total = [color=#f78c6c]0[/color];",
+              "text": "    let mut total = 0;"
+            },
+            {
+              "bb": "    [color=#c792ea]for[/color] _ [color=#c792ea]in[/color] [color=#f78c6c]0[/color]..count {",
+              "text": "    for _ in 0..count {"
+            },
+            {
+              "bb": "        total += points(kind);",
+              "text": "        total += points(kind);"
+            },
+            {
+              "bb": "    }",
+              "text": "    }"
+            },
+            {
+              "bb": "    total",
+              "text": "    total"
+            },
+            {
+              "bb": "}",
+              "text": "}"
+            }
+          ],
+          "prompt": "Round 2: build [code][color=#ffd36e]pile_score[/color][/code], adding points(kind) once per creature."
+        },
+        {
+          "answer": [
+            "&mut",
+            "&",
+            "to_string"
+          ],
+          "decoys": [
+            "mut",
+            "&&",
+            "clone()",
+            "*"
+          ],
+          "explain": "Many [code][color=#ffd36e]&[/color][/code] readers OR one [code][color=#ffd36e]&mut[/color][/code] writer at a time: that's the borrow checker's whole rule. [code][color=#ffd36e].to_string()[/color][/code] makes an owned [code][color=#ffd36e]String[/color][/code] from [code][color=#ffd36e]&str[/color][/code].",
+          "hp": 3,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] grow(creature: "
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": " [color=#ffcb6b]Creature[/color]) {\n    creature.size += [color=#f78c6c]1[/color];\n}\n\n[color=#c792ea]fn[/color] label(creature: "
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": " [color=#ffcb6b]Creature[/color]) -> [color=#ffcb6b]String[/color] {\n    [color=#82aaff]format[/color]!([color=#c3e88d]\"{} (size {})\"[/color], creature.name, creature.size)\n}\n\n[color=#c792ea]fn[/color] rename(creature: &[color=#c792ea]mut[/color] [color=#ffcb6b]Creature[/color], new_name: &str) {\n    creature.name = new_name."
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": "();\n}"
+            }
+          ],
+          "prompt": "Final round: change a creature through [code][color=#ffd36e]&mut[/color][/code], but only look through [code][color=#ffd36e]&[/color][/code]."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Boss: Borrowzilla",
       "xp": 150
     },
@@ -1919,68 +2070,132 @@
       "taps": [
         {
           "answer": [
-            "mut",
-            "+=",
-            "Some",
-            "for",
-            "let",
-            "out"
-          ],
-          "decoys": [
-            "const",
-            "&",
-            "=",
-            "-=",
+            "get",
+            "*",
             "None"
           ],
-          "explain": "",
-          "hp": 6,
+          "decoys": [
+            "[0]",
+            "&",
+            "Err",
+            "pop"
+          ],
+          "explain": "[code][color=#ffd36e]v.get(0)[/color][/code] gives [code][color=#ffd36e]Some(&item)[/color][/code] or [code][color=#ffd36e]None[/color][/code], so an empty Vec is safe. [code][color=#ffd36e]v[lb]0[rb][/color][/code] would panic. [code][color=#ffd36e]*n[/color][/code] copies the number out of the reference.",
+          "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// Add up every number in the bucket.[/color]\n[color=#c792ea]fn[/color] total(v: &[color=#ffcb6b]Vec[/color]<i32>) -> i32 {\n    [color=#c792ea]let[/color] "
+              "t": "[color=#c792ea]fn[/color] first_or_zero(v: &[color=#ffcb6b]Vec[/color]<i32>) -> i32 {\n    [color=#c792ea]match[/color] v."
             },
             {
               "b": 0
             },
             {
-              "t": " sum = [color=#f78c6c]0[/color];\n    [color=#c792ea]for[/color] n [color=#c792ea]in[/color] v {\n        sum "
+              "t": "([color=#f78c6c]0[/color]) {\n        [color=#ffcb6b]Some[/color](n) => "
             },
             {
               "b": 1
             },
             {
-              "t": " n;\n    }\n    sum\n}\n\n[color=#7f8ca3]// Return the first item. If the Vec is empty, return 0.[/color]\n[color=#7f8ca3]// Hint: use v.get(0) and match on the Option.[/color]\n[color=#c792ea]fn[/color] first_or_zero(v: &[color=#ffcb6b]Vec[/color]<i32>) -> i32 {\n    [color=#c792ea]match[/color] v.get([color=#f78c6c]0[/color]) {\n        "
+              "t": "n,\n        "
             },
             {
               "b": 2
             },
             {
-              "t": "(n) => *n,\n        [color=#ffcb6b]None[/color] => [color=#f78c6c]0[/color],\n    }\n}\n\n[color=#7f8ca3]// Double every number in place.[/color]\n[color=#c792ea]fn[/color] double_all(v: &[color=#c792ea]mut[/color] [color=#ffcb6b]Vec[/color]<i32>) {\n    "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": " n [color=#c792ea]in[/color] v {\n        *n *= [color=#f78c6c]2[/color];\n    }\n}\n\n[color=#7f8ca3]// countdown(3) gives [lb]3, 2, 1[rb]. countdown(0) gives an empty Vec.[/color]\n[color=#c792ea]fn[/color] countdown(n: i32) -> [color=#ffcb6b]Vec[/color]<i32> {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] out = [color=#ffcb6b]Vec[/color]::new();\n    "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": " [color=#c792ea]mut[/color] i = n;\n    [color=#c792ea]while[/color] i > [color=#f78c6c]0[/color] {\n        "
-            },
-            {
-              "b": 5
-            },
-            {
-              "t": ".push(i);\n        i -= [color=#f78c6c]1[/color];\n    }\n    out\n}\n\n[color=#c792ea]fn[/color] main() {\n[color=#7f8ca3]// ...[/color]"
+              "t": " => [color=#f78c6c]0[/color],\n    }\n}"
             }
           ],
-          "prompt": "Implement total (sum of the Vec), first_or_zero (first item, or 0 if empty, using .get), double_all (double every item in place) and countdown (a Vec from n down to 1)."
+          "prompt": "Finish [code][color=#ffd36e]first_or_zero[/color][/code] with [code][color=#ffd36e].get[/color][/code], which returns an Option instead of crashing on an empty Vec."
+        },
+        {
+          "answer": [
+            "&mut",
+            "*"
+          ],
+          "decoys": [
+            "&",
+            "mut",
+            "+"
+          ],
+          "explain": "[code][color=#ffd36e]&mut Vec[/color][/code] lets the function change the caller's Vec. Each [code][color=#ffd36e]n[/color][/code] is a [code][color=#ffd36e]&mut i32[/color][/code], and [code][color=#ffd36e]*n[/color][/code] reaches the number itself.",
+          "hp": 2,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] double_all(v: "
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": " [color=#ffcb6b]Vec[/color]<i32>) {\n    [color=#c792ea]for[/color] n [color=#c792ea]in[/color] v {\n        "
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": "n *= [color=#f78c6c]2[/color];\n    }\n}"
+            }
+          ],
+          "prompt": "Double every item in place. The Vec is borrowed mutably."
+        },
+        {
+          "decoys": [
+            {
+              "bb": "    [color=#c792ea]let[/color] out = [color=#ffcb6b]Vec[/color]::new();",
+              "text": "    let out = Vec::new();"
+            },
+            {
+              "bb": "        out.pop(i);",
+              "text": "        out.pop(i);"
+            }
+          ],
+          "explain": "[code][color=#ffd36e]Vec::new()[/color][/code] makes an empty Vec, and [code][color=#ffd36e].push[/color][/code] adds to the end. The Vec must be [code][color=#ffd36e]mut[/color][/code] to grow.",
+          "hp": 9,
+          "kind": "order",
+          "lines": [
+            {
+              "bb": "[color=#c792ea]fn[/color] countdown(n: i32) -> [color=#ffcb6b]Vec[/color]<i32> {",
+              "text": "fn countdown(n: i32) -> Vec<i32> {"
+            },
+            {
+              "bb": "    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] out = [color=#ffcb6b]Vec[/color]::new();",
+              "text": "    let mut out = Vec::new();"
+            },
+            {
+              "bb": "    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] i = n;",
+              "text": "    let mut i = n;"
+            },
+            {
+              "bb": "    [color=#c792ea]while[/color] i > [color=#f78c6c]0[/color] {",
+              "text": "    while i > 0 {"
+            },
+            {
+              "bb": "        out.push(i);",
+              "text": "        out.push(i);"
+            },
+            {
+              "bb": "        i -= [color=#f78c6c]1[/color];",
+              "text": "        i -= 1;"
+            },
+            {
+              "bb": "    }",
+              "text": "    }"
+            },
+            {
+              "bb": "    out",
+              "text": "    out"
+            },
+            {
+              "bb": "}",
+              "text": "}"
+            }
+          ],
+          "prompt": "Build [code][color=#ffd36e]countdown[/color][/code]: a Vec from n down to 1."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Bucket of Shells",
       "xp": 90
     },
@@ -2077,67 +2292,91 @@
         {
           "answer": [
             "mut",
-            "'!'",
-            "0",
-            "if",
-            "n",
-            "\"{} has {} shells\""
+            "to_uppercase",
+            "'!'"
           ],
           "decoys": [
-            "const",
-            "&",
-            "1",
-            "match",
-            "while"
+            "upper",
+            "\"!\"",
+            "const"
           ],
-          "explain": "",
-          "hp": 6,
+          "explain": "[code][color=#ffd36e].to_uppercase()[/color][/code] makes a new [code][color=#ffd36e]String[/color][/code]. [code][color=#ffd36e].push[/color][/code] adds one [code][color=#ffd36e]char[/color][/code] (single quotes); [code][color=#ffd36e].push_str[/color][/code] adds a [code][color=#ffd36e]&str[/color][/code] (double quotes).",
+          "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// \"hi crab\" becomes \"HI CRAB!\" (uppercase, plus an exclamation mark).[/color]\n[color=#c792ea]fn[/color] shout(s: &str) -> [color=#ffcb6b]String[/color] {\n    [color=#c792ea]let[/color] "
+              "t": "[color=#c792ea]fn[/color] shout(s: &str) -> [color=#ffcb6b]String[/color] {\n    [color=#c792ea]let[/color] "
             },
             {
               "b": 0
             },
             {
-              "t": " out = s.to_uppercase();\n    out.push("
+              "t": " out = s."
             },
             {
               "b": 1
             },
             {
-              "t": ");\n    out\n}\n\n[color=#7f8ca3]// Count the letters a, e, i, o, u (lowercase only) in the text.[/color]\n[color=#c792ea]fn[/color] count_vowels(s: &str) -> usize {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] n = "
+              "t": "();\n    out.push("
             },
             {
               "b": 2
             },
             {
-              "t": ";\n    [color=#c792ea]for[/color] ch [color=#c792ea]in[/color] s.chars() {\n        "
+              "t": ");\n    out\n}"
+            }
+          ],
+          "prompt": "Write [code][color=#ffd36e]shout[/color][/code]: uppercase the text and add one '!' on the end."
+        },
+        {
+          "answer": [
+            "split_whitespace",
+            "format",
+            "trim",
+            "push_str"
+          ],
+          "decoys": [
+            "println",
+            "push",
+            "len",
+            "split"
+          ],
+          "explain": "[code][color=#ffd36e]split_whitespace[/color][/code] ignores extra spaces, [code][color=#ffd36e]trim[/color][/code] removes spaces at both ends, and [code][color=#ffd36e]push_str[/color][/code] appends text to a [code][color=#ffd36e]String[/color][/code].",
+          "hp": 4,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] word_count(s: &str) -> usize {\n    s."
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": "().count()\n}\n\n[color=#c792ea]fn[/color] banner(name: &str, shells: u32) -> [color=#ffcb6b]String[/color] {\n    "
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": "!([color=#c3e88d]\"{} has {} shells\"[/color], name."
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": "(), shells)\n}\n\n[color=#c792ea]fn[/color] add_ahoy(s: &[color=#c792ea]mut[/color] [color=#ffcb6b]String[/color]) {\n    s."
             },
             {
               "b": 3
             },
             {
-              "t": " ch == [color=#c3e88d]'a'[/color] || ch == [color=#c3e88d]'e'[/color] || ch == [color=#c3e88d]'i'[/color] || ch == [color=#c3e88d]'o'[/color] || ch == [color=#c3e88d]'u'[/color] {\n            n += [color=#f78c6c]1[/color];\n        }\n    }\n    "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": "\n}\n\n[color=#7f8ca3]// How many words are in the text? Extra spaces don't matter.[/color]\n[color=#c792ea]fn[/color] word_count(s: &str) -> usize {\n    s.split_whitespace().count()\n}\n\n[color=#7f8ca3]// banner(\"Pinch\", 3) gives \"Pinch has 3 shells\". Use format!.[/color]\n[color=#7f8ca3]// Trim spaces off the name first.[/color]\n[color=#c792ea]fn[/color] banner(name: &str, shells: u32) -> [color=#ffcb6b]String[/color] {\n    [color=#82aaff]format[/color]!("
-            },
-            {
-              "b": 5
-            },
-            {
-              "t": ", name.trim(), shells)\n}\n\n[color=#7f8ca3]// Add the text \" Ahoy!\" to the end of the String (note the leading space).[/color]\n[color=#c792ea]fn[/color] add_ahoy(s: &[color=#c792ea]mut[/color] [color=#ffcb6b]String[/color]) {\n    s.push_str([color=#c3e88d]\" Ahoy!\"[/color]);\n}\n\n[color=#c792ea]fn[/color] main() {\n[color=#7f8ca3]// ...[/color]"
+              "t": "([color=#c3e88d]\" Ahoy!\"[/color]);\n}"
             }
           ],
-          "prompt": "Implement shout, count_vowels, word_count, banner and add_ahoy so the tests pass."
+          "prompt": "Finish the other helpers: count words, tidy a name, and append to a borrowed String."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "String Theory",
       "xp": 90
     },
@@ -2231,68 +2470,93 @@
       "taps": [
         {
           "answer": [
-            "mut",
-            "0",
-            "counts",
-            "None",
-            "for",
-            "total"
+            "HashMap",
+            "entry",
+            "or_insert",
+            "*"
           ],
           "decoys": [
-            "const",
-            "&",
-            "1",
-            "Some",
-            "null"
+            "Vec",
+            "get",
+            "insert",
+            "&"
           ],
-          "explain": "",
-          "hp": 6,
+          "explain": "[code][color=#ffd36e]entry(key).or_insert(0)[/color][/code] finds the count, creating it as 0 the first time, and gives back a [code][color=#ffd36e]&mut u32[/color][/code]. [code][color=#ffd36e]*c += 1[/color][/code] bumps it.",
+          "hp": 4,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n\n[color=#7f8ca3]// \"a b a\" gives {\"a\": 2, \"b\": 1}. Use entry().or_insert(0).[/color]\n[color=#c792ea]fn[/color] count_words(text: &str) -> [color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32> {\n    [color=#c792ea]let[/color] "
+              "t": "[color=#c792ea]use[/color] std::collections::"
             },
             {
               "b": 0
             },
             {
-              "t": " counts = [color=#ffcb6b]HashMap[/color]::new();\n    [color=#c792ea]for[/color] word [color=#c792ea]in[/color] text.split_whitespace() {\n        [color=#c792ea]let[/color] c = counts.entry(word.to_string()).or_insert("
+              "t": ";\n\n[color=#c792ea]fn[/color] count_words(text: &str) -> [color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32> {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] counts = [color=#ffcb6b]HashMap[/color]::new();\n    [color=#c792ea]for[/color] word [color=#c792ea]in[/color] text.split_whitespace() {\n        [color=#c792ea]let[/color] c = counts."
             },
             {
               "b": 1
             },
             {
-              "t": ");\n        *c += [color=#f78c6c]1[/color];\n    }\n    "
+              "t": "(word.to_string())."
             },
             {
               "b": 2
             },
             {
-              "t": "\n}\n\n[color=#7f8ca3]// How many times does `word` appear in the map? 0 if it is not there.[/color]\n[color=#7f8ca3]// Use .get() and match.[/color]\n[color=#c792ea]fn[/color] count_of(map: &[color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32>, word: &str) -> u32 {\n    [color=#c792ea]match[/color] map.get(word) {\n        [color=#ffcb6b]Some[/color](n) => *n,\n        "
+              "t": "([color=#f78c6c]0[/color]);\n        "
             },
             {
               "b": 3
             },
             {
-              "t": " => [color=#f78c6c]0[/color],\n    }\n}\n\n[color=#7f8ca3]// Add up all the counts in the map. Loop over &map.[/color]\n[color=#c792ea]fn[/color] total_words(map: &[color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32>) -> u32 {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] total = [color=#f78c6c]0[/color];\n    "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": " (_word, count) [color=#c792ea]in[/color] map {\n        total += count;\n    }\n    "
-            },
-            {
-              "b": 5
-            },
-            {
-              "t": "\n}\n\n[color=#7f8ca3]// Add n shells to `who`'s tally. Create the entry at 0 if it is new.[/color]\n[color=#c792ea]fn[/color] add_shells(map: &[color=#c792ea]mut[/color] [color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32>, who: &str, n: u32) {\n    [color=#c792ea]let[/color] c = map.entry(who.to_string()).or_insert([color=#f78c6c]0[/color]);\n    *c += n;\n}\n\n[color=#c792ea]fn[/color] main() {\n[color=#7f8ca3]// ...[/color]"
+              "t": "c += [color=#f78c6c]1[/color];\n    }\n    counts\n}"
             }
           ],
-          "prompt": "Implement count_words (how often each word appears), count_of (look up one word, 0 if missing), total_words (sum of all counts) and add_shells (add n to a name's tally)."
+          "prompt": "Count how often each word appears using the entry API."
+        },
+        {
+          "answer": [
+            "get",
+            "Some",
+            "0"
+          ],
+          "decoys": [
+            "entry",
+            "Ok",
+            "None",
+            "null"
+          ],
+          "explain": "[code][color=#ffd36e]map.get(key)[/color][/code] returns an [code][color=#ffd36e]Option[/color][/code]: [code][color=#ffd36e]Some(&value)[/color][/code] if the key is there, [code][color=#ffd36e]None[/color][/code] if not.",
+          "hp": 3,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] count_of(map: &[color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32>, word: &str) -> u32 {\n    [color=#c792ea]match[/color] map."
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": "(word) {\n        "
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": "(n) => *n,\n        [color=#ffcb6b]None[/color] => "
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": ",\n    }\n}"
+            }
+          ],
+          "prompt": "Look up one word, giving 0 if it isn't in the map."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Shell Tally",
       "xp": 100
     },
@@ -2363,171 +2627,124 @@
       "taps": [
         {
           "answer": [
-            "mut",
-            "out",
-            "let",
-            "0",
-            "map"
+            "new",
+            "split_whitespace",
+            "entry"
           ],
           "decoys": [
-            "const",
-            "&",
-            "var",
-            "1",
-            "filter"
+            "empty",
+            "chars",
+            "get",
+            "insert"
           ],
-          "explain": "",
-          "hp": 5,
+          "explain": "[code][color=#ffd36e]Vec::new()[/color][/code] starts empty; [code][color=#ffd36e]split_whitespace[/color][/code] gives the words; [code][color=#ffd36e]entry(...).or_insert(0)[/color][/code] makes counting easy.",
+          "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n[color=#7f8ca3]// \"Crab  SHELL crab\" becomes [lb]\"crab\", \"shell\", \"crab\"[rb]:[/color]\n[color=#7f8ca3]// split into words, make each lowercase, and push them into a Vec.[/color]\n[color=#c792ea]fn[/color] parse_catch(text: &str) -> [color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]> {\n    [color=#c792ea]let[/color] "
+              "t": "[color=#c792ea]fn[/color] parse_catch(text: &str) -> [color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]> {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] out = [color=#ffcb6b]Vec[/color]::"
             },
             {
               "b": 0
             },
             {
-              "t": " out = [color=#ffcb6b]Vec[/color]::new();\n    [color=#c792ea]for[/color] word [color=#c792ea]in[/color] text.split_whitespace() {\n        "
+              "t": "();\n    [color=#c792ea]for[/color] word [color=#c792ea]in[/color] text."
             },
             {
               "b": 1
             },
             {
-              "t": ".push(word.to_lowercase());\n    }\n    out\n}\n\n[color=#7f8ca3]// Count how many times each item appears. Use entry().or_insert(0).[/color]\n[color=#c792ea]fn[/color] tally(items: &[color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]>) -> [color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32> {\n    "
+              "t": "() {\n        out.push(word.to_lowercase());\n    }\n    out\n}\n\n[color=#c792ea]fn[/color] tally(items: &[color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]>) -> [color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32> {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] map = [color=#ffcb6b]HashMap[/color]::new();\n    [color=#c792ea]for[/color] item [color=#c792ea]in[/color] items {\n        [color=#c792ea]let[/color] c = map."
             },
             {
               "b": 2
             },
             {
-              "t": " [color=#c792ea]mut[/color] map = [color=#ffcb6b]HashMap[/color]::new();\n    [color=#c792ea]for[/color] item [color=#c792ea]in[/color] items {\n        [color=#c792ea]let[/color] c = map.entry(item.to_string()).or_insert("
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": ");\n        *c += [color=#f78c6c]1[/color];\n    }\n    "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": "\n}\n\n[color=#7f8ca3]// Look up one item in the tally. Return 0 if it is missing.[/color]\n[color=#c792ea]fn[/color] count_of(map: &[color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32>, item: &str) -> u32 {\n    [color=#c792ea]match[/color] map.get(item) {\n        [color=#ffcb6b]Some[/color](n) => *n,\n        [color=#ffcb6b]None[/color] => [color=#f78c6c]0[/color],\n    }\n}\n[color=#7f8ca3]// ...[/color]"
+              "t": "(item.to_string()).or_insert([color=#f78c6c]0[/color]);\n        *c += [color=#f78c6c]1[/color];\n    }\n    map\n}"
             }
           ],
-          "prompt": "Fill in all seven todo!() functions (parse_catch, tally, count_of, biggest, bump_all, banner, shortest_name) so every test passes and the Kraken sinks."
+          "prompt": "Round 1: split the catch into lowercase words, then tally them."
         },
         {
           "answer": [
             "None",
-            "for",
-            "Some",
-            "best",
-            "*"
-          ],
-          "decoys": [
-            "null",
-            "while",
-            "loop",
-            "Ok",
-            "&"
-          ],
-          "explain": "",
-          "hp": 5,
-          "kind": "fill",
-          "parts": [
-            {
-              "t": "[color=#7f8ca3]// ...[/color]\n[color=#c792ea]fn[/color] count_of(map: &[color=#ffcb6b]HashMap[/color]<[color=#ffcb6b]String[/color], u32>, item: &str) -> u32 {\n    [color=#c792ea]match[/color] map.get(item) {\n        [color=#ffcb6b]Some[/color](n) => *n,\n        "
-            },
-            {
-              "b": 0
-            },
-            {
-              "t": " => [color=#f78c6c]0[/color],\n    }\n}\n\n[color=#7f8ca3]// The largest number in the Vec, or None if the Vec is empty.[/color]\n[color=#c792ea]fn[/color] biggest(v: &[color=#ffcb6b]Vec[/color]<u32>) -> [color=#ffcb6b]Option[/color]<u32> {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] best: [color=#ffcb6b]Option[/color]<u32> = [color=#ffcb6b]None[/color];\n    "
-            },
-            {
-              "b": 1
-            },
-            {
-              "t": " &n [color=#c792ea]in[/color] v {\n        [color=#c792ea]match[/color] best {\n            "
-            },
-            {
-              "b": 2
-            },
-            {
-              "t": "(b) [color=#c792ea]if[/color] b >= n => {}\n            _ => best = [color=#ffcb6b]Some[/color](n),\n        }\n    }\n    "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": "\n}\n\n[color=#7f8ca3]// Add 1 to every number in the Vec, in place.[/color]\n[color=#c792ea]fn[/color] bump_all(v: &[color=#c792ea]mut[/color] [color=#ffcb6b]Vec[/color]<u32>) {\n    [color=#c792ea]for[/color] n [color=#c792ea]in[/color] v {\n        "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": "n += [color=#f78c6c]1[/color];\n    }\n}\n\n[color=#7f8ca3]// Join the items in uppercase with commas: [lb]\"a\", \"b\"[rb] becomes \"A,B\".[/color]\n[color=#7f8ca3]// No comma at the start or end. An empty Vec gives \"\".[/color]\n[color=#c792ea]fn[/color] banner(items: &[color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]>) -> [color=#ffcb6b]String[/color] {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] out = [color=#ffcb6b]String[/color]::new();\n    [color=#c792ea]for[/color] item [color=#c792ea]in[/color] items {\n        [color=#c792ea]if[/color] !out.is_empty() {\n            out.push([color=#c3e88d]','[/color]);\n        }\n[color=#7f8ca3]// ...[/color]"
-            }
-          ],
-          "prompt": "Fill in all seven todo!() functions (parse_catch, tally, count_of, biggest, bump_all, banner, shortest_name) so every test passes and the Kraken sinks."
-        },
-        {
-          "answer": [
             "if",
-            "&",
-            "mut",
-            "let",
             "Some"
           ],
           "decoys": [
-            "match",
-            "while",
-            "&mut",
-            "*",
-            "const"
+            "0",
+            "when",
+            "Ok"
           ],
-          "explain": "",
-          "hp": 5,
+          "explain": "Start with [code][color=#ffd36e]None[/color][/code] (nothing seen yet). [code][color=#ffd36e]Some(b) if b >= n[/color][/code] only matches when the old best is still bigger; otherwise [code][color=#ffd36e]n[/color][/code] becomes the new best.",
+          "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n[color=#c792ea]fn[/color] banner(items: &[color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]>) -> [color=#ffcb6b]String[/color] {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] out = [color=#ffcb6b]String[/color]::new();\n    [color=#c792ea]for[/color] item [color=#c792ea]in[/color] items {\n        "
+              "t": "[color=#c792ea]fn[/color] biggest(v: &[color=#ffcb6b]Vec[/color]<u32>) -> [color=#ffcb6b]Option[/color]<u32> {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] best: [color=#ffcb6b]Option[/color]<u32> = "
             },
             {
               "b": 0
             },
             {
-              "t": " !out.is_empty() {\n            out.push([color=#c3e88d]','[/color]);\n        }\n        out.push_str("
+              "t": ";\n    [color=#c792ea]for[/color] &n [color=#c792ea]in[/color] v {\n        [color=#c792ea]match[/color] best {\n            [color=#ffcb6b]Some[/color](b) "
             },
             {
               "b": 1
             },
             {
-              "t": "item.to_uppercase());\n    }\n    out\n}\n\n[color=#7f8ca3]// The length of the shortest name, or None if there are no names.[/color]\n[color=#c792ea]fn[/color] shortest_name(items: &[color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]>) -> [color=#ffcb6b]Option[/color]<usize> {\n    [color=#c792ea]let[/color] "
+              "t": " b >= n => {}\n            _ => best = "
             },
             {
               "b": 2
             },
             {
-              "t": " best: [color=#ffcb6b]Option[/color]<usize> = [color=#ffcb6b]None[/color];\n    [color=#c792ea]for[/color] item [color=#c792ea]in[/color] items {\n        "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": " len = item.len();\n        [color=#c792ea]match[/color] best {\n            "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": "(b) [color=#c792ea]if[/color] b <= len => {}\n            _ => best = [color=#ffcb6b]Some[/color](len),\n        }\n    }\n    best\n}\n\n[color=#c792ea]fn[/color] main() {\n[color=#7f8ca3]// ...[/color]"
+              "t": "(n),\n        }\n    }\n    best\n}"
             }
           ],
-          "prompt": "Fill in all seven todo!() functions (parse_catch, tally, count_of, biggest, bump_all, banner, shortest_name) so every test passes and the Kraken sinks."
+          "prompt": "Round 2: find the biggest number. A match arm can have an [code][color=#ffd36e]if[/color][/code] guard."
+        },
+        {
+          "answer": [
+            "*",
+            "!",
+            "&"
+          ],
+          "decoys": [
+            "&mut",
+            "not",
+            "**"
+          ],
+          "explain": "[code][color=#ffd36e]*n[/color][/code] changes the number behind the reference. [code][color=#ffd36e]![/color][/code] means not. [code][color=#ffd36e]push_str[/color][/code] wants a [code][color=#ffd36e]&str[/color][/code], so [code][color=#ffd36e]&[/color][/code] borrows the new String.",
+          "hp": 3,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] bump_all(v: &[color=#c792ea]mut[/color] [color=#ffcb6b]Vec[/color]<u32>) {\n    [color=#c792ea]for[/color] n [color=#c792ea]in[/color] v {\n        "
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": "n += [color=#f78c6c]1[/color];\n    }\n}\n\n[color=#c792ea]fn[/color] banner(items: &[color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]>) -> [color=#ffcb6b]String[/color] {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] out = [color=#ffcb6b]String[/color]::new();\n    [color=#c792ea]for[/color] item [color=#c792ea]in[/color] items {\n        [color=#c792ea]if[/color] "
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": "out.is_empty() {\n            out.push([color=#c3e88d]','[/color]);\n        }\n        out.push_str("
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": "item.to_uppercase());\n    }\n    out\n}"
+            }
+          ],
+          "prompt": "Final round: bump every number, and join items as UPPERCASE with commas."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Boss: The Collection Kraken",
       "xp": 180
     },
@@ -2622,67 +2839,77 @@
         {
           "answer": [
             "self",
-            "derive",
-            "name",
-            "\"click\"",
-            "clone",
-            "\"blub\""
+            "impl",
+            "for"
           ],
           "decoys": [
             "Self",
-            "this",
-            "copy",
-            "to_string",
-            "&"
+            "trait",
+            "in",
+            "this"
           ],
-          "explain": "",
-          "hp": 6,
+          "explain": "[code][color=#ffd36e]impl Trait for Type[/color][/code] fills in the trait's methods. [code][color=#ffd36e]speak[/color][/code] has a default body, so Crab gets it for free.",
+          "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n\n    [color=#7f8ca3]// Default method: \"NAME says SOUND\", e.g. \"Pinch says click\".[/color]\n    [color=#c792ea]fn[/color] speak(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#82aaff]format[/color]!([color=#c3e88d]\"{} says {}\"[/color], "
+              "t": "[color=#c792ea]trait[/color] [color=#ffcb6b]Speak[/color] {\n    [color=#c792ea]fn[/color] name(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color];\n    [color=#c792ea]fn[/color] sound(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color];\n\n    [color=#c792ea]fn[/color] speak(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#82aaff]format[/color]!([color=#c3e88d]\"{} says {}\"[/color], "
             },
             {
               "b": 0
             },
             {
-              "t": ".name(), [color=#c792ea]self[/color].sound())\n    }\n}\n\n#[lb]"
+              "t": ".name(), [color=#c792ea]self[/color].sound())\n    }\n}\n\n"
             },
             {
               "b": 1
             },
             {
-              "t": "([color=#ffcb6b]Debug[/color], [color=#ffcb6b]Clone[/color], [color=#ffcb6b]PartialEq[/color])[rb]\n[color=#7f8ca3]// TODO: add #[lb]derive(Debug, Clone, PartialEq)[rb] on the next line[/color]\n[color=#c792ea]struct[/color] [color=#ffcb6b]Crab[/color] {\n    name: [color=#ffcb6b]String[/color],\n}\n\n[color=#c792ea]struct[/color] [color=#ffcb6b]Octopus[/color] {\n    name: [color=#ffcb6b]String[/color],\n    arms: u32,\n}\n\n[color=#7f8ca3]// Crab's sound is \"click\".[/color]\n[color=#c792ea]impl[/color] [color=#ffcb6b]Speak[/color] [color=#c792ea]for[/color] [color=#ffcb6b]Crab[/color] {\n    [color=#c792ea]fn[/color] name(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#c792ea]self[/color]."
+              "t": " [color=#ffcb6b]Speak[/color] "
             },
             {
               "b": 2
             },
             {
-              "t": ".clone()\n    }\n    [color=#c792ea]fn[/color] sound(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": ".to_string()\n    }\n}\n\n[color=#7f8ca3]// Octopus's sound is \"blub\".[/color]\n[color=#c792ea]impl[/color] [color=#ffcb6b]Speak[/color] [color=#c792ea]for[/color] [color=#ffcb6b]Octopus[/color] {\n    [color=#c792ea]fn[/color] name(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#c792ea]self[/color].name."
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": "()\n    }\n    [color=#c792ea]fn[/color] sound(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        "
-            },
-            {
-              "b": 5
-            },
-            {
-              "t": ".to_string()\n    }\n}\n\n[color=#7f8ca3]// Works for ANY speaker. Returns \"[lb]\" + the speak() text + \"[rb]\".[/color]\n[color=#c792ea]fn[/color] describe(x: &[color=#c792ea]impl[/color] [color=#ffcb6b]Speak[/color]) -> [color=#ffcb6b]String[/color] {\n    [color=#82aaff]format[/color]!([color=#c3e88d]\"[lb]{}[rb]\"[/color], x.speak())\n}\n\n[color=#c792ea]fn[/color] main() {\n[color=#7f8ca3]// ...[/color]"
+              "t": " [color=#ffcb6b]Crab[/color] {\n    [color=#c792ea]fn[/color] name(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#c792ea]self[/color].name.clone()\n    }\n    [color=#c792ea]fn[/color] sound(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#c3e88d]\"click\"[/color].to_string()\n    }\n}"
             }
           ],
-          "prompt": "Fill in the Speak trait's default method, implement Speak for Crab and Octopus, write describe, and derive Debug, Clone and PartialEq on Crab."
+          "prompt": "Give the Speak trait a default [code][color=#ffd36e]speak[/color][/code] method, and implement it for Crab."
+        },
+        {
+          "answer": [
+            "derive",
+            "impl"
+          ],
+          "decoys": [
+            "impl Debug",
+            "dyn trait",
+            "trait"
+          ],
+          "explain": "[code][color=#ffd36e]#[lb]derive(...)[rb][/color][/code] writes common trait code for you. [code][color=#ffd36e]&impl Speak[/color][/code] means \"a reference to any type that implements Speak\".",
+          "hp": 2,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "#[lb]"
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": "([color=#ffcb6b]Debug[/color], [color=#ffcb6b]Clone[/color], [color=#ffcb6b]PartialEq[/color])[rb]\n[color=#c792ea]struct[/color] [color=#ffcb6b]Crab[/color] {\n    name: [color=#ffcb6b]String[/color],\n}\n\n[color=#c792ea]fn[/color] describe(x: &"
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": " [color=#ffcb6b]Speak[/color]) -> [color=#ffcb6b]String[/color] {\n    [color=#82aaff]format[/color]!([color=#c3e88d]\"[lb]{}[rb]\"[/color], x.speak())\n}"
+            }
+          ],
+          "prompt": "Derive the handy traits on Crab, and accept anything that can Speak."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Shared Superpowers",
       "xp": 110
     },
@@ -2773,45 +3000,85 @@
       "taps": [
         {
           "answer": [
+            "Fn",
             "f",
-            "x",
-            "|"
+            "f"
           ],
           "decoys": [
-            "&",
-            "mut",
-            "let"
+            "fn",
+            "x",
+            "Box"
           ],
-          "explain": "",
+          "explain": "[code][color=#ffd36e]impl Fn(i32) -> i32[/color][/code] accepts any closure or function with that shape. Calling it twice is [code][color=#ffd36e]f(f(x))[/color][/code].",
           "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// Runs the function f on x and returns the result.[/color]\n[color=#c792ea]fn[/color] apply(f: [color=#c792ea]impl[/color] [color=#ffcb6b]Fn[/color](i32) -> i32, x: i32) -> i32 {\n    "
+              "t": "[color=#c792ea]fn[/color] apply(f: [color=#c792ea]impl[/color] "
             },
             {
               "b": 0
             },
             {
-              "t": "(x)\n}\n\n[color=#7f8ca3]// Runs f on x, then runs f again on that result.[/color]\n[color=#7f8ca3]// apply_twice(|n| n * 2, 3) is 12.[/color]\n[color=#c792ea]fn[/color] apply_twice(f: [color=#c792ea]impl[/color] [color=#ffcb6b]Fn[/color](i32) -> i32, x: i32) -> i32 {\n    f(f("
+              "t": "(i32) -> i32, x: i32) -> i32 {\n    "
             },
             {
               "b": 1
             },
             {
-              "t": "))\n}\n\n[color=#7f8ca3]// Use apply with a CLOSURE that adds `bonus` to its input.[/color]\n[color=#7f8ca3]// score_with_bonus(5, 10) is 15.[/color]\n[color=#c792ea]fn[/color] score_with_bonus(base: i32, bonus: i32) -> i32 {\n    apply("
+              "t": "(x)\n}\n\n[color=#c792ea]fn[/color] apply_twice(f: [color=#c792ea]impl[/color] [color=#ffcb6b]Fn[/color](i32) -> i32, x: i32) -> i32 {\n    f("
             },
             {
               "b": 2
             },
             {
-              "t": "s| s + bonus, base)\n}\n\n[color=#c792ea]fn[/color] main() {\n[color=#7f8ca3]// ...[/color]"
+              "t": "(x))\n}"
             }
           ],
-          "prompt": "Write apply, apply_twice (run f two times in a row) and score_with_bonus (use a closure that captures bonus) so the tests pass."
+          "prompt": "Write [code][color=#ffd36e]apply[/color][/code] and [code][color=#ffd36e]apply_twice[/color][/code]. [code][color=#ffd36e]f[/color][/code] is any function from i32 to i32."
+        },
+        {
+          "answer": [
+            "|",
+            "|",
+            "bonus"
+          ],
+          "decoys": [
+            "(",
+            ")",
+            "base",
+            "=>"
+          ],
+          "explain": "[code][color=#ffd36e]|s| s + bonus[/color][/code] is a closure: parameters between pipes, then the body. It \"captures\" [code][color=#ffd36e]bonus[/color][/code] from the surrounding function.",
+          "hp": 3,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] score_with_bonus(base: i32, bonus: i32) -> i32 {\n    apply("
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": "s"
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": " s + "
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": ", base)\n}"
+            }
+          ],
+          "prompt": "Make a closure that adds the captured [code][color=#ffd36e]bonus[/color][/code] to a score."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "Pocket Functions",
       "xp": 100
     },
@@ -2906,68 +3173,92 @@
       "taps": [
         {
           "answer": [
-            "|",
-            "*",
-            "2",
-            "iter",
-            "enumerate",
-            "\"{}:{}\""
+            "map",
+            "sum",
+            "filter"
           ],
           "decoys": [
-            "3",
-            "1",
-            "into_iter",
-            "next",
-            "&"
+            "for_each",
+            "collect",
+            "find",
+            "len"
           ],
-          "explain": "",
-          "hp": 6,
+          "explain": "[code][color=#ffd36e]map[/color][/code] transforms each item, [code][color=#ffd36e]filter[/color][/code] keeps the ones where the closure says true, and [code][color=#ffd36e]sum[/color][/code]/[code][color=#ffd36e]count[/color][/code] finish the chain.",
+          "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// Sum of every number squared. sum_of_squares(&[lb]1, 2, 3[rb]) is 14.[/color]\n[color=#c792ea]fn[/color] sum_of_squares(v: &[lb]i32[rb]) -> i32 {\n    v.iter().map("
+              "t": "[color=#c792ea]fn[/color] sum_of_squares(v: &[lb]i32[rb]) -> i32 {\n    v.iter()."
             },
             {
               "b": 0
             },
             {
-              "t": "x| x * x).sum()\n}\n\n[color=#7f8ca3]// How many numbers are greater than 10?[/color]\n[color=#c792ea]fn[/color] count_big(v: &[lb]i32[rb]) -> usize {\n    v.iter().filter(|x| "
+              "t": "(|x| x * x)."
             },
             {
               "b": 1
             },
             {
-              "t": "*x > [color=#f78c6c]10[/color]).count()\n}\n\n[color=#7f8ca3]// Keep only the even numbers, then double them.[/color]\n[color=#7f8ca3]// evens_doubled(&[lb]1, 2, 3, 4[rb]) is [lb]4, 8[rb].[/color]\n[color=#c792ea]fn[/color] evens_doubled(v: &[lb]i32[rb]) -> [color=#ffcb6b]Vec[/color]<i32> {\n    v.iter().copied().filter(|x| x % "
+              "t": "()\n}\n\n[color=#c792ea]fn[/color] count_big(v: &[lb]i32[rb]) -> usize {\n    v.iter()."
             },
             {
               "b": 2
             },
             {
-              "t": " == [color=#f78c6c]0[/color]).map(|x| x * [color=#f78c6c]2[/color]).collect()\n}\n\n[color=#7f8ca3]// Turn names into \"index:name\" text.[/color]\n[color=#7f8ca3]// labelled(&[lb]\"a\", \"b\"[rb]) is [lb]\"0:a\", \"1:b\"[rb].[/color]\n[color=#c792ea]fn[/color] labelled(names: &[lb]&str[rb]) -> [color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]> {\n    names\n        ."
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": "()\n        ."
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": "()\n        .map(|(i, s)| [color=#82aaff]format[/color]!("
-            },
-            {
-              "b": 5
-            },
-            {
-              "t": ", i, s))\n        .collect()\n}\n\n[color=#c792ea]fn[/color] main() {\n[color=#7f8ca3]// ...[/color]"
+              "t": "(|x| **x > [color=#f78c6c]10[/color]).count()\n}"
             }
           ],
-          "prompt": "Rewrite the loops as iterator chains: sum_of_squares, count_big (items over 10), evens_doubled, and labelled (index:name). No [code][color=#ffd36e]for[/color][/code] loops allowed!"
+          "prompt": "Sum the squares, and count items over 10, with iterator chains."
+        },
+        {
+          "decoys": [
+            {
+              "bb": "        .sum()",
+              "text": "        .sum()"
+            },
+            {
+              "bb": "        .map(|i, s| [color=#82aaff]format[/color]!([color=#c3e88d]\"{}:{}\"[/color], i, s))",
+              "text": "        .map(|i, s| format!(\"{}:{}\", i, s))"
+            }
+          ],
+          "explain": "[code][color=#ffd36e]enumerate[/color][/code] pairs each item with its index as [code][color=#ffd36e](i, item)[/color][/code], so the closure takes a tuple [code][color=#ffd36e]|(i, s)|[/color][/code]. [code][color=#ffd36e]collect[/color][/code] gathers everything into a Vec.",
+          "hp": 7,
+          "kind": "order",
+          "lines": [
+            {
+              "bb": "[color=#c792ea]fn[/color] labelled(names: &[lb]&str[rb]) -> [color=#ffcb6b]Vec[/color]<[color=#ffcb6b]String[/color]> {",
+              "text": "fn labelled(names: &[&str]) -> Vec<String> {"
+            },
+            {
+              "bb": "    names",
+              "text": "    names"
+            },
+            {
+              "bb": "        .iter()",
+              "text": "        .iter()"
+            },
+            {
+              "bb": "        .enumerate()",
+              "text": "        .enumerate()"
+            },
+            {
+              "bb": "        .map(|(i, s)| [color=#82aaff]format[/color]!([color=#c3e88d]\"{}:{}\"[/color], i, s))",
+              "text": "        .map(|(i, s)| format!(\"{}:{}\", i, s))"
+            },
+            {
+              "bb": "        .collect()",
+              "text": "        .collect()"
+            },
+            {
+              "bb": "}",
+              "text": "}"
+            }
+          ],
+          "prompt": "Build [code][color=#ffd36e]labelled[/color][/code]: turn [lb]\"a\", \"b\"[rb] into [lb]\"0:a\", \"1:b\"[rb]."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "The Conveyor Belt",
       "xp": 110
     },
@@ -3059,68 +3350,84 @@
       "taps": [
         {
           "answer": [
-            "\"empty input\"",
-            "let",
-            "match",
-            "if",
-            "?",
-            "total_shells"
+            "Err",
+            "TooBig",
+            "Ok"
           ],
           "decoys": [
-            "var",
-            "mut",
-            "switch",
-            "while",
-            "!"
+            "None",
+            "Some",
+            "panic!"
           ],
-          "explain": "",
-          "hp": 6,
+          "explain": "Errors are ordinary values: [code][color=#ffd36e]Err(CrabError::Empty)[/color][/code]. The happy path ends with [code][color=#ffd36e]Ok(n)[/color][/code].",
+          "hp": 3,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n[color=#c792ea]impl[/color] fmt::[color=#ffcb6b]Display[/color] [color=#c792ea]for[/color] [color=#ffcb6b]CrabError[/color] {\n    [color=#c792ea]fn[/color] fmt(&[color=#c792ea]self[/color], f: &[color=#c792ea]mut[/color] fmt::[color=#ffcb6b]Formatter[/color]) -> fmt::[color=#ffcb6b]Result[/color] {\n        [color=#c792ea]match[/color] [color=#c792ea]self[/color] {\n            [color=#ffcb6b]CrabError[/color]::[color=#ffcb6b]Empty[/color] => [color=#82aaff]write[/color]!(f, "
+              "t": "[color=#c792ea]fn[/color] parse_shells(text: &str) -> [color=#ffcb6b]Result[/color]<u32, [color=#ffcb6b]CrabError[/color]> {\n    [color=#c792ea]let[/color] text = text.trim();\n    [color=#c792ea]if[/color] text.is_empty() {\n        [color=#c792ea]return[/color] "
             },
             {
               "b": 0
             },
             {
-              "t": "),\n            [color=#ffcb6b]CrabError[/color]::[color=#ffcb6b]NotANumber[/color] => [color=#82aaff]write[/color]!(f, [color=#c3e88d]\"not a number\"[/color]),\n            [color=#ffcb6b]CrabError[/color]::[color=#ffcb6b]TooBig[/color](n) => [color=#82aaff]write[/color]!(f, [color=#c3e88d]\"{} is too big (max 100)\"[/color], n),\n        }\n    }\n}\n\n[color=#7f8ca3]// \"\" (after trim) -> Err(Empty). Not a whole number -> Err(NotANumber).[/color]\n[color=#7f8ca3]// More than 100 -> Err(TooBig(n)). Otherwise Ok(n).[/color]\n[color=#c792ea]fn[/color] parse_shells(text: &str) -> [color=#ffcb6b]Result[/color]<u32, [color=#ffcb6b]CrabError[/color]> {\n    "
+              "t": "([color=#ffcb6b]CrabError[/color]::[color=#ffcb6b]Empty[/color]);\n    }\n    [color=#c792ea]let[/color] n = [color=#c792ea]match[/color] text.parse::<u32>() {\n        [color=#ffcb6b]Ok[/color](n) => n,\n        [color=#ffcb6b]Err[/color](_) => [color=#c792ea]return[/color] [color=#ffcb6b]Err[/color]([color=#ffcb6b]CrabError[/color]::[color=#ffcb6b]NotANumber[/color]),\n    };\n    [color=#c792ea]if[/color] n > [color=#f78c6c]100[/color] {\n        [color=#c792ea]return[/color] [color=#ffcb6b]Err[/color]([color=#ffcb6b]CrabError[/color]::"
             },
             {
               "b": 1
             },
             {
-              "t": " text = text.trim();\n    [color=#c792ea]if[/color] text.is_empty() {\n        [color=#c792ea]return[/color] [color=#ffcb6b]Err[/color]([color=#ffcb6b]CrabError[/color]::[color=#ffcb6b]Empty[/color]);\n    }\n    [color=#c792ea]let[/color] n = "
+              "t": "(n));\n    }\n    "
             },
             {
               "b": 2
             },
             {
-              "t": " text.parse::<u32>() {\n        [color=#ffcb6b]Ok[/color](n) => n,\n        [color=#ffcb6b]Err[/color](_) => [color=#c792ea]return[/color] [color=#ffcb6b]Err[/color]([color=#ffcb6b]CrabError[/color]::[color=#ffcb6b]NotANumber[/color]),\n    };\n    "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": " n > [color=#f78c6c]100[/color] {\n        [color=#c792ea]return[/color] [color=#ffcb6b]Err[/color]([color=#ffcb6b]CrabError[/color]::[color=#ffcb6b]TooBig[/color](n));\n    }\n    [color=#ffcb6b]Ok[/color](n)\n}\n\n[color=#7f8ca3]// Parse both texts and add them. Use ? to pass any error up.[/color]\n[color=#c792ea]fn[/color] total_shells(a: &str, b: &str) -> [color=#ffcb6b]Result[/color]<u32, [color=#ffcb6b]CrabError[/color]> {\n    [color=#c792ea]let[/color] x = parse_shells(a)"
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": ";\n    [color=#c792ea]let[/color] y = parse_shells(b)?;\n    [color=#ffcb6b]Ok[/color](x + y)\n}\n\n[color=#7f8ca3]// Ok(n)  -> \"Total: N\"      Err(e) -> \"Error: MESSAGE\" (use the Display text)[/color]\n[color=#c792ea]fn[/color] report(a: &str, b: &str) -> [color=#ffcb6b]String[/color] {\n    [color=#c792ea]match[/color] "
-            },
-            {
-              "b": 5
-            },
-            {
-              "t": "(a, b) {\n        [color=#ffcb6b]Ok[/color](n) => [color=#82aaff]format[/color]!([color=#c3e88d]\"Total: {}\"[/color], n),\n        [color=#ffcb6b]Err[/color](e) => [color=#82aaff]format[/color]!([color=#c3e88d]\"Error: {}\"[/color], e),\n    }\n}\n\n[color=#7f8ca3]// ...[/color]"
+              "t": "(n)\n}"
             }
           ],
-          "prompt": "Finish the CrabError Display impl, write parse_shells (returns a Result), total_shells (use ?), and report (match on the result)."
+          "prompt": "Return the right error for empty or too-big input."
+        },
+        {
+          "answer": [
+            "?",
+            "?",
+            "Err"
+          ],
+          "decoys": [
+            ".unwrap()",
+            "!",
+            "None"
+          ],
+          "explain": "[code][color=#ffd36e]?[/color][/code] means \"if this is an Err, return it right now; otherwise unwrap the Ok\". It keeps error handling short.",
+          "hp": 3,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] total_shells(a: &str, b: &str) -> [color=#ffcb6b]Result[/color]<u32, [color=#ffcb6b]CrabError[/color]> {\n    [color=#c792ea]let[/color] x = parse_shells(a)"
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": ";\n    [color=#c792ea]let[/color] y = parse_shells(b)"
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": ";\n    [color=#ffcb6b]Ok[/color](x + y)\n}\n\n[color=#c792ea]fn[/color] report(a: &str, b: &str) -> [color=#ffcb6b]String[/color] {\n    [color=#c792ea]match[/color] total_shells(a, b) {\n        [color=#ffcb6b]Ok[/color](n) => [color=#82aaff]format[/color]!([color=#c3e88d]\"Total: {}\"[/color], n),\n        "
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": "(e) => [color=#82aaff]format[/color]!([color=#c3e88d]\"Error: {}\"[/color], e),\n    }\n}"
+            }
+          ],
+          "prompt": "Use [code][color=#ffd36e]?[/color][/code] to pass errors up, then match on the final result."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "When Things Go Wrong",
       "xp": 120
     },
@@ -3178,171 +3485,147 @@
       "taps": [
         {
           "answer": [
+            "Hero",
             "30",
-            "self",
-            "match",
-            "=>",
-            "0"
+            "title",
+            "for"
           ],
           "decoys": [
-            "31",
-            "29",
-            "Self",
-            "this",
-            "if"
+            "self",
+            "banner",
+            "in",
+            "&Hero"
           ],
-          "explain": "",
-          "hp": 5,
+          "explain": "A trait's default method can call its other methods through [code][color=#ffd36e]self[/color][/code]. [code][color=#ffd36e]impl Describe for Hero[/color][/code] only has to supply [code][color=#ffd36e]title[/color][/code].",
+          "hp": 4,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n[color=#c792ea]impl[/color] [color=#ffcb6b]Hero[/color] {\n    [color=#7f8ca3]// New hero with the given name and 30 hp.[/color]\n    [color=#c792ea]fn[/color] new(name: &str) -> [color=#ffcb6b]Hero[/color] {\n        [color=#ffcb6b]Hero[/color] { name: name.to_string(), hp: "
+              "t": "[color=#c792ea]impl[/color] [color=#ffcb6b]Hero[/color] {\n    [color=#c792ea]fn[/color] new(name: &str) -> "
             },
             {
               "b": 0
             },
             {
-              "t": " }\n    }\n}\n\n[color=#c792ea]trait[/color] [color=#ffcb6b]Describe[/color] {\n    [color=#c792ea]fn[/color] title(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color];\n\n    [color=#7f8ca3]// Default method: \"=== TITLE ===\"[/color]\n    [color=#c792ea]fn[/color] banner(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#82aaff]format[/color]!([color=#c3e88d]\"=== {} ===\"[/color], "
+              "t": " {\n        [color=#ffcb6b]Hero[/color] { name: name.to_string(), hp: "
             },
             {
               "b": 1
             },
             {
-              "t": ".title())\n    }\n}\n\n[color=#7f8ca3]// A hero's title is just its name.[/color]\n[color=#c792ea]impl[/color] [color=#ffcb6b]Describe[/color] [color=#c792ea]for[/color] [color=#ffcb6b]Hero[/color] {\n    [color=#c792ea]fn[/color] title(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#c792ea]self[/color].name.clone()\n    }\n}\n\n[color=#c792ea]enum[/color] [color=#ffcb6b]Move[/color] {\n    [color=#ffcb6b]Claw[/color],\n    [color=#ffcb6b]Pinch[/color](u32),\n    [color=#ffcb6b]Retreat[/color],\n}\n\n[color=#7f8ca3]// Claw does 5, Pinch(n) does n * 2, Retreat does 0.[/color]\n[color=#c792ea]fn[/color] damage(m: &[color=#ffcb6b]Move[/color]) -> u32 {\n    "
+              "t": " }\n    }\n}\n\n[color=#c792ea]trait[/color] [color=#ffcb6b]Describe[/color] {\n    [color=#c792ea]fn[/color] title(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color];\n\n    [color=#c792ea]fn[/color] banner(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#82aaff]format[/color]!([color=#c3e88d]\"=== {} ===\"[/color], [color=#c792ea]self[/color]."
             },
             {
               "b": 2
             },
             {
-              "t": " m {\n        [color=#ffcb6b]Move[/color]::[color=#ffcb6b]Claw[/color] "
+              "t": "())\n    }\n}\n\n[color=#c792ea]impl[/color] [color=#ffcb6b]Describe[/color] "
             },
             {
               "b": 3
             },
             {
-              "t": " [color=#f78c6c]5[/color],\n        [color=#ffcb6b]Move[/color]::[color=#ffcb6b]Pinch[/color](n) => n * [color=#f78c6c]2[/color],\n        [color=#ffcb6b]Move[/color]::[color=#ffcb6b]Retreat[/color] => "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": ",\n    }\n}\n\n[color=#7f8ca3]// Add up the damage of every move. Use an iterator chain.[/color]\n[color=#c792ea]fn[/color] total_damage(moves: &[lb][color=#ffcb6b]Move[/color][rb]) -> u32 {\n    moves.iter().map(|m| damage(m)).sum()\n}\n\n[color=#7f8ca3]// How many moves do 10 or more damage? Use an iterator chain.[/color]\n[color=#7f8ca3]// ...[/color]"
+              "t": " [color=#ffcb6b]Hero[/color] {\n    [color=#c792ea]fn[/color] title(&[color=#c792ea]self[/color]) -> [color=#ffcb6b]String[/color] {\n        [color=#c792ea]self[/color].name.clone()\n    }\n}"
             }
           ],
-          "prompt": "Fill in every todo!() so all 8 tests pass: Hero, Describe, damage, total_damage, count_big_hits, parse_move and parse_battle."
+          "prompt": "Round 1: a Hero struct with 30 HP, and a trait with a default banner."
         },
         {
           "answer": [
-            "|",
-            "let",
-            "return",
-            "if",
+            "Pinch",
+            "map",
+            "filter",
+            "count"
+          ],
+          "decoys": [
+            "Claw",
+            "sum",
+            "len",
+            "find"
+          ],
+          "explain": "[code][color=#ffd36e]map[/color][/code] turns moves into damage numbers, [code][color=#ffd36e]filter[/color][/code] keeps the big ones, and [code][color=#ffd36e]count[/color][/code] counts what's left.",
+          "hp": 4,
+          "kind": "fill",
+          "parts": [
+            {
+              "t": "[color=#c792ea]fn[/color] damage(m: &[color=#ffcb6b]Move[/color]) -> u32 {\n    [color=#c792ea]match[/color] m {\n        [color=#ffcb6b]Move[/color]::[color=#ffcb6b]Claw[/color] => [color=#f78c6c]5[/color],\n        [color=#ffcb6b]Move[/color]::"
+            },
+            {
+              "b": 0
+            },
+            {
+              "t": "(n) => n * [color=#f78c6c]2[/color],\n        [color=#ffcb6b]Move[/color]::[color=#ffcb6b]Retreat[/color] => [color=#f78c6c]0[/color],\n    }\n}\n\n[color=#c792ea]fn[/color] total_damage(moves: &[lb][color=#ffcb6b]Move[/color][rb]) -> u32 {\n    moves.iter()."
+            },
+            {
+              "b": 1
+            },
+            {
+              "t": "(|m| damage(m)).sum()\n}\n\n[color=#c792ea]fn[/color] count_big_hits(moves: &[lb][color=#ffcb6b]Move[/color][rb]) -> usize {\n    moves.iter()."
+            },
+            {
+              "b": 2
+            },
+            {
+              "t": "(|m| damage(m) >= [color=#f78c6c]10[/color])."
+            },
+            {
+              "b": 3
+            },
+            {
+              "t": "()\n}"
+            }
+          ],
+          "prompt": "Round 2: damage for each move, then total and count big hits with iterators."
+        },
+        {
+          "answer": [
+            "Result",
+            "?",
+            "push",
+            "Ok"
+          ],
+          "decoys": [
+            "Option",
+            ".unwrap()",
+            "insert",
             "Some"
           ],
-          "decoys": [
-            "var",
-            "mut",
-            "break",
-            "yield",
-            "match"
-          ],
-          "explain": "",
-          "hp": 5,
+          "explain": "[code][color=#ffd36e]?[/color][/code] returns the first [code][color=#ffd36e]Err[/color][/code] straight away. If every move parses, [code][color=#ffd36e]Ok(moves)[/color][/code] hands back the full list. The Leviathan is beaten!",
+          "hp": 4,
           "kind": "fill",
           "parts": [
             {
-              "t": "[color=#7f8ca3]// ...[/color]\n\n[color=#7f8ca3]// How many moves do 10 or more damage? Use an iterator chain.[/color]\n[color=#c792ea]fn[/color] count_big_hits(moves: &[lb][color=#ffcb6b]Move[/color][rb]) -> usize {\n    moves.iter().filter("
+              "t": "[color=#c792ea]fn[/color] parse_battle(script: &str) -> "
             },
             {
               "b": 0
             },
             {
-              "t": "m| damage(m) >= [color=#f78c6c]10[/color]).count()\n}\n\n[color=#7f8ca3]// \"claw\" -> Claw, \"retreat\" -> Retreat, \"pinch 4\" -> Pinch(4).[/color]\n[color=#7f8ca3]// Anything else (including \"pinch abc\") -> Err with a message.[/color]\n[color=#c792ea]fn[/color] parse_move(text: &str) -> [color=#ffcb6b]Result[/color]<[color=#ffcb6b]Move[/color], [color=#ffcb6b]String[/color]> {\n    "
+              "t": "<[color=#ffcb6b]Vec[/color]<[color=#ffcb6b]Move[/color]>, [color=#ffcb6b]String[/color]> {\n    [color=#c792ea]let[/color] [color=#c792ea]mut[/color] moves = [color=#ffcb6b]Vec[/color]::new();\n    [color=#c792ea]for[/color] piece [color=#c792ea]in[/color] script.split([color=#c3e88d]','[/color]) {\n        [color=#c792ea]let[/color] m = parse_move(piece)"
             },
             {
               "b": 1
             },
             {
-              "t": " text = text.trim();\n    [color=#c792ea]if[/color] text == [color=#c3e88d]\"claw\"[/color] {\n        "
+              "t": ";\n        moves."
             },
             {
               "b": 2
             },
             {
-              "t": " [color=#ffcb6b]Ok[/color]([color=#ffcb6b]Move[/color]::[color=#ffcb6b]Claw[/color]);\n    }\n    "
+              "t": "(m);\n    }\n    "
             },
             {
               "b": 3
             },
             {
-              "t": " text == [color=#c3e88d]\"retreat\"[/color] {\n        [color=#c792ea]return[/color] [color=#ffcb6b]Ok[/color]([color=#ffcb6b]Move[/color]::[color=#ffcb6b]Retreat[/color]);\n    }\n    [color=#c792ea]if[/color] [color=#c792ea]let[/color] "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": "(rest) = text.strip_prefix([color=#c3e88d]\"pinch \"[/color]) {\n        [color=#c792ea]return[/color] [color=#c792ea]match[/color] rest.trim().parse::<u32>() {\n            [color=#ffcb6b]Ok[/color](n) => [color=#ffcb6b]Ok[/color]([color=#ffcb6b]Move[/color]::[color=#ffcb6b]Pinch[/color](n)),\n            [color=#ffcb6b]Err[/color](_) => [color=#ffcb6b]Err[/color]([color=#82aaff]format[/color]!([color=#c3e88d]\"bad pinch power: {}\"[/color], rest)),\n        };\n[color=#7f8ca3]// ...[/color]"
+              "t": "(moves)\n}"
             }
           ],
-          "prompt": "Fill in every todo!() so all 8 tests pass: Hero, Describe, damage, total_damage, count_big_hits, parse_move and parse_battle."
-        },
-        {
-          "answer": [
-            "Ok",
-            "Err",
-            "mut",
-            "for",
-            "moves"
-          ],
-          "decoys": [
-            "Some",
-            "None",
-            "const",
-            "&",
-            "while"
-          ],
-          "explain": "",
-          "hp": 5,
-          "kind": "fill",
-          "parts": [
-            {
-              "t": "[color=#7f8ca3]// ...[/color]\n    }\n    [color=#c792ea]if[/color] [color=#c792ea]let[/color] [color=#ffcb6b]Some[/color](rest) = text.strip_prefix([color=#c3e88d]\"pinch \"[/color]) {\n        [color=#c792ea]return[/color] [color=#c792ea]match[/color] rest.trim().parse::<u32>() {\n            "
-            },
-            {
-              "b": 0
-            },
-            {
-              "t": "(n) => [color=#ffcb6b]Ok[/color]([color=#ffcb6b]Move[/color]::[color=#ffcb6b]Pinch[/color](n)),\n            "
-            },
-            {
-              "b": 1
-            },
-            {
-              "t": "(_) => [color=#ffcb6b]Err[/color]([color=#82aaff]format[/color]!([color=#c3e88d]\"bad pinch power: {}\"[/color], rest)),\n        };\n    }\n    [color=#ffcb6b]Err[/color]([color=#82aaff]format[/color]!([color=#c3e88d]\"unknown move: {}\"[/color], text))\n}\n\n[color=#7f8ca3]// \"claw, pinch 4, retreat\" -> Ok(vec of three moves).[/color]\n[color=#7f8ca3]// If any piece fails, pass that Err up with ?.[/color]\n[color=#c792ea]fn[/color] parse_battle(script: &str) -> [color=#ffcb6b]Result[/color]<[color=#ffcb6b]Vec[/color]<[color=#ffcb6b]Move[/color]>, [color=#ffcb6b]String[/color]> {\n    [color=#c792ea]let[/color] "
-            },
-            {
-              "b": 2
-            },
-            {
-              "t": " moves = [color=#ffcb6b]Vec[/color]::new();\n    "
-            },
-            {
-              "b": 3
-            },
-            {
-              "t": " piece [color=#c792ea]in[/color] script.split([color=#c3e88d]','[/color]) {\n        [color=#c792ea]let[/color] m = parse_move(piece)?;\n        "
-            },
-            {
-              "b": 4
-            },
-            {
-              "t": ".push(m);\n    }\n    [color=#ffcb6b]Ok[/color](moves)\n}\n\n[color=#c792ea]fn[/color] main() {\n[color=#7f8ca3]// ...[/color]"
-            }
-          ],
-          "prompt": "Fill in every todo!() so all 8 tests pass: Hero, Describe, damage, total_damage, count_big_hits, parse_move and parse_battle."
+          "prompt": "Final round: parse a whole battle script. Any bad move stops the parse with its error."
         }
       ],
-      "taps_auto": true,
+      "taps_auto": false,
       "title": "The Rust Leviathan",
       "xp": 250
     }

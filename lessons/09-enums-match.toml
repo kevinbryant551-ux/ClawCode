@@ -194,3 +194,39 @@ println!("{word}");
 choices = ["five", "five other", "nothing", "other"]
 answer = 3
 explain = "Arms are checked top to bottom and `_` matches anything, so the first arm wins. The `5` arm can never run, and the compiler warns about an unreachable pattern."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Match on the weather. Each arm is `pattern => value`."
+code = '''
+fn advice(w: &Weather) -> String {
+    ___ w {
+        Weather___Sunny ___ String::from("Wear sunglasses"),
+        Weather::Rainy(mm) => {
+            if ___mm >= 10 {
+                String::from("Stay in your shell")
+            } else {
+                String::from("Bring a seaweed umbrella")
+            }
+        }
+        Weather::Storm { ___ } => String::from("Hide under a rock"),
+    }
+}
+'''
+answer = ["match", "::", "=>", "*", ".."]
+decoys = ["switch", ".", "->", "&", "_"]
+explain = "`Weather::Sunny` names a variant. `Rainy(mm)` pulls the number out; `*mm` reads through the reference. `{ .. }` means \"ignore the other fields\"."
+
+[[tap]]
+kind = "order"
+prompt = "Build the Weather enum: a plain variant, one holding a number, and one with a named field."
+code = '''
+enum Weather {
+    Sunny,
+    Rainy(u32),
+    Storm { wind: u32 },
+}
+'''
+decoys = ['struct Weather {', '    Rainy: u32,']
+explain = "An enum lists every possible kind of value. Variants can carry data, like `Rainy(u32)` or `Storm { wind: u32 }`."
