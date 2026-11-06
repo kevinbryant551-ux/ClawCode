@@ -29,6 +29,9 @@ pub struct Lesson {
     #[serde(default)]
     pub quiz: Vec<Quiz>,
     pub boss: Option<Boss>,
+    /// Button-pushing puzzles for the Godot (Android) app. See src/tap.rs.
+    #[serde(default)]
+    pub tap: Vec<crate::tap::Tap>,
 }
 
 /// A multiple-choice question shown between reading cards.
@@ -154,6 +157,11 @@ impl Lesson {
                     "{file_name}: quiz {} needs 2-6 choices and a valid answer index",
                     i + 1
                 );
+            }
+        }
+        for (i, t) in lesson.tap.iter().enumerate() {
+            if let Err(e) = t.validate() {
+                bail!("{file_name}: tap puzzle {}: {e}", i + 1);
             }
         }
         if lesson.boss.is_some() && lesson.test_count() == 0 {

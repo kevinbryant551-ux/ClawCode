@@ -217,3 +217,30 @@ println!("{a} {b}");
 choices = ["4.5 4.5", "4 4.5", "5 4.5", "4 4"]
 answer = 1
 explain = "Whole-number division drops the remainder (9 / 2 = 4), but decimal division keeps it (9.0 / 2.0 = 4.5)."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Give each function a value of the right type."
+code = '''
+fn lives() -> u32 { ___ }          // 3 lives
+fn temperature() -> i32 { ___ }    // five below zero
+fn speed() -> f64 { ___ }          // two and a half
+fn is_alive() -> bool { ___ }      // doing fine
+fn grade() -> char { ___ }         // the letter A
+fn crab_name() -> &'static str { ___ }
+'''
+answer = ["3", "-5", "2.5", "true", "'A'", '"Pinch"']
+decoys = ["-3", "\"true\"", '"A"', "2,5", "'Pinch'"]
+explain = "`u32` can't be negative, `i32` can. Decimals need `f64`. A `char` uses single quotes, text (`&str`) uses double quotes."
+
+[[tap]]
+kind = "fill"
+prompt = "Whole numbers drop the remainder. Pick the division that gives each answer."
+code = '''
+fn whole_half() -> i32 { ___ }      // gives 3
+fn decimal_half() -> f64 { ___ }    // gives 3.5
+'''
+answer = ["7 / 2", "7.0 / 2.0"]
+decoys = ["7 % 2", "7.0 / 2", "3.5"]
+explain = "`7 / 2` with integers is 3. With `f64` values, `7.0 / 2.0` is 3.5. Rust won't mix `7.0 / 2` (f64 and integer) without a conversion."

@@ -1,0 +1,108 @@
+name: Godot (Android)
+# Checks the Godot mobile app and builds a debug APK you can download from the
+# run's "Artifacts" section and install on an Android phone.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: 4.4.1
+
+jobs:
+  godot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Lessons JSON is up to date
+        run: |
+          cargo run --locked -- export-godot
+          if ! git diff --exit-code godot/data/lessons.json; then
+            echo "::error::godot/data/lessons.json is out of date. Run: cargo run -- export-godot"
+            exit 1
+          fi
+
+      - name: Install Godot
+        run: |
+          curl -fsSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          sudo mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
+          godot --version
+
+      - name: Import project
+        run: godot --headless --path godot --import 2>&1 | tee import.log
+
+      - name: Unit tests (puzzle logic and lesson data)
+        run: |
+          godot --headless --path godot --script res://tests/run_tests.gd 2>&1 | tee tests.log
+          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" tests.log; then exit 1; fi
+          grep -q "ALL TESTS PASSED" tests.log
+
+      - name: Smoke test (plays every lesson through the real screens)
+        run: |
+          timeout 300 godot --headless --path godot -- --selftest 2>&1 | tee selftest.log
+          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" selftest.log; then exit 1; fi
+          grep -q "SELFTEST PASSED" selftest.log
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Cache Android export templates
+        id: templates
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable
+          key: godot-android-templates-${{ env.GODOT_VERSION }}
+
+      - name: Install Android export templates
+        if: steps.templates.outputs.cache-hit != 'true'
+        run: |
+          dir="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$dir"
+          curl -fsSL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          unzip -j -o templates.tpz templates/android_debug.apk templates/android_release.apk templates/version.txt -d "$dir"
+          rm templates.tpz
+          ls -la "$dir"
+
+      - name: Debug keystore and editor settings
+        run: |
+          keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android \
+            -keystore "$HOME/debug.keystore" -storepass android \
+            -dname "CN=Android Debug,O=Android,C=US" -validity 9999 -deststoretype pkcs12
+          mkdir -p "$HOME/.config/godot"
+          for f in editor_settings-4.tres editor_settings-4.4.tres; do
+            cat > "$HOME/.config/godot/$f" <<EOF
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          export/android/java_sdk_path = "$JAVA_HOME"
+          export/android/debug_keystore = "$HOME/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          EOF
+          done
+          cat "$HOME/.config/godot/editor_settings-4.4.tres"
+
+      - name: Export debug APK
+        env:
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
+        run: |
+          export GODOT_ANDROID_KEYSTORE_DEBUG_PATH="$HOME/debug.keystore"
+          mkdir -p godot/build
+          godot --headless --path godot --export-debug "Android" "$GITHUB_WORKSPACE/godot/build/ClawCode-debug.apk" 2>&1 | tee export.log
+          ls -la godot/build
+          test -s godot/build/ClawCode-debug.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClawCode-debug-apk
+          path: godot/build/ClawCode-debug.apk
+          if-no-files-found: error

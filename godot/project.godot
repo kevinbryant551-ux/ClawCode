@@ -1,0 +1,38 @@
+; Engine configuration file for the ClawCode mobile app (Godot 4.4+).
+; Open this folder in the Godot editor: Project Manager > Import > godot/project.godot
+
+config_version=5
+
+[application]
+
+config/name="ClawCode"
+config/description="Learn Rust by tapping, with Pinch the crab."
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.4", "GL Compatibility")
+config/icon="res://icon.svg"
+config/quit_on_go_back=false
+
+[autoload]
+
+Game="*res://scripts/game.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/window_width_override=432
+window/size/window_height_override=768
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[input_devices]
+
+pointing/emulate_mouse_from_touch=true
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.062, 0.078, 0.122, 1)

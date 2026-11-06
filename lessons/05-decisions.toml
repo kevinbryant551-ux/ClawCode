@@ -183,3 +183,36 @@ let mood = if water > 5 { "splashy" } else { 3 };
 choices = ["Both branches must have the same type", "The condition needs parentheses", "else needs its own condition", "water must be mut"]
 answer = 0
 explain = "When `if` gives back a value, every branch must produce the same type. One is text and the other is a number, so it fails."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Finish `tide_level`: below 0 is unknown, 0 to 2 is low, 3 to 6 is medium, 7 or more is high."
+code = '''
+fn tide_level(height: i32) -> &'static str {
+    if height ___ 0 {
+        "unknown"
+    } ___ if height <= 2 {
+        "low"
+    } else if height ___ 6 {
+        "medium"
+    } ___ {
+        "high"
+    }
+}
+'''
+answer = ["<", "else", "<=", "else"]
+decoys = [">", "elif", ">=", "then"]
+explain = "Rust checks each `if` from top to bottom and runs the first one that is true. `else` catches everything left over."
+
+[[tap]]
+kind = "fill"
+prompt = "A beach day is a height from 2 to 6 and NOT raining."
+code = '''
+fn is_beach_day(height: i32, raining: bool) -> bool {
+    height >= 2 ___ height <= 6 ___ ___raining
+}
+'''
+answer = ["&&", "&&", "!"]
+decoys = ["||", "and", "not"]
+explain = "`&&` means \"and\" (both must be true), `||` means \"or\", and `!` flips true and false."
