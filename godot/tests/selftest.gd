@@ -1,4 +1,4 @@
-extends RefCounted
+extends Node
 ## End-to-end smoke test: plays every lesson through the real screens by
 ## "pressing" buttons in code. Started by main.gd when run with:
 ##   godot --headless --path godot -- --selftest
@@ -19,6 +19,7 @@ func press(b) -> void:
 
 func run(main) -> void:
 	var tree: SceneTree = main.get_tree()
+	print("SELFTEST: starting")
 	Game.save_path = "user://selftest_progress.json"
 	Game.reset_progress()
 	Game.progress["unlock_all"] = true

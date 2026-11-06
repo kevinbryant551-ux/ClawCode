@@ -10,6 +10,7 @@ const Confetti := preload("res://scripts/confetti.gd")
 var current: Control
 var layer: Control
 var confetti: Control
+var selftest  # kept here so the test object stays alive across `await`s
 
 
 func _ready() -> void:
@@ -28,8 +29,9 @@ func _ready() -> void:
 	confetti.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 	if OS.get_cmdline_user_args().has("--selftest"):
-		var SelfTest = load("res://tests/selftest.gd")
-		SelfTest.new().run(self)
+		selftest = load("res://tests/selftest.gd").new()
+		add_child(selftest)
+		selftest.run(self)
 	else:
 		show_title()
 
