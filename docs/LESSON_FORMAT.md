@@ -140,3 +140,43 @@ art = '''
 taunt = "What the boss says when the fight starts."
 defeat = "What it says when beaten."
 ```
+
+## Tap puzzles (for the Android app)
+
+The Godot phone app (`godot/`) can't run `rustc`, and typing code on a phone
+is no fun, so it replaces the coding challenge with **tap puzzles**. The
+terminal game ignores these tables. Add 1 to 3 per lesson:
+
+```toml
+[[tap]]
+kind = "fill"           # code with ___ blanks; the player taps tiles to fill them in order
+prompt = "Unlock the variable so it can change."   # optional, defaults to `goal`
+code = '''
+let ___ lives = 3;
+lives = ___;
+'''
+answer = ["mut", "2"]               # one per ___, in order
+decoys = ["const", "let", "\"2\""]   # plausible wrong tiles (must not be correct answers)
+explain = "Shown when solved."
+
+[[tap]]
+kind = "order"          # the lines are shuffled; the player taps them top to bottom
+code = '''
+fn main() {
+    println!("Hi!");
+}
+'''
+decoys = ['    print("Hi!")']   # wrong lines mixed in (optional)
+explain = "Shown when solved."
+```
+
+- Blanks are written `___` (three underscores). The number of blanks must
+  equal the number of `answer` entries.
+- In `order` puzzles, blank lines are ignored and identical lines (like two `}`)
+  are interchangeable.
+- In a boss lesson, each correct blank (or line) is one boss hit point.
+- Lessons without `[[tap]]` get **automatic** fill puzzles built from the
+  difference between `starter` and `solution`. Hand-made ones teach better.
+
+After editing, run `cargo run -- export-godot` to refresh `godot/data/lessons.json`
+and `cargo test` to check every puzzle is solvable.

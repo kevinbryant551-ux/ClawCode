@@ -17,6 +17,10 @@ build **quiz combos**, keep **daily streaks**, collect **badges**, fight three
 colours for **Pinch the crab**, your guide. When the compiler complains, Pinch
 translates the error into plain English and tells you what to try next.
 
+> **On Android?** There is a phone version built with the Godot engine, played
+> entirely by tapping (no typing). See [godot/README.md](godot/README.md) for how
+> to download the APK from GitHub Actions or build it yourself.
+
 ## Contents
 
 1. [Key terms](#key-terms)
@@ -473,6 +477,7 @@ Cargo's options from ClawCode's), or with plain `clawcode` if installed.
 | `clawcode list` | Print all lessons, your level, XP and streak; `✔` marks passed lessons |
 | `clawcode check <id> <file.rs>` | Check a `.rs` file against a lesson, without the in-game editor |
 | `clawcode verify [id]` | For lesson authors: solutions must pass, starters must fail |
+| `clawcode export-godot [file]` | For the Android app: converts lessons to `godot/data/lessons.json` (see [godot/README.md](godot/README.md)) |
 | `clawcode reset` | Delete all saved progress (asks first) |
 | `clawcode --help` | Show the usage text |
 
