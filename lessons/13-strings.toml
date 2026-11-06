@@ -222,3 +222,38 @@ choices = [
 ]
 answer = 2
 explain = "`contains` only says yes or no, and `chars().count()` counts all letters. Looping over `chars()` and comparing each one counts just the a's."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Write `shout`: uppercase the text and add one '!' on the end."
+code = '''
+fn shout(s: &str) -> String {
+    let ___ out = s.___();
+    out.push(___);
+    out
+}
+'''
+answer = ["mut", "to_uppercase", "'!'"]
+decoys = ["upper", '"!"', "const"]
+explain = "`.to_uppercase()` makes a new `String`. `.push` adds one `char` (single quotes); `.push_str` adds a `&str` (double quotes)."
+
+[[tap]]
+kind = "fill"
+prompt = "Finish the other helpers: count words, tidy a name, and append to a borrowed String."
+code = '''
+fn word_count(s: &str) -> usize {
+    s.___().count()
+}
+
+fn banner(name: &str, shells: u32) -> String {
+    ___!("{} has {} shells", name.___(), shells)
+}
+
+fn add_ahoy(s: &mut String) {
+    s.___(" Ahoy!");
+}
+'''
+answer = ["split_whitespace", "format", "trim", "push_str"]
+decoys = ["println", "push", "len", "split"]
+explain = "`split_whitespace` ignores extra spaces, `trim` removes spaces at both ends, and `push_str` appends text to a `String`."

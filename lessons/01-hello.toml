@@ -110,3 +110,28 @@ fn main() {
 choices = ["The first println! is missing its semicolon", "main must be written Main", "The text needs single quotes", "You can only call println! once"]
 answer = 0
 explain = "Every instruction ends with `;`. The compiler spotted the missing one after `println!(\"Ahoy!\")` and tells you it expected a `;`."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Make the program greet Rust and Pinch. Tap the right text for each blank."
+code = '''
+fn main() {
+    println!(___);
+    println!(___);
+}
+'''
+answer = ['"Hello, Rust!"', '"I am learning with Pinch."']
+decoys = ['"Hello, World!"', '"I am learning with Crab."', 'Hello, Rust!']
+explain = "Text inside `println!` goes in double quotes. Without the quotes, Rust thinks the words are code."
+
+[[tap]]
+kind = "order"
+prompt = "Build the smallest Rust program that prints a line. Tap the lines from top to bottom."
+code = '''
+fn main() {
+    println!("Hello, Rust!");
+}
+'''
+decoys = ['main() {', '    print("Hello, Rust!")']
+explain = "`fn main()` is where every program starts, and its body sits between `{` and `}`. Note the `!` on `println!`: it is a macro."

@@ -164,3 +164,39 @@ fn main() {
 choices = ["4", "6", "5", "It doesn't compile"]
 answer = 2
 explain = "The inner call gives 4, then the outer call turns that into 5."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Finish `square`: it takes an `i32` and returns that number times itself."
+code = '''
+fn square(n: ___) ___ i32 {
+    n ___ n
+}
+'''
+answer = ["i32", "->", "*"]
+decoys = ["=>", "+", "f64", ":"]
+explain = "Parameters are written `name: Type`, and `-> Type` names the return type. The last expression (no semicolon) is the value returned."
+
+[[tap]]
+kind = "order"
+prompt = "Put `average` together: it adds two f64 numbers and halves them."
+code = '''
+fn average(a: f64, b: f64) -> f64 {
+    (a + b) / 2.0
+}
+'''
+decoys = ['    (a + b) / 2.0;', '    return (a + b) / 2']
+explain = "No semicolon on the last line means it is the return value. A `;` would turn it into a statement and return nothing."
+
+[[tap]]
+kind = "fill"
+prompt = "`greeting` must return a new String like \"Hello, Pinch!\"."
+code = '''
+fn greeting(name: ___) -> String {
+    ___!("Hello, {}!", name)
+}
+'''
+answer = ["&str", "format"]
+decoys = ["println", "String", "print"]
+explain = "`format!` builds a `String` without printing it. `println!` would print and return nothing."

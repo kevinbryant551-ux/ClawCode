@@ -231,3 +231,65 @@ What does `kind_from_letter('q')` return if the match ends with `_ => None`?
 choices = ["Some(Kind::Crab)", "None", "It panics", "It doesn't compile"]
 answer = 1
 explain = "The `_` arm catches every letter not listed above it, and gives back `None` to say \"nothing found\"."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+# In a boss lesson, every correct blank (or line) is one hit point.
+[[tap]]
+kind = "fill"
+prompt = "Round 1: score each creature with `match`, and turn a letter into a Kind."
+code = '''
+fn points(kind: &Kind) -> u32 {
+    match kind {
+        Kind::Crab ___ 5,
+        Kind::Starfish => 3,
+        Kind::Snail => 1,
+    }
+}
+
+fn kind_from_letter(letter: char) -> ___<Kind> {
+    match letter {
+        ___ => Some(Kind::Crab),
+        's' => Some(Kind::Starfish),
+        'n' => Some(Kind::Snail),
+        ___ => None,
+    }
+}
+'''
+answer = ["=>", "Option", "'c'", "_"]
+decoys = ["->", "Result", '"c"', "else"]
+explain = "`_` is the catch-all pattern: any other letter gives `None`. Chars use single quotes."
+
+[[tap]]
+kind = "order"
+prompt = "Round 2: build `pile_score`, adding points(kind) once per creature."
+code = '''
+fn pile_score(kind: &Kind, count: u32) -> u32 {
+    let mut total = 0;
+    for _ in 0..count {
+        total += points(kind);
+    }
+    total
+}
+'''
+decoys = ['    let total = 0;', '        total += points(&kind);']
+explain = "`for _ in 0..count` repeats `count` times when you don't need the number. `kind` is already a `&Kind`, so pass it straight on."
+
+[[tap]]
+kind = "fill"
+prompt = "Final round: change a creature through `&mut`, but only look through `&`."
+code = '''
+fn grow(creature: ___ Creature) {
+    creature.size += 1;
+}
+
+fn label(creature: ___ Creature) -> String {
+    format!("{} (size {})", creature.name, creature.size)
+}
+
+fn rename(creature: &mut Creature, new_name: &str) {
+    creature.name = new_name.___();
+}
+'''
+answer = ["&mut", "&", "to_string"]
+decoys = ["mut", "&&", "clone()", "*"]
+explain = "Many `&` readers OR one `&mut` writer at a time: that's the borrow checker's whole rule. `.to_string()` makes an owned `String` from `&str`."

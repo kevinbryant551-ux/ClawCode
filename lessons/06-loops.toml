@@ -223,3 +223,57 @@ for i in 1..=4 {
 choices = ["Declare it as `let mut total = 0;`", "Change the range to `1..4`", "Add a `break` inside the loop", "Declare `i` as `mut`"]
 answer = 0
 explain = "An accumulator changes every time around, so it must be `mut`. Without it Rust stops you with error E0384 (assigning twice to an immutable variable)."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Finish `sum_to`: add up 1, 2, 3 ... up to and including `n`."
+code = '''
+fn sum_to(n: u32) -> u32 {
+    let ___ total = 0;
+    ___ i in 1___n {
+        total ___ i;
+    }
+    total
+}
+'''
+answer = ["mut", "for", "..=", "+="]
+decoys = ["while", "..", "=", "const"]
+explain = "`1..=n` includes `n`; `1..n` would stop one short. `total += i` is short for `total = total + i`."
+
+[[tap]]
+kind = "order"
+prompt = "Build `doublings`: keep doubling `value` while it is at most `limit`, counting each step."
+code = '''
+fn doublings(limit: u32) -> u32 {
+    let mut value = 1;
+    let mut count = 0;
+    while value <= limit {
+        value *= 2;
+        count += 1;
+    }
+    count
+}
+'''
+decoys = ['    for value <= limit {', '    count;']
+explain = "A `while` loop repeats as long as its condition is true. The last line, `count` with no semicolon, is the returned value."
+
+[[tap]]
+kind = "fill"
+prompt = "SnipSnap: multiples of 15 print SnipSnap, of 3 print Snip, of 5 print Snap. Check 15 first!"
+code = '''
+for i in 1..=15 {
+    if i ___ 15 == 0 {
+        println!("SnipSnap");
+    } else if i % ___ == 0 {
+        println!("Snip");
+    } ___ if i % 5 == 0 {
+        println!("Snap");
+    } else {
+        println!("{i}");
+    }
+}
+'''
+answer = ["%", "3", "else"]
+decoys = ["/", "5", "elif"]
+explain = "`%` gives the remainder, so `i % 3 == 0` means \"i divides evenly by 3\". 15 is checked first because it is also a multiple of 3 and 5."

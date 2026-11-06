@@ -256,3 +256,47 @@ question = "You want to write `if a == b` on two of your own structs. Which deri
 choices = ["Debug", "Clone", "PartialEq", "Speak"]
 answer = 2
 explain = "PartialEq gives you `==`. Debug is for `{:?}` printing and Clone is for `.clone()`."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Give the Speak trait a default `speak` method, and implement it for Crab."
+code = '''
+trait Speak {
+    fn name(&self) -> String;
+    fn sound(&self) -> String;
+
+    fn speak(&self) -> String {
+        format!("{} says {}", ___.name(), self.sound())
+    }
+}
+
+___ Speak ___ Crab {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+    fn sound(&self) -> String {
+        "click".to_string()
+    }
+}
+'''
+answer = ["self", "impl", "for"]
+decoys = ["Self", "trait", "in", "this"]
+explain = "`impl Trait for Type` fills in the trait's methods. `speak` has a default body, so Crab gets it for free."
+
+[[tap]]
+kind = "fill"
+prompt = "Derive the handy traits on Crab, and accept anything that can Speak."
+code = '''
+#[___(Debug, Clone, PartialEq)]
+struct Crab {
+    name: String,
+}
+
+fn describe(x: &___ Speak) -> String {
+    format!("[{}]", x.speak())
+}
+'''
+answer = ["derive", "impl"]
+decoys = ["impl Debug", "dyn trait", "trait"]
+explain = "`#[derive(...)]` writes common trait code for you. `&impl Speak` means \"a reference to any type that implements Speak\"."

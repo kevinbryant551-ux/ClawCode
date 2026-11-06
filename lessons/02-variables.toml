@@ -129,3 +129,32 @@ fn main() {
 choices = ["3", "4", "8", "It doesn't compile"]
 answer = 2
 explain = "Each `let` shadows the last: 3, then 4, then 4 * 2 = 8. Shadowing is allowed even without `mut`."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "The compiler refuses to change `lives`. Unlock it so the program prints Lives: 3, then Lives: 2."
+code = '''
+fn main() {
+    let ___ lives = 3;
+    println!("Lives: {}", lives);
+
+    lives = 2;
+    println!("Lives: {}", ___);
+}
+'''
+answer = ["mut", "lives"]
+decoys = ["const", "let", "{}", "3"]
+explain = "`let mut` makes a variable that is allowed to change. The `{}` placeholder is filled with the value listed after the text."
+
+[[tap]]
+kind = "fill"
+prompt = "Use shadowing to make `size` grow from 3 to 4, without `mut`."
+code = '''
+let size = 3;
+___ size = size ___ 1;
+println!("{}", size); // prints 4
+'''
+answer = ["let", "+"]
+decoys = ["mut", "-", "=", "fn"]
+explain = "A second `let` makes a brand new `size` that hides the old one. That is shadowing."

@@ -262,3 +262,48 @@ question = "Your error enum has no Display impl. What breaks?"
 choices = ["Creating the error", "Matching on the error", "Printing it with `println!(\"{}\", e)`", "Returning it inside Err"]
 answer = 2
 explain = "`{}` needs the Display trait. You can still create, match and return the error without it."
+
+# Tap puzzles for the Android app (see docs/LESSON_FORMAT.md, "Tap puzzles").
+[[tap]]
+kind = "fill"
+prompt = "Return the right error for empty or too-big input."
+code = '''
+fn parse_shells(text: &str) -> Result<u32, CrabError> {
+    let text = text.trim();
+    if text.is_empty() {
+        return ___(CrabError::Empty);
+    }
+    let n = match text.parse::<u32>() {
+        Ok(n) => n,
+        Err(_) => return Err(CrabError::NotANumber),
+    };
+    if n > 100 {
+        return Err(CrabError::___(n));
+    }
+    ___(n)
+}
+'''
+answer = ["Err", "TooBig", "Ok"]
+decoys = ["None", "Some", "panic!"]
+explain = "Errors are ordinary values: `Err(CrabError::Empty)`. The happy path ends with `Ok(n)`."
+
+[[tap]]
+kind = "fill"
+prompt = "Use `?` to pass errors up, then match on the final result."
+code = '''
+fn total_shells(a: &str, b: &str) -> Result<u32, CrabError> {
+    let x = parse_shells(a)___;
+    let y = parse_shells(b)___;
+    Ok(x + y)
+}
+
+fn report(a: &str, b: &str) -> String {
+    match total_shells(a, b) {
+        Ok(n) => format!("Total: {}", n),
+        ___(e) => format!("Error: {}", e),
+    }
+}
+'''
+answer = ["?", "?", "Err"]
+decoys = [".unwrap()", "!", "None"]
+explain = "`?` means \"if this is an Err, return it right now; otherwise unwrap the Ok\". It keeps error handling short."

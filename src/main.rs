@@ -4,10 +4,12 @@ mod app;
 mod checker;
 mod feedback;
 mod friendly;
+mod godot_export;
 mod lesson;
 mod markdown;
 mod progress;
 mod shop;
+mod tap;
 mod ui;
 mod widgets;
 
@@ -23,6 +25,7 @@ USAGE:
     clawcode list                List lessons and your progress
     clawcode check <id> <file>   Check a .rs file against a lesson (for use with your own editor)
     clawcode verify [id]         For lesson authors: solutions must pass, starters must fail
+    clawcode export-godot [file] For the Android app: write lessons as JSON (default godot/data/lessons.json)
     clawcode reset               Delete all saved progress
     clawcode --help              Show this text
 ";
@@ -93,6 +96,17 @@ fn real_main() -> Result<ExitCode> {
             })
         }
         Some("verify") => Ok(verify(&lessons, args.get(1).map(String::as_str))),
+        Some("export-godot") => {
+            let out = args
+                .get(1)
+                .map_or(godot_export::DEFAULT_OUT, String::as_str);
+            if let Some(dir) = std::path::Path::new(out).parent() {
+                std::fs::create_dir_all(dir)?;
+            }
+            std::fs::write(out, godot_export::export(&lessons))?;
+            println!("Wrote {} lessons to {out}", lessons.len());
+            Ok(ExitCode::SUCCESS)
+        }
         Some("reset") => {
             use std::io::Write;
             print!(
